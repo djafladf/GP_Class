@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] Transform WeaponHolder;
+
     Rigidbody rigid;
     Animation anim;
     Animator _anim;
@@ -75,9 +77,9 @@ public class Player : MonoBehaviour
     void OnLook(InputValue value)
     {
         MouseDir = value.Get<Vector2>();
-        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.2f, 1f, 2f);
+        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.4f, 0f, 3f);
         Aim.localPosition = new Vector3(0, Ny, 0);
-        transform.Rotate(Vector3.up * 10f * Time.deltaTime * MouseDir.x);
+        transform.Rotate(Vector3.up * 15f * Time.deltaTime * MouseDir.x);
     }
 
     bool _onFire = false;
