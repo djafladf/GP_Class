@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,13 +9,18 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [SerializeField] Transform WeaponHolder;
+    [SerializeField] Transform FirePos;
+    [SerializeField] CinemachineVirtualCamera CV;
 
     Rigidbody rigid;
     Animation anim;
     Animator _anim;
 
+    CinemachineTransposer transposer;
+
     private void Awake()
     {
+        transposer = CV.GetCinemachineComponent<CinemachineTransposer>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animation>();
         _anim = GetComponent<Animator>();
@@ -31,35 +37,37 @@ public class Player : MonoBehaviour
             Vector3 NextDir = (transform.forward * Dir.y + transform.right * Dir.x).normalized;
 
             rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * MoveSpeed);
-            if (_onFire) anim.CrossFade("RunFireSMG",0.25f);
-            else if (Dir.x > 0) anim.CrossFade("RunR",0.25f);
-            else if (Dir.x < 0) anim.CrossFade("RunL",0.25f);
-            else if (Dir.y > 0) anim.CrossFade("RunF",0.25f);
-            else anim.CrossFade("RunB",0.25f);
+            if (_onFire)
+            {
+                anim.CrossFade("RunFireSMG", 0.25f);
+            }
+            else if (Dir.x > 0) anim.CrossFade("RunR", 0.25f);
+            else if (Dir.x < 0) anim.CrossFade("RunL", 0.25f);
+            else if (Dir.y > 0) anim.CrossFade("RunF", 0.25f);
+            else anim.CrossFade("RunB", 0.25f);
         }
         else
         {
-            if (_onFire) anim.CrossFade("IdleFireSMG",0.25f);
-            else anim.CrossFade("Idle",0.25f);
+            if (_onFire)
+            {
+                anim.CrossFade("IdleFireSMG", 0.25f);
+            }
+            else anim.CrossFade("Idle", 0.25f);
         }
-
-        // Animator
-        /*if (!Dir.Equals(Vector2.zero))
-        {
-            Vector3 NextDir = (transform.forward * Dir.y + transform.right * Dir.x).normalized;
-
-            rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * MoveSpeed);
-            _anim.SetBool("OnMove", true);
-            _anim.SetFloat("dx", Dir.x);
-            _anim.SetFloat("dy", Dir.y);
-        }
-        else
-        {
-            _anim.SetBool("OnMove", false);
-        }*/
     }
 
     Vector3 Dir;
+
+    [SerializeField] bool OnCam = false;
+
+
+    public void Shoot() 
+    {
+            float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+            Vector3 BDir = new Vector3(Mathf.Sin(Theta), (Aim.localPosition.y - 1.5f) * 0.5f, Mathf.Cos(Theta));
+            GameManager.instance.bullet.ShootBullet(FirePos.position, BDir.normalized);
+    }
+
     void OnMove(InputValue value)
     {
         Dir = value.Get<Vector2>();
@@ -78,7 +86,7 @@ public class Player : MonoBehaviour
     {
         MouseDir = value.Get<Vector2>();
         float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.4f, 0f, 3f);
-        Aim.localPosition = new Vector3(0, Ny, 0);
+        Aim.localPosition = new Vector3(0, Ny, Aim.localPosition.z);
         transform.Rotate(Vector3.up * 15f * Time.deltaTime * MouseDir.x);
     }
 
@@ -86,6 +94,14 @@ public class Player : MonoBehaviour
     void OnFire(InputValue value)
     {
         _onFire = _onFire == false;
+        if (_onFire)
+        {
+            transposer.m_FollowOffset = new Vector3(0, 1.8f, 0.2f);
+        }
+        else 
+        { 
+            transposer.m_FollowOffset = new Vector3(0, 2, -1.5f); 
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
