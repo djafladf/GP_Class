@@ -1,20 +1,18 @@
 using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] Transform WeaponHolder;
     [SerializeField] Transform FirePos;
     [SerializeField] CinemachineVirtualCamera CV;
+    Transform CurWeapon = null;
 
     Rigidbody rigid;
     Animation anim;
-    Animator _anim;
 
     CinemachineTransposer transposer;
 
@@ -23,14 +21,20 @@ public class Player : MonoBehaviour
         transposer = CV.GetCinemachineComponent<CinemachineTransposer>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animation>();
-        _anim = GetComponent<Animator>();
         anim.Play("Idle");
         Cursor.visible = false;
+
+        CurWeapon = WeaponHolder.GetChild(0);
+        AttackGap = anim["IdleFireSMG"].length;
+        CrossTime = AttackGap * 0.8f;
     }
 
     float MoveSpeed = 5f;
+    float CrossTime;
+    bool MoveAble = true;
     private void FixedUpdate()
     {
+        if (!MoveAble) return;
         // Animation
         if (!Dir.Equals(Vector2.zero))
         {
@@ -39,12 +43,12 @@ public class Player : MonoBehaviour
             rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * MoveSpeed);
             if (_onFire)
             {
-                anim.CrossFade("RunFireSMG", 0.25f);
+                anim.CrossFade("RunFireSMG",CrossTime);
             }
-            else if (Dir.x > 0) anim.CrossFade("RunR", 0.25f);
-            else if (Dir.x < 0) anim.CrossFade("RunL", 0.25f);
-            else if (Dir.y > 0) anim.CrossFade("RunF", 0.25f);
-            else anim.CrossFade("RunB", 0.25f);
+            else if (Dir.x > 0) anim.CrossFade("RunR", CrossTime);
+            else if (Dir.x < 0) anim.CrossFade("RunL", CrossTime);
+            else if (Dir.y > 0) anim.CrossFade("RunF", CrossTime);
+            else anim.CrossFade("RunB", CrossTime);
         }
         else
         {
@@ -58,35 +62,58 @@ public class Player : MonoBehaviour
 
     Vector3 Dir;
 
-    [SerializeField] bool OnCam = false;
-
-
-    public void Shoot() 
+    // Idle <-> Attack 전환 도중 발생하는 연사 방지
+    // 0 : Idle, 1 : Cool, 2 : Call While Shoot (키 씹힘 방지)
+    int ShootCall = 0;
+    float AttackGap;
+    void Shoot_Sub()
     {
-            float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-            Vector3 BDir = new Vector3(Mathf.Sin(Theta), (Aim.localPosition.y - 1.5f) * 0.5f, Mathf.Cos(Theta));
-            GameManager.instance.bullet.ShootBullet(FirePos.position, BDir.normalized);
+        if (ShootCall == 2) { ShootCall = 0; Shoot(); }
+        else ShootCall = 0;
     }
 
+    float LastTime = 0;
+    public void Shoot()
+    {
+        if (LeftBul <= 0) return;
+        if (ShootCall > 0) { ShootCall = 2; return; }
+        float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+        if (Aim.localPosition.y < 3)
+        {
+            Aim.Translate(0, 0.01f, 0);
+            if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir; }
+        }
+        GameManager.instance.bullet.ShootBullet(FirePos.position, CurWeapon.forward);
+        LeftBul--; BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = LeftBul / 60f;
+        ShootCall = 1; Invoke("Shoot_Sub", AttackGap);
+    }
+
+    [SerializeField] int LeftBul = 60;
+
+#region InputSystems
+    // WASD, Shaft
     void OnMove(InputValue value)
     {
         Dir = value.Get<Vector2>();
     }
 
+    // Space
     bool JumpAble = false;
     void OnJump(InputValue value)
     {
-        if (JumpAble) { rigid.AddForce(Vector3.up * 5,ForceMode.Impulse); JumpAble = false; }
+        if (JumpAble && MoveAble) { rigid.AddForce(Vector3.up * 5, ForceMode.Impulse); JumpAble = false; }
     }
 
-    // Mouse Controll
+    // Mouse
     [SerializeField] Transform Aim;
     Vector2 MouseDir;
     void OnLook(InputValue value)
     {
+        if (!MoveAble) return;
         MouseDir = value.Get<Vector2>();
         float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.4f, 0f, 3f);
-        Aim.localPosition = new Vector3(0, Ny, Aim.localPosition.z);
+        Aim.localPosition = new Vector3(0.5f, Ny, Aim.localPosition.z);
+        if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir;  }
         transform.Rotate(Vector3.up * 15f * Time.deltaTime * MouseDir.x);
     }
 
@@ -94,18 +121,39 @@ public class Player : MonoBehaviour
     void OnFire(InputValue value)
     {
         _onFire = _onFire == false;
-        if (_onFire)
+    }
+
+    bool _onFocus = false;
+    void OnFocus(InputValue value)
+    {
+        if (!MoveAble) return;
+        _onFocus = _onFocus == false;
+        if (_onFocus) transposer.m_FollowOffset = new Vector3(0.5f, 1.7f, 0.2f);
+        else
         {
-            transposer.m_FollowOffset = new Vector3(0, 1.8f, 0.2f);
-        }
-        else 
-        { 
-            transposer.m_FollowOffset = new Vector3(0, 2, -1.5f); 
+            transposer.m_FollowOffset = new Vector3(0.5f, 2, -1.5f);
+            Aim.localPosition = new Vector3(0.5f, 1.5f, Aim.localPosition.z);
         }
     }
+
+    [SerializeField] Image BulletGage;
+    [SerializeField] TMP_Text BulletText;
+    void OnReload(InputValue value)
+    {
+        if (!MoveAble) return;
+        MoveAble = false; Dir = Vector3.zero;
+        anim.CrossFade("IdleReloadSMG", CrossTime);
+    }
+    public void ReloadEnd()
+    {
+        MoveAble = true; LeftBul = 60;
+        BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = 1f;
+    }
+#endregion
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Floor")) JumpAble = true;
     }
+
 }

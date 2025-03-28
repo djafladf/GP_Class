@@ -6,8 +6,8 @@ public class BulletManager : MonoBehaviour
 {
     [SerializeField] GameObject BulletPref;
 
-    List<Rigidbody> BulletRigid = new List<Rigidbody>();
     List<GameObject> BulletPool = new List<GameObject>();
+    List<Bullet> BulletScripts = new List<Bullet>();
     int front = 0;
 
     private void Awake()
@@ -15,7 +15,7 @@ public class BulletManager : MonoBehaviour
         for(int i = 0; i < 50; i++)
         {
             GameObject cntPref = Instantiate(BulletPref, transform); cntPref.SetActive(false);
-            BulletPool.Add(cntPref); BulletRigid.Add(cntPref.GetComponent<Rigidbody>());
+            BulletPool.Add(cntPref); BulletScripts.Add(cntPref.GetComponent<Bullet>());
         }
     }
     private void Start()
@@ -30,11 +30,7 @@ public class BulletManager : MonoBehaviour
             GameObject CurBul = BulletPool[front];
             if (!CurBul.activeSelf)
             {
-                CurBul.transform.position = Start;
-                CurBul.transform.rotation = Quaternion.FromToRotation(Vector3.up, Dir);
-                BulletRigid[front].velocity = Vector3.zero;
-                CurBul.SetActive(true);
-                BulletRigid[front].AddForce(Dir * 5, ForceMode.Impulse);
+                BulletScripts[front].Init(Start, Dir);
                 front = (front + 1) % BulletPool.Count;
                 break;
             }
