@@ -1,4 +1,5 @@
 using Cinemachine;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,18 +10,22 @@ public class Player : MonoBehaviour
     [SerializeField] Transform WeaponHolder;
     [SerializeField] Transform FirePos;
     [SerializeField] CinemachineVirtualCamera CV;
+    [SerializeField] AudioClip[] audioclips;
+    [SerializeField] MeshRenderer muzzleFlash;
     Transform CurWeapon = null;
 
     Rigidbody rigid;
     Animation anim;
 
     CinemachineTransposer transposer;
+    AudioSource audio;
 
     private void Awake()
     {
         transposer = CV.GetCinemachineComponent<CinemachineTransposer>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animation>();
+        audio = GetComponent<AudioSource>();
         anim.Play("Idle");
         Cursor.visible = false;
 
@@ -83,12 +88,14 @@ public class Player : MonoBehaviour
             Aim.Translate(0, 0.01f, 0);
             if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir; }
         }
+        audio.clip = audioclips[0]; audio.Play();
+        StartCoroutine(ShowMuzzleFlash());
         GameManager.instance.bullet.ShootBullet(FirePos.position, CurWeapon.forward);
         LeftBul--; BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = LeftBul / 60f;
         ShootCall = 1; Invoke("Shoot_Sub", AttackGap);
     }
 
-    [SerializeField] int LeftBul = 60;
+    int LeftBul = 60;
 
 #region InputSystems
     // WASD, Shaft
@@ -142,6 +149,7 @@ public class Player : MonoBehaviour
     {
         if (!MoveAble) return;
         MoveAble = false; Dir = Vector3.zero;
+        audio.clip = audioclips[1]; audio.Play();
         anim.CrossFade("IdleReloadSMG", CrossTime);
     }
     public void ReloadEnd()
@@ -149,7 +157,20 @@ public class Player : MonoBehaviour
         MoveAble = true; LeftBul = 60;
         BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = 1f;
     }
-#endregion
+
+    IEnumerator ShowMuzzleFlash()
+    {
+        Vector2 offset = new Vector2(Random.Range(0, 2), Random.Range(0, 2)) * 0.5f;
+        muzzleFlash.material.mainTextureOffset = offset;
+        /*float angle = Random.Range(0, 360);
+        muzzleFlash.transform.localRotation = Quaternion.Euler(0, 0, angle);*/
+        float scale = Random.Range(0.04f, 0.06f);
+        muzzleFlash.transform.localScale = Vector3.one * scale;
+        muzzleFlash.enabled = true;
+        yield return new WaitForSeconds(CrossTime);
+        muzzleFlash.enabled = false;
+    }
+    #endregion
 
     private void OnCollisionEnter(Collision collision)
     {
