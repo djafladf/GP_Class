@@ -11,6 +11,8 @@ public class Bullet : MonoBehaviour
     MeshRenderer mesh;
     ParticleSystem[] Particles = new ParticleSystem[3];
 
+    Vector3 MeshSize;
+
     private void Awake()
     {
         Particles[0] = Particle.GetComponent<ParticleSystem>();
@@ -20,6 +22,7 @@ public class Bullet : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         mesh = GetComponent<MeshRenderer>();
         coll = GetComponent<BoxCollider>();
+        MeshSize = GetComponent<MeshFilter>().mesh.bounds.size * 0.5f;
     }
 
     private void Start()
@@ -35,11 +38,16 @@ public class Bullet : MonoBehaviour
         gameObject.SetActive(true); TR.Clear(); rigid.AddForce(_Dir * 50,ForceMode.Impulse);
     }
 
+    GameObject MyHole = null;
     private void OnCollisionEnter(Collision col)
     {
         var cp = col.GetContact(0);
-        var rot = Quaternion.LookRotation(-cp.normal);
-        Particle.transform.position = cp.point; Particle.transform.rotation = rot;
+        if (col.transform.CompareTag("Floor"))
+        {
+            if (MyHole == null) MyHole = GameManager.instance.bullet.MakeHole();
+            MyHole.transform.position = cp.point; MyHole.transform.rotation = Quaternion.FromToRotation(Vector3.up, cp.normal); MyHole.SetActive(true);
+        }
+        Particle.transform.position = cp.point; Particle.transform.rotation = Quaternion.LookRotation(-cp.normal);
         foreach (var j in Particles) j.Play();
 
         rigid.isKinematic = false; mesh.enabled = false; rigid.velocity = Vector3.zero; coll.enabled = false;

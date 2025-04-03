@@ -23846,7 +23846,7 @@ Transform:
   - {fileID: 1980085092671980817}
   - {fileID: 1980085093087315219}
   m_Father: {fileID: 359076416053705652}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &1858850772936593281
 ParticleSystem:
@@ -38325,7 +38325,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 359076416053705652}
-  - component: {fileID: 8154685176388126255}
   - component: {fileID: 4720061407423385772}
   - component: {fileID: 4720061407423385771}
   - component: {fileID: 4655789569731692460}
@@ -38348,26 +38347,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1980085096260979519}
   - {fileID: 3795132392927948814}
+  - {fileID: 1980085096260979519}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &8154685176388126255
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3648174916585327015}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations: []
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!54 &4720061407423385772
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -38410,6 +38394,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee969733e25e7449a64a3d4b4fd5b28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mats:
+  - {fileID: 2100000, guid: 8b486f856f0491e40977f08e818e3497, type: 2}
+  - {fileID: 2100000, guid: aec187e4dc149164983cd07bb5dc4296, type: 2}
+  - {fileID: 2100000, guid: 32373cb5a2b659c4c8b6f2919660727c, type: 2}
 --- !u!1 &9086981033074644393
 GameObject:
   m_ObjectHideFlags: 0
@@ -38436,12 +38424,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9086981033074644393}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 359076416053705652}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3528301175675412464
 MeshFilter:
@@ -38470,8 +38458,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 32373cb5a2b659c4c8b6f2919660727c, type: 2}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

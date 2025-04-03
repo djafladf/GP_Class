@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class Barrel : MonoBehaviour
 {
+    [SerializeField] Material[] Mats;
     int HP = 3;
     Rigidbody rigid;
 
+    private void Awake()
+    {
+        transform.GetChild(0).GetComponent<MeshRenderer>().material = Mats[Random.Range(0, Mats.Length)];
+    }
 
     private void OnCollisionEnter(Collision collision)
     {

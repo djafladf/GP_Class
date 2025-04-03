@@ -34,6 +34,11 @@ public class Player : MonoBehaviour
         CrossTime = AttackGap * 0.8f;
     }
 
+    private void Start()
+    {
+        GameManager.instance.Player = transform;
+    }
+
     float MoveSpeed = 5f;
     float CrossTime;
     bool MoveAble = true;
@@ -85,7 +90,7 @@ public class Player : MonoBehaviour
         float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
         if (Aim.localPosition.y < 3)
         {
-            Aim.Translate(0, 0.01f, 0);
+            Aim.Translate(0, 0.02f, 0);
             if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir; }
         }
         audio.clip = audioclips[0]; audio.Play();
@@ -162,8 +167,8 @@ public class Player : MonoBehaviour
     {
         Vector2 offset = new Vector2(Random.Range(0, 2), Random.Range(0, 2)) * 0.5f;
         muzzleFlash.material.mainTextureOffset = offset;
-        /*float angle = Random.Range(0, 360);
-        muzzleFlash.transform.localRotation = Quaternion.Euler(0, 0, angle);*/
+        float angle = Random.Range(0, 360);
+        muzzleFlash.transform.localRotation = Quaternion.Euler(0, 0, angle);
         float scale = Random.Range(0.04f, 0.06f);
         muzzleFlash.transform.localScale = Vector3.one * scale;
         muzzleFlash.enabled = true;
