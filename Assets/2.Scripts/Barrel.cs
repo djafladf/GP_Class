@@ -20,7 +20,7 @@ public class Barrel : MonoBehaviour
             HP--; 
             if (HP <= 0)
             {
-                var part = transform.GetChild(0); part.SetParent(GameManager.instance.ParticleSet);
+                var part = transform.GetChild(1); part.SetParent(GameManager.instance.ParticleSet);
                 part.gameObject.SetActive(true);
                 Destroy(gameObject, 3.0f);
                 Collider[] colls = Physics.OverlapSphere(transform.position, 10, 1<<6);

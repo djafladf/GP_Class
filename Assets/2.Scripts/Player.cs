@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animation>();
         audio = GetComponent<AudioSource>();
         anim.Play("Idle");
-        Cursor.visible = false;
+        
 
         CurWeapon = WeaponHolder.GetChild(0);
         AttackGap = anim["IdleFireSMG"].length;
@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
     bool MoveAble = true;
     private void FixedUpdate()
     {
+        Cursor.visible = false;
         if (!MoveAble) return;
         // Animation
         if (!Dir.Equals(Vector2.zero))
@@ -93,7 +94,7 @@ public class Player : MonoBehaviour
             Aim.Translate(0, 0.02f, 0);
             if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir; }
         }
-        audio.clip = audioclips[0]; audio.Play();
+        audio.PlayOneShot(audioclips[0],1.0f);
         StartCoroutine(ShowMuzzleFlash());
         GameManager.instance.bullet.ShootBullet(FirePos.position, CurWeapon.forward);
         LeftBul--; BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = LeftBul / 60f;
@@ -126,7 +127,7 @@ public class Player : MonoBehaviour
         float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.4f, 0f, 3f);
         Aim.localPosition = new Vector3(0.5f, Ny, Aim.localPosition.z);
         if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir;  }
-        transform.Rotate(Vector3.up * 15f * Time.deltaTime * MouseDir.x);
+        transform.Rotate(Vector3.up * 25f * Time.deltaTime * MouseDir.x);
     }
 
     bool _onFire = false;
