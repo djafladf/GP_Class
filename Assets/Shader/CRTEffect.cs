@@ -18,9 +18,15 @@ public class CRTEffect : MonoBehaviour
         Graphics.Blit(source, destination, _material);
     }
 
-    public bool ToggleShader(bool MustOn = false)
+    /// <summary>
+    /// Toggle Shader
+    /// </summary>
+    /// <param name="Toggletype">0:Toggle,1:On,2:Off</param>
+    /// <returns></returns>
+    public bool ToggleShader(int Toggletype = 0)
     {
-        if (MustOn) this.enabled = true;
+        if (Toggletype == 1) this.enabled = true;
+        else if (Toggletype == 2) this.enabled = false;
         else this.enabled = this.enabled == false;
         return this.enabled;
     }

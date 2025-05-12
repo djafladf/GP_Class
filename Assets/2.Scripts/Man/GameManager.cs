@@ -18,4 +18,23 @@ public class GameManager : MonoBehaviour
         if (instance == null) instance = this;
         else Destroy(gameObject);
     }
+
+
+    List<float> TimeSet = new List<float>();
+    public void SetTime(float var, bool IsRemove = false)
+    {
+        if (IsRemove)
+        {
+            TimeSet.Remove(var);
+            if (TimeSet.Count == 0) Time.timeScale = 1;
+            else Time.timeScale = TimeSet[0];
+        }
+        else
+        {
+            if (TimeSet.Count == 0) Time.timeScale = var;
+            else if (var < TimeSet[0]) Time.timeScale = var;
+            TimeSet.Add(var);
+            TimeSet.Sort();
+        }
+    }
 }

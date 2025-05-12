@@ -177,15 +177,10 @@ public class Player : MonoBehaviour
         muzzleFlash.enabled = false;
     }
 
+    bool sub = false;
     void OnMenu(InputValue value)
     {
-        bool res = GameManager.instance.shad.ToggleShader();
-        /*if (!res) GameManager.instance.shad.SendMessageToShader(new Dictionary<string, float>{
-            { "BlurRadius",3 },
-            { "AlphaWeight",0.3f},
-            { "Power",10 }
-        }
-        );*/
+        GameManager.instance.UI.UIToggle();
     }
 
     #endregion
@@ -195,19 +190,16 @@ public class Player : MonoBehaviour
         if (collision.gameObject.CompareTag("Floor")) JumpAble = true;
     }
 
-
-    [SerializeField] Image HPBar;
-    [SerializeField] TMP_Text HPText;
     bool HitAble = true;
-    int CurHP = 100;
+    float MaxHP = 100;
+    float CurHP = 100;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("EnemyAttack") && HitAble)
         {
             HitAble = false; Invoke("HitGap", 0.5f);
             CurHP -= 10;
-            HPBar.fillAmount = CurHP * 0.01f;
-            HPText.text = $"{CurHP}";
+            GameManager.instance.UI.HPChange(CurHP / MaxHP);
             if(CurHP <= 0)
             {
                 GameManager.instance.Enemy.OnGameEnd();
