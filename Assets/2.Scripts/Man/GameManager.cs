@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public static WaitForSeconds DotOne = new WaitForSeconds(0.1f);
     public static WaitForSeconds DotFive = new WaitForSeconds(0.5f);
     [HideInInspector] public Transform Player;
     [HideInInspector] public MonsterManager Enemy;
@@ -17,6 +19,17 @@ public class GameManager : MonoBehaviour
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
+    }
+
+    [SerializeField] Volume Volume_Day;
+    [SerializeField] Volume Volume_Night;
+    [SerializeField] float TimeVar = 1;
+    [SerializeField] float Trig = -1;
+    private void FixedUpdate()
+    {
+        TimeVar += Time.deltaTime * Trig;
+        if (TimeVar >= 1 || TimeVar <= 0.3) Trig *= -1;
+        Volume_Day.weight = TimeVar; Volume_Night.weight = 1 - TimeVar;
     }
 
 

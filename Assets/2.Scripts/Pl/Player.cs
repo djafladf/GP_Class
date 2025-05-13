@@ -183,6 +183,10 @@ public class Player : MonoBehaviour
         GameManager.instance.UI.UIToggle();
     }
 
+    void OnInteract(InputValue value)
+    {
+        GameManager.instance.UI.InteractSomething();
+    }
     #endregion
 
     private void OnCollisionEnter(Collision collision)

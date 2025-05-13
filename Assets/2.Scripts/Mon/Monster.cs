@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Monster : MonoBehaviour
 {
     [SerializeField] List<SphereCollider> AttackCol;
+    [SerializeField] GameObject Soul;
     Rigidbody rigid;
     Animator anim;
     NavMeshAgent agent;
@@ -102,6 +103,7 @@ public class Monster : MonoBehaviour
     {
         GameManager.instance.Enemy.Pool.Add(gameObject); gameObject.SetActive(false);
         GameManager.instance.UI.ScoreUp();
+        var Obj = Instantiate(Soul,GameManager.instance.Enemy.transform); Obj.transform.position = new Vector3(transform.position.x,transform.position.y + 1f, transform.position.z);
         HP = 10;
     }
 
@@ -124,7 +126,7 @@ public class Monster : MonoBehaviour
             {
                 CurState = State.OnHit;
                 anim.SetTrigger("OnHit"); 
-            }
+            } 
         }
     }
 
