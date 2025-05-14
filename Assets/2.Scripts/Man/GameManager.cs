@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Transform ParticleSet;
     public CRTEffect shad;
 
+
+    public Action<int> PlayerHealFunc;
     private void Awake()
     {
         if (instance == null) instance = this;

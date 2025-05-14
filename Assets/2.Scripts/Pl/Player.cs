@@ -37,7 +37,9 @@ public class Player : MonoBehaviour
     private void Start()
     {
         GameManager.instance.Player = transform;
+        GameManager.instance.PlayerHealFunc = HealFunction;
     }
+
 
     float MoveSpeed = 5f;
     float CrossTime;
@@ -211,7 +213,11 @@ public class Player : MonoBehaviour
         }
     }
 
-
+    public void HealFunction(int Count)
+    {
+        CurHP = Mathf.Min(MaxHP, CurHP + Count);
+        GameManager.instance.UI.HPChange(CurHP / MaxHP);
+    }
     void HitGap()
     {
         HitAble = true;

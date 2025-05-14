@@ -33,6 +33,7 @@ public class Altar : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            print("Altar Interact Active!");
             GameManager.instance.UI.ToggleInteract(InterAct, true, "Press <color=red>E</color> To Interact");
         }
     }
@@ -104,6 +105,7 @@ public class Altar : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             GameManager.instance.UI.ToggleInteract(null, false,null);
+            print("Altar Interact UnActive!");
         }
     }
 

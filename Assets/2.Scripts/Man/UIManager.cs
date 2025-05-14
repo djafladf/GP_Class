@@ -8,6 +8,8 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour
 {
+    
+
     [SerializeField] TMP_Text Score;
     [SerializeField] TMP_Text HP_Text;
     [SerializeField] TMP_Text InteractText;
@@ -27,8 +29,6 @@ public class UIManager : MonoBehaviour
     {
         GameManager.instance.UI = this;
     }
-
-
 
     public void HPChange(float rf)
     {
