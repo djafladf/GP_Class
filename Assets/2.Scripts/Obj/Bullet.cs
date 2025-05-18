@@ -48,10 +48,25 @@ public class Bullet : MonoBehaviour
             MyHole.transform.position = cp.point; MyHole.transform.rotation = Quaternion.FromToRotation(Vector3.up, cp.normal); MyHole.SetActive(true);
         }
         Particle.transform.position = cp.point; Particle.transform.rotation = Quaternion.LookRotation(-cp.normal);
-        foreach (var j in Particles) j.Play();
+        Particle.gameObject.SetActive(true);
 
         rigid.isKinematic = false; mesh.enabled = false; rigid.velocity = Vector3.zero; coll.enabled = false;
         Invoke("NaturalTrail", 0.5f) ;
+    }
+
+    private void OnEnable()
+    {
+        if (gameObject.activeSelf) StartCoroutine(FarTest());
+    }
+
+    IEnumerator FarTest()
+    {
+        while (gameObject.activeSelf)
+        {
+            yield return GameManager.OneSec;
+            float Dist = Vector2.Distance(transform.position, GameManager.instance.Player.position);
+            if (Dist > 100) gameObject.SetActive(false);
+        }
     }
 
     // Trail 부자연스럽게 사라지는거 방지
@@ -66,11 +81,5 @@ public class Bullet : MonoBehaviour
         rigid.isKinematic = false;
         mesh.enabled = true;
         coll.enabled = true;
-    }
-
-    // 맵 경계 밖으로 이동
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("MapBorder")) gameObject.SetActive(false);
     }
 }

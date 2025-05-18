@@ -16,7 +16,7 @@ public class Blurring : MonoBehaviour
     {
         if(TryGetComponent<Image>(out im)) imnit = im.color.a;
         if(TryGetComponent<TMP_Text>(out tx)) txnit = tx.color.a;
-        
+        gameObject.SetActive(false);
     }
 
     Action After;
@@ -26,11 +26,19 @@ public class Blurring : MonoBehaviour
         if (text != null && tx != null) tx.text = text;
         if (im != null && image != null) { im.sprite = image; imnit = im.color.a; }
         After = AfterAction;
+        if (gameObject.activeSelf) { StopCoroutine(Col); Col = StartCoroutine(Blur()); }
+        //gameObject.SetActive(true);
     }
+
+    Coroutine Col = null;
 
     private void OnEnable()
     {
-        StartCoroutine(Blur());
+        Col =  StartCoroutine(Blur());
+    }
+    private void OnDisable()
+    {
+        if (Col != null) { StopCoroutine(Col); Col = null; }
     }
 
     IEnumerator Blur()

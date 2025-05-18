@@ -11,7 +11,9 @@ public class Monster : MonoBehaviour
     Animator anim;
     NavMeshAgent agent;
     BoxCollider col;
-    int HP = 10;
+    [SerializeField] int InitHP = 5;
+    int HP;
+    [SerializeField] float AttackRagne;
 
     public enum State
     {
@@ -36,6 +38,7 @@ public class Monster : MonoBehaviour
     private void Start()
     {
         GameManager.instance.Enemy.GameEnd.Add(OnGameEnd);
+        GameManager.instance.Enemy.DeadAct.Add(ExtraDead);
     }
 
     bool MoveAble = true;
@@ -52,14 +55,13 @@ public class Monster : MonoBehaviour
             Vector3 dir = GameManager.instance.Player.position - transform.position; dir.y = 0;
             float dist = dir.magnitude;
 
-            if (dist > 10 && CurState != State.IDLE) { CurState = State.IDLE; ChangeOccur = true; }
-            else if (dist > 1.5f && dist < 10f) 
+            if (dist > AttackRagne) 
             { 
                 agent.SetDestination(GameManager.instance.Player.position); 
                 if(CurState != State.TRACE)ChangeOccur = true;
                 CurState = State.TRACE;
             }
-            else if (dist <= 1.5f && CurState != State.ATTACK) { CurState = State.ATTACK; ChangeOccur = true; }
+            else if (dist <= AttackRagne && CurState != State.ATTACK) { CurState = State.ATTACK; ChangeOccur = true; }
         }
     }
 
@@ -101,10 +103,16 @@ public class Monster : MonoBehaviour
 
     void Dead()
     {
-        GameManager.instance.Enemy.Pool.Add(gameObject); gameObject.SetActive(false);
+        gameObject.SetActive(false);
         GameManager.instance.UI.ScoreUp();
-        var Obj = Instantiate(Soul,GameManager.instance.Enemy.transform); Obj.transform.position = new Vector3(transform.position.x,transform.position.y + 1f, transform.position.z);
-        HP = 10;
+        if (!IsExtraDead) { var Obj = Instantiate(Soul, GameManager.instance.Enemy.transform); Obj.transform.position = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z); }
+    }
+
+    bool IsExtraDead;
+    public void ExtraDead()
+    {
+        if (!gameObject.activeSelf) return;
+        HP = 0; StopAllCoroutines(); anim.SetTrigger("Die"); foreach (var j in AttackCol) j.enabled = false; IsExtraDead = true;
     }
 
     [SerializeField] GameObject BloodPref;
@@ -121,6 +129,7 @@ public class Monster : MonoBehaviour
             BloodEffects[LastBlood].transform.position = pos; BloodEffects[LastBlood].transform.rotation = rot;
             BloodEffects[LastBlood].Play(); LastBlood = (LastBlood + 1) % BloodEffects.Count;
             rigid.velocity = Vector3.zero;
+            foreach (var j in AttackCol) j.enabled = false;
             if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); }
             else 
             {
@@ -132,6 +141,8 @@ public class Monster : MonoBehaviour
 
     private void OnEnable()
     {
+        HP = InitHP;
+        IsExtraDead = false;
         agent.isStopped = true;
         anim.SetBool("OnWalk", false);
         StartCoroutine(CheckStat());

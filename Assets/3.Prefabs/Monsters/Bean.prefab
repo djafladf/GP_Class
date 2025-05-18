@@ -1954,6 +1954,8 @@ MonoBehaviour:
   - {fileID: 2379100342563568987}
   - {fileID: 6703953060370885330}
   Soul: {fileID: 6581098292497470606, guid: 05187d28a0fae9349bc121b9cac9272e, type: 3}
+  HP: 5
+  AttackRagne: 1.5
   BloodPref: {fileID: 5919574347784969478}
 --- !u!195 &5688022323231415093
 NavMeshAgent:
@@ -1965,7 +1967,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

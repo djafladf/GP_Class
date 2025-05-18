@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] List<Door> Doors;
+    public bool IsUnknown = true;
+    public int Indx, Indy;
+
+    public void ToggleAllDoor(bool Type)
     {
-        
+        foreach (var j in Doors) j.LockToggle(Type);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Player"))
+        {
+            GameManager.instance.UI.MapSetting(Indx,Indy,IsUnknown);
+        }
     }
 }

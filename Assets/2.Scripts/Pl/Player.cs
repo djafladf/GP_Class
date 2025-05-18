@@ -13,110 +13,111 @@ public class Player : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera CV;
     [SerializeField] AudioClip[] audioclips;
     [SerializeField] MeshRenderer muzzleFlash;
-    Transform CurWeapon = null;
 
     Rigidbody rigid;
-    Animation anim;
+    Animator anim;
 
     CinemachineTransposer transposer;
     AudioSource audiodio;
 
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
         transposer = CV.GetCinemachineComponent<CinemachineTransposer>();
         rigid = GetComponent<Rigidbody>();
-        anim = GetComponent<Animation>();
+        anim = GetComponent<Animator>();
         audiodio = GetComponent<AudioSource>();
-        anim.Play("Idle");
 
-        CurWeapon = WeaponHolder.GetChild(0);
-        AttackGap = anim["IdleFireSMG"].length;
-        CrossTime = AttackGap * 0.8f;
+        AttackGap[0] = 0.1667f;
+        CrossTime = AttackGap[0] * 0.8f;
     }
 
     private void Start()
     {
         GameManager.instance.Player = transform;
+        GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
     }
-
 
     float MoveSpeed = 5f;
     float CrossTime;
     bool MoveAble = true;
     private void FixedUpdate()
     {
-        Cursor.visible = false;
         if (!MoveAble) return;
-        // Animation
         if (!Dir.Equals(Vector2.zero))
         {
             Vector3 NextDir = (transform.forward * Dir.y + transform.right * Dir.x).normalized;
-
-            rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * MoveSpeed);
-            if (_onFire)
-            {
-                anim.CrossFade("RunFireSMG",CrossTime);
-            }
-            else if (Dir.x > 0) anim.CrossFade("RunR", CrossTime);
-            else if (Dir.x < 0) anim.CrossFade("RunL", CrossTime);
-            else if (Dir.y > 0) anim.CrossFade("RunF", CrossTime);
-            else anim.CrossFade("RunB", CrossTime);
-        }
-        else
-        {
-            if (_onFire)
-            {
-                anim.CrossFade("IdleFireSMG", 0.25f);
-            }
-            else anim.CrossFade("Idle", 0.25f);
+            rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * (MoveSpeed + BuffAmount[2]));
         }
     }
 
     Vector3 Dir;
-
-    // Idle <-> Attack ��ȯ ���� �߻��ϴ� ���� ����
-    // 0 : Idle, 1 : Cool, 2 : Call While Shoot (Ű ���� ����)
-    int ShootCall = 0;
-    float AttackGap;
-    void Shoot_Sub()
+    IEnumerator Shoot_Sub()
     {
-        if (ShootCall == 2) { ShootCall = 0; Shoot(); }
-        else ShootCall = 0;
+        if (CurWeaponInd != 0) { anim.SetBool("OnFire",false); yield return new WaitForSeconds(AttackGap[CurWeaponInd] - AttackGap[0]); }
+        if (_onFire) anim.SetBool("OnFire", true);
+        else { anim.SetBool("OnFire", false); FirstFire = true; }
     }
 
-    float LastTime = 0;
+    void EndShoot()
+    {
+        StartCoroutine(Shoot_Sub());
+    }
+
     public void Shoot()
     {
-        if (LeftBul <= 0) return;
-        if (ShootCall > 0) { ShootCall = 2; return; }
+        if (LeftBul[CurWeaponInd] <= 0) return;
         float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
         if (Aim.localPosition.y < 3)
         {
-            Aim.Translate(0, 0.02f, 0);
-            if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir; }
+            Aim.Translate(0, Rebound[CurWeaponInd], 0);
+            if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir; }
         }
         audiodio.PlayOneShot(audioclips[0],1.0f);
         StartCoroutine(ShowMuzzleFlash());
-        GameManager.instance.bullet.ShootBullet(FirePos.position, CurWeapon.forward);
-        LeftBul--; BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = LeftBul / 60f;
-        ShootCall = 1; Invoke("Shoot_Sub", AttackGap);
+        if (WeaponType[CurWeaponInd]) GameManager.instance.bullet.ShootBullet(FirePos.position, Weapons[CurWeaponInd].forward);
+        else
+        {
+            for(int _ = 0; _ < 9; _++)
+            {
+                Quaternion randomRot = Quaternion.Euler(
+                   Random.Range(-5f, 5f), // 상하
+                   Random.Range(-5f, 5f), // 좌우
+                   0
+               );
+
+                Vector3 spreadDirection = randomRot * Weapons[CurWeaponInd].forward;
+
+                GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection);
+            }
+        }
+        LeftBul[CurWeaponInd]--; BulletText.text = $"{LeftBul[CurWeaponInd]}/{MaxBul[CurWeaponInd]}"; BulletGage.fillAmount = LeftBul[CurWeaponInd] / MaxBul[CurWeaponInd];
     }
 
-    int LeftBul = 60;
+    public int CurWeaponInd = 0;
+    [SerializeField] List<Transform> Weapons;
+    [SerializeField] List<float> Rebound;
+    [SerializeField] List<bool> WeaponType;
+    [SerializeField] List<float> AttackGap;
+    [SerializeField] List<float> LeftBul;
+    [SerializeField] List<float> MaxBul;
 
 #region InputSystems
     // WASD, Shaft
     void OnMove(InputValue value)
     {
         Dir = value.Get<Vector2>();
+        anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
+        anim.SetBool("OnMove", !Dir.Equals(Vector2.zero));
     }
 
     // Space
     bool JumpAble = false;
     void OnJump(InputValue value)
     {
-        if (JumpAble && MoveAble) { rigid.AddForce(Vector3.up * 5, ForceMode.Impulse); JumpAble = false; }
+        if (JumpAble && MoveAble) { rigid.AddForce(Vector3.up * (5 + BuffAmount[2]), ForceMode.Impulse); JumpAble = false; }
     }
 
     // Mouse
@@ -128,14 +129,15 @@ public class Player : MonoBehaviour
         MouseDir = value.Get<Vector2>();
         float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.4f, 0f, 3f);
         Aim.localPosition = new Vector3(0.5f, Ny, Aim.localPosition.z);
-        if (CurWeapon != null) { Vector3 WDir = CurWeapon.eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; CurWeapon.eulerAngles = WDir;  }
+        if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;  }
         transform.Rotate(Vector3.up * 25f * Time.deltaTime * MouseDir.x);
     }
 
-    bool _onFire = false;
+    bool _onFire = false; bool FirstFire = true;
     void OnFire(InputValue value)
     {
         _onFire = _onFire == false;
+        if (_onFire && FirstFire) { anim.SetBool("OnFire", true); FirstFire = false; }
     }
 
     bool _onFocus = false;
@@ -157,13 +159,13 @@ public class Player : MonoBehaviour
     {
         if (!MoveAble) return;
         MoveAble = false; Dir = Vector3.zero;
-        GetComponent<AudioSource>().clip = audioclips[1]; GetComponent<AudioSource>().Play();
-        anim.CrossFade("IdleReloadSMG", CrossTime);
+        audiodio.PlayOneShot(audioclips[1],0.25f);
+        anim.SetTrigger("OnReload");
     }
     public void ReloadEnd()
     {
-        MoveAble = true; LeftBul = 60;
-        BulletText.text = $"{LeftBul}/60"; BulletGage.fillAmount = 1f;
+        MoveAble = true && ControllFromExtern; LeftBul[CurWeaponInd] = MaxBul[CurWeaponInd];
+        BulletText.text = $"{LeftBul[CurWeaponInd]}/{MaxBul[CurWeaponInd]}"; BulletGage.fillAmount = 1f;
     }
 
     IEnumerator ShowMuzzleFlash()
@@ -179,15 +181,60 @@ public class Player : MonoBehaviour
         muzzleFlash.enabled = false;
     }
 
-    bool sub = false;
     void OnMenu(InputValue value)
     {
-        GameManager.instance.UI.UIToggle();
+        if (GameManager.instance.UI.UIToggle())
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            
+        }
     }
 
     void OnInteract(InputValue value)
     {
         GameManager.instance.UI.InteractSomething();
+    }
+
+
+    bool CatchScroll = true;
+    bool CurRight = true;
+
+    public void ChangeWeapon(int dr)
+    {
+        Weapons[CurWeaponInd].gameObject.SetActive(false);
+        CurWeaponInd = (CurWeaponInd + dr + Weapons.Count) % Weapons.Count;
+        Weapons[CurWeaponInd].gameObject.SetActive(true);
+        FirePos = Weapons[CurWeaponInd].GetChild(0); muzzleFlash = FirePos.GetComponent<MeshRenderer>();
+        Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;
+        BulletText.text = $"{LeftBul[CurWeaponInd]}/{MaxBul[CurWeaponInd]}"; BulletGage.fillAmount = LeftBul[CurWeaponInd] / MaxBul[CurWeaponInd];
+    }
+    void OnScroll(InputValue value)
+    {
+        if (CatchScroll && !anim.GetBool("OnFire") && MoveAble)
+        {
+            anim.SetBool("OnChangeWeapon", true);
+            var scrollV = value.Get<float>();
+            if (scrollV > 0) CurRight = true;
+            else if(scrollV < 0) CurRight = false;
+            GameManager.instance.UI.SlideWeapon(CurRight);
+            CatchScroll = false;
+            Invoke("ChangeScroll",0.1f);
+        }
+    }
+    public void ChangeWeaponEnd()
+    {
+        anim.SetBool("OnChangeWeapon", false);
+    }
+
+    void ChangeScroll()
+    {
+        CatchScroll = true;
     }
     #endregion
 
@@ -208,16 +255,45 @@ public class Player : MonoBehaviour
             GameManager.instance.UI.HPChange(CurHP / MaxHP);
             if(CurHP <= 0)
             {
+
                 GameManager.instance.Enemy.OnGameEnd();
             }
         }
     }
 
+    [SerializeField] List<GameObject> BuffObjects;
+    float[] BuffAmount = { 0, 0, 0 };
     public void HealFunction(int Count)
     {
+        BuffObjects[0].SetActive(true);
         CurHP = Mathf.Min(MaxHP, CurHP + Count);
         GameManager.instance.UI.HPChange(CurHP / MaxHP);
     }
+
+    
+    public void BuffOn(int type,int Last,int Amount)
+    {
+        if (Amount > BuffAmount[type - 1])
+        {
+            BuffAmount[type - 1] = Amount;
+            BuffObjects[type].SetActive(true);
+            GameManager.instance.UI.SetBuff(type, Last);
+        }
+    }
+
+    public void BuffOff(int type)
+    {
+        BuffAmount[type-1] = 0;
+        BuffObjects[type].SetActive(false);
+    }
+
+    bool ControllFromExtern = false;
+    public void ControllMoveAble(bool Toggle)
+    {
+        MoveAble = Toggle;
+        ControllFromExtern = !Toggle;
+    }
+
     void HitGap()
     {
         HitAble = true;

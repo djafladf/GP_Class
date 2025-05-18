@@ -5,11 +5,19 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     [SerializeField] Transform DoorLeft, DoorRight;
-
+    [SerializeField] GameObject LockObject;
 
     [SerializeField] float Process = 0;  // 0 : Close , 1 : Open
     [SerializeField] float Trigger = 1;  //-1 : Close , 1 : Open
     WaitForSeconds wfs = new WaitForSeconds(0.05f);
+
+    BoxCollider coll;
+
+    private void Awake()
+    {
+        coll = GetComponent<BoxCollider>();
+    }
+
     IEnumerator DoorChange()
     {
         while (Process >= 0 && Process <= 1)
@@ -28,6 +36,20 @@ public class Door : MonoBehaviour
             DoorLeft.transform.localPosition = new Vector3(0, 0, 0.9f); DoorRight.transform.localPosition = new Vector3(0, -0.15f, -0.5f); Process = 0;
         }
         DoorToggle = null;
+    }
+
+    public void LockToggle(bool Type)
+    {
+        if (Type)
+        {
+            Trigger = 1; IsLock = false;
+            LockObject.SetActive(false); coll.enabled = true;
+        }
+        else
+        {
+            Trigger = -1; IsLock = true;
+            LockObject.SetActive(true); coll.enabled = false;
+        }
     }
 
     public bool IsLock = false;

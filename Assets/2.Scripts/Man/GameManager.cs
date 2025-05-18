@@ -4,18 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[DefaultExecutionOrder(-1000)]
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public static WaitForSeconds OneSec = new WaitForSeconds(1f);
     public static WaitForSeconds DotOne = new WaitForSeconds(0.1f);
     public static WaitForSeconds DotFive = new WaitForSeconds(0.5f);
     [HideInInspector] public Transform Player;
+    [HideInInspector] public Player PlayerScript;
     [HideInInspector] public MonsterManager Enemy;
     [HideInInspector] public BulletManager bullet;
     [HideInInspector] public UIManager UI;
     [HideInInspector] public Transform ParticleSet;
     public CRTEffect shad;
 
+    
 
     public Action<int> PlayerHealFunc;
     private void Awake()
@@ -31,7 +35,7 @@ public class GameManager : MonoBehaviour
     private void FixedUpdate()
     {
         TimeVar += Time.deltaTime * Trig;
-        if (TimeVar >= 1 || TimeVar <= 0.3) Trig *= -1;
+        if (TimeVar >= 1 || TimeVar <= 0.5) Trig *= -1;
         Volume_Day.weight = TimeVar; Volume_Night.weight = 1 - TimeVar;
     }
 

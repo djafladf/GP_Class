@@ -14,18 +14,14 @@ public class BulletManager : MonoBehaviour
 
     private void Awake()
     {
-        for(int i = 0; i < 50; i++)
+        GameManager.instance.bullet = this;
+        for (int i = 0; i < 50; i++)
         {
             GameObject cntPref = Instantiate(BulletPref, transform); cntPref.SetActive(false);
             BulletPool.Add(cntPref); BulletScripts.Add(cntPref.GetComponent<Bullet>());
             HolePool.Add(Instantiate(HolePref,transform));
         }
     }
-    private void Start()
-    {
-        GameManager.instance.bullet = this;
-    }
-
     public void ShootBullet(Vector3 Start, Vector3 Dir)
     {
         for(int i = 0; i < BulletPool.Count;i++)
