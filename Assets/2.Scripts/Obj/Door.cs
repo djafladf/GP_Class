@@ -7,19 +7,23 @@ public class Door : MonoBehaviour
     [SerializeField] Transform DoorLeft, DoorRight;
     [SerializeField] GameObject LockObject;
 
-    [SerializeField] float Process = 0;  // 0 : Close , 1 : Open
-    [SerializeField] float Trigger = 1;  //-1 : Close , 1 : Open
+    float Process = 0;  // 0 : Close , 1 : Open
+    float Trigger = 1;  //-1 : Close , 1 : Open
     WaitForSeconds wfs = new WaitForSeconds(0.05f);
 
     BoxCollider coll;
 
+    AudioSource AS;
+
     private void Awake()
     {
+        AS = GetComponent<AudioSource>();
         coll = GetComponent<BoxCollider>();
     }
 
     IEnumerator DoorChange()
     {
+        AS.Play();
         while (Process >= 0 && Process <= 1)
         {
             yield return wfs;
@@ -35,6 +39,8 @@ public class Door : MonoBehaviour
         {
             DoorLeft.transform.localPosition = new Vector3(0, 0, 0.9f); DoorRight.transform.localPosition = new Vector3(0, -0.15f, -0.5f); Process = 0;
         }
+        AS.Stop();
+        Process = Mathf.Clamp(Process, 0, 1);
         DoorToggle = null;
     }
 

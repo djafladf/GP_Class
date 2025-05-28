@@ -30,7 +30,6 @@ public class Player : MonoBehaviour
         audiodio = GetComponent<AudioSource>();
 
         AttackGap[0] = 0.1667f;
-        CrossTime = AttackGap[0] * 0.8f;
     }
 
     private void Start()
@@ -41,7 +40,6 @@ public class Player : MonoBehaviour
     }
 
     float MoveSpeed = 5f;
-    float CrossTime;
     bool MoveAble = true;
     private void FixedUpdate()
     {
@@ -59,15 +57,18 @@ public class Player : MonoBehaviour
         if (CurWeaponInd != 0) { anim.SetBool("OnFire",false); yield return new WaitForSeconds(AttackGap[CurWeaponInd] - AttackGap[0]); }
         if (_onFire) anim.SetBool("OnFire", true);
         else { anim.SetBool("OnFire", false); FirstFire = true; }
+        ShootCor = null;
     }
 
+    Coroutine ShootCor = null;
     void EndShoot()
     {
-        StartCoroutine(Shoot_Sub());
+        if(ShootCor == null) ShootCor = StartCoroutine(Shoot_Sub());
     }
 
     public void Shoot()
     {
+        if (ShootCor != null) return;
         if (LeftBul[CurWeaponInd] <= 0) return;
         float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
         if (Aim.localPosition.y < 3)
@@ -75,8 +76,8 @@ public class Player : MonoBehaviour
             Aim.Translate(0, Rebound[CurWeaponInd], 0);
             if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir; }
         }
-        audiodio.PlayOneShot(audioclips[0],1.0f);
-        StartCoroutine(ShowMuzzleFlash());
+        audiodio.PlayOneShot(audioclips[0],0.8f);
+        if(!muzzleFlash.enabled)StartCoroutine(ShowMuzzleFlash());
         if (WeaponType[CurWeaponInd]) GameManager.instance.bullet.ShootBullet(FirePos.position, Weapons[CurWeaponInd].forward);
         else
         {
@@ -104,14 +105,19 @@ public class Player : MonoBehaviour
     [SerializeField] List<float> LeftBul;
     [SerializeField] List<float> MaxBul;
 
-#region InputSystems
+    #region InputSystems
+
+    Coroutine WalkSoundCor = null;
     // WASD, Shaft
     void OnMove(InputValue value)
     {
         Dir = value.Get<Vector2>();
         anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
         anim.SetBool("OnMove", !Dir.Equals(Vector2.zero));
+        if (!Dir.Equals(Vector2.zero) && WalkSoundCor == null) WalkSoundCor = StartCoroutine(WalkSound());
     }
+    bool walkType = false;
+    IEnumerator WalkSound() { while (!Dir.Equals(Vector2.zero)) { audiodio.PlayOneShot(walkType ? audioclips[2] : audioclips[3], 0.8f); walkType =walkType == false; yield return GameManager.DotThree; } WalkSoundCor = null; }
 
     // Space
     bool JumpAble = false;
@@ -136,8 +142,9 @@ public class Player : MonoBehaviour
     bool _onFire = false; bool FirstFire = true;
     void OnFire(InputValue value)
     {
-        _onFire = _onFire == false;
+        _onFire = value.isPressed;
         if (_onFire && FirstFire) { anim.SetBool("OnFire", true); FirstFire = false; }
+
     }
 
     bool _onFocus = false;
@@ -159,7 +166,7 @@ public class Player : MonoBehaviour
     {
         if (!MoveAble) return;
         MoveAble = false; Dir = Vector3.zero;
-        audiodio.PlayOneShot(audioclips[1],0.25f);
+        audiodio.PlayOneShot(audioclips[1],1);
         anim.SetTrigger("OnReload");
     }
     public void ReloadEnd()
@@ -177,23 +184,13 @@ public class Player : MonoBehaviour
         float scale = Random.Range(0.04f, 0.06f);
         muzzleFlash.transform.localScale = Vector3.one * scale;
         muzzleFlash.enabled = true;
-        yield return new WaitForSeconds(CrossTime);
+        yield return GameManager.DotOne;
         muzzleFlash.enabled = false;
     }
 
     void OnMenu(InputValue value)
     {
-        if (GameManager.instance.UI.UIToggle())
-        {
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            
-        }
+        GameManager.instance.UI.ShowMenu();
     }
 
     void OnInteract(InputValue value)
@@ -287,11 +284,11 @@ public class Player : MonoBehaviour
         BuffObjects[type].SetActive(false);
     }
 
-    bool ControllFromExtern = false;
+    bool ControllFromExtern = true;
     public void ControllMoveAble(bool Toggle)
     {
         MoveAble = Toggle;
-        ControllFromExtern = !Toggle;
+        ControllFromExtern = Toggle;
     }
 
     void HitGap()

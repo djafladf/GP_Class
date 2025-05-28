@@ -15,13 +15,14 @@ public class Altar : MonoBehaviour
     [SerializeField] ParticleSystem ClearEffect;
     [SerializeField] Light SphereLight;
 
+    AudioSource ad;
     BoxCollider InteractField;
 
     private void Awake()
     {
         InteractField = GetComponent<BoxCollider>();
         Wall1 = Walls.transform.GetChild(0); Wall2 = Walls.transform.GetChild(1);
-        
+        ad = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -70,7 +71,8 @@ public class Altar : MonoBehaviour
 
     IEnumerator UnLockAct()
     {
-        for(int i = 0; i < 35; i++)
+        ad.time = 69; ad.Play();
+        for (int i = 0; i < 35; i++)
         {
             if (i == 30) ClearEffect.Play();
             SphereLight.intensity = i * 5;
@@ -95,6 +97,7 @@ public class Altar : MonoBehaviour
     CinemachineTransposer transposer;
     IEnumerator CamShake(float time, float intensity = 1)    
     {
+        ad.time = 4;  ad.Play();
         Camera.main.GetComponent<CinemachineBrain>().enabled = false;
         WaitForSeconds LittleSec = new WaitForSeconds(0.05f);
         var MainCam = Camera.main;
@@ -121,6 +124,7 @@ public class Altar : MonoBehaviour
             intensity -= intSub;
         }
         Camera.main.GetComponent<CinemachineBrain>().enabled = true;
+        ad.Stop();
         if(AltarType == 0)GameManager.instance.UI.ShowAscending($"Survive <color=red>{ST.LastTime}</color> Seconds",2,UnLockStart);
     }
 

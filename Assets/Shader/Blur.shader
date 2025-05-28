@@ -8,19 +8,23 @@ Shader "Custom/Blur"{
     }
     SubShader
     {
-        Tags { "Queue" = "Overlay" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-        LOD 200
-        Cull Off
-        ZWrite Off
-        Blend SrcAlpha OneMinusSrcAlpha
+        Tags { "RenderType"="Opaque" "Queue"="Transparent" }
         Pass
         {
-            CGPROGRAM
+            Name "BlurPass"
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
-            
-            struct appdata
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+            float _BlurRadius;
+            float4 _MainTex_TexelSize;
+            float _AlphaWeight;
+            int _Power;
+
+             struct appdata
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
@@ -28,72 +32,62 @@ Shader "Custom/Blur"{
 
             struct v2f
             {
+                float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
             };
-            
-            sampler2D _MainTex;
-            float _BlurRadius;
-            float4 _MainTex_TexelSize;
-            float _AlphaWeight;
-            int _Power;
 
             v2f vert(appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.positionCS = TransformObjectToHClip(v.vertex.xyz);
                 o.uv = v.uv;
                 return o;
             }
-            
-            // Function to calculate Gaussian weight
+
             float Gaussian(float x, float deviation)
             {
-                return exp(-(x * x) / (2 * deviation * deviation)) / (deviation * sqrt(2 * UNITY_PI));
+                return exp(-(x * x) / (2.0 * deviation * deviation)) / (deviation * sqrt(2.0 * 3.14159));
             }
 
-            float4 frag(v2f i) : SV_Target
+            half4 frag(v2f i) : SV_Target
             {
-                float4 MainColor = tex2D(_MainTex, i.uv); MainColor.a *= _AlphaWeight;
-                float2 texelSize = _MainTex_TexelSize.xy;
+                half4 MainColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
+                MainColor.a *= _AlphaWeight;
+
                 if (MainColor.a == 0) discard;
-                if (_BlurRadius == 0) return MainColor;
-                
+                if (_BlurRadius <= 0.001) return MainColor;
+
+                float2 texelSize = _MainTex_TexelSize.xy;
+
                 float4 color = float4(0, 0, 0, 0);
-                float totalWeight = 0.0;
+                float totalWeight = 0;
 
                 for (int x = -_Power; x <= _Power; x++)
                 {
-                    float2 offset = float2(x,0) * texelSize * (_BlurRadius + _SinTime.w * 1.5);
-                    
-                    offset += i.uv.xy;
-                    offset.x = max(0, offset.x); offset.x = min(1, offset.x); offset.y = max(0, offset.y);offset.y = min(1, offset.y);
-
-                        float4 samp = tex2D(_MainTex, offset.xy);
-                        if (samp.a > 0) {
-                            float weight = Gaussian(x, _BlurRadius);
-                            color += samp * weight;
-                            totalWeight += weight;
-                        }
+                    float2 offset = float2(x, 0) * texelSize * _BlurRadius;
+                    float2 sampleUV = clamp(i.uv + offset, 0.0, 1.0);
+                    float4 sampleColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, sampleUV);
+                    float weight = Gaussian(x, _BlurRadius);
+                    color += sampleColor * weight;
+                    totalWeight += weight;
                 }
 
-                for (int y = -_Power; y <= _Power; y++) 
+                for (int y = -_Power; y <= _Power; y++)
                 {
-                    float2 offset = float2(0, y ) * texelSize * (_BlurRadius+ _CosTime.w * 1.5);
-                    offset += i.uv.xy;
-                    offset.x = max(0, offset.x); offset.x = min(1, offset.x); offset.y = max(0, offset.y); offset.y = min(1, offset.y);
-                        float4 samp = tex2D(_MainTex, offset.xy);
-                        if (samp.a > 0) {
-                            float weight = Gaussian(x, _BlurRadius);
-                            color += samp * weight;
-                            totalWeight += weight;
-                        }
+                    float2 offset = float2(0, y) * texelSize * _BlurRadius;
+                    float2 sampleUV = clamp(i.uv + offset, 0.0, 1.0);
+                    float4 sampleColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, sampleUV);
+                    float weight = Gaussian(y, _BlurRadius);
+                    color += sampleColor * weight;
+                    totalWeight += weight;
                 }
+
                 color /= totalWeight;
-                color.a *= (_AlphaWeight - _SinTime.w * 0.05);
+                color.a *= _AlphaWeight;
+
                 return color;
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

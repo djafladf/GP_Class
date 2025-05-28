@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class Event : UnityEvent<BaseEventData> { }
 
 [System.Serializable]
 public struct SpawnType

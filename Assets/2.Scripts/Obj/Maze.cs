@@ -18,6 +18,7 @@ public class Maze : MonoBehaviour
         MyMaze.Maze[Size / 2-1, Size / 2].Right = true; MyMaze.Maze[Size / 2, Size / 2-1].Down = true;
         MyMaze.Maze[Size / 2, Size / 2].Right = true; MyMaze.Maze[Size / 2, Size / 2].Down = true;
         pr.SetParent(transform.parent);
+        ad = GetComponent<AudioSource>();
         MakeWalls();
     }
 
@@ -56,8 +57,11 @@ public class Maze : MonoBehaviour
         }
     }
 
+
+    AudioSource ad;
     IEnumerator GoUpMaze(bool IsUp)
     {
+        ad.Play(); ad.time = 2;
         for(int y = -1; y <= 1; y++) for(int x = -1; x <= 1; x++)
         {
                 GameObject cnt = Instantiate(StoneEffect, transform);
@@ -88,6 +92,7 @@ public class Maze : MonoBehaviour
             GameManager.instance.UI.ShowAscending("Find EXIT", 1);
         }
         else { yield return GameManager.DotFive; Destroy(gameObject); }
+        GetComponent<AudioSource>().Stop();
     }
 
     IEnumerator CamShake(float time, float intensity = 2)

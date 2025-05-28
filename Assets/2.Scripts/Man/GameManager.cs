@@ -8,8 +8,11 @@ using UnityEngine.Rendering;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public static WaitForSeconds MinSeconds = new WaitForSeconds(0.05f);
     public static WaitForSeconds OneSec = new WaitForSeconds(1f);
     public static WaitForSeconds DotOne = new WaitForSeconds(0.1f);
+    public static WaitForSeconds DotTwo = new WaitForSeconds(0.2f);
+    public static WaitForSeconds DotThree = new WaitForSeconds(0.3f);
     public static WaitForSeconds DotFive = new WaitForSeconds(0.5f);
     [HideInInspector] public Transform Player;
     [HideInInspector] public Player PlayerScript;
@@ -17,7 +20,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public BulletManager bullet;
     [HideInInspector] public UIManager UI;
     [HideInInspector] public Transform ParticleSet;
-    public CRTEffect shad;
 
     
 

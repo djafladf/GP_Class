@@ -20,13 +20,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image HPBar;
 
     [SerializeField] GameObject PlayUI;
-    [SerializeField] GameObject PauseUI;
+    [SerializeField] RawImage PauseUI;
 
     [HideInInspector] public int CurScore = 0;
     private void Awake()
     {
         GameManager.instance.UI = this;
         WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
+        captured = new RenderTexture(Screen.width, Screen.height, 0);
     }
 
 #region Weapon
@@ -200,24 +201,41 @@ public class UIManager : MonoBehaviour
     #endregion
 
 
-    // UnUse
-    bool CurUIState = true;
-    public bool UIToggle()
+    
+    RenderTexture captured;
+    int CurStopCall = 0;
+
+
+    bool OnMenu = false;
+
+    public void ShowMenu()
     {
-        if (CurUIState) { 
-            PlayUI.SetActive(false); PauseUI.SetActive(true); GameManager.instance.SetTime(0);
-            GameManager.instance.shad.SendMessageToShader(new Dictionary<string, float>{
-            { "BlurRadius",3 },
-            { "AlphaWeight",0.3f},
-            { "Power",10 }
+        OnMenu = OnMenu == false;
+        SetStop(OnMenu ? 1 : -1);
+    }
+
+    /// <summary>
+    /// On/Off Stop
+    /// </summary>
+    /// <param name="var">1 : On, -1 : Off</param>
+    public void SetStop(int var)
+    {
+        if(var == 1 && CurStopCall == 0)
+        {
+            Camera.main.targetTexture = captured; Camera.main.Render(); Camera.main.targetTexture = null;
+            PauseUI.texture = captured;  GameManager.instance.SetTime(0);
+            Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            PlayUI.SetActive(false); PauseUI.gameObject.SetActive(true);
         }
-        );
-           GameManager.instance.shad.ToggleShader(1); CurUIState = false;
+
+        CurStopCall += var;
+
+        if (CurStopCall == 0)
+        {
+            PauseUI.gameObject.SetActive(false); PlayUI.SetActive(true);
+            Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false;
+            GameManager.instance.SetTime(0, true);
         }
-        else { PlayUI.SetActive(true); PauseUI.SetActive(false); GameManager.instance.SetTime(0,true);
-            GameManager.instance.shad.ToggleShader(2); CurUIState = true;
-        }
-        return CurUIState;
     }
     
 }
