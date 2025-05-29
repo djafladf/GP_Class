@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
-    List<Door> Doors = new List<Door>();
+    [SerializeField] List<Door> Doors;
     bool IsUnknown = true;
     int Indx, Indy;
 
@@ -19,15 +19,17 @@ public class MapController : MonoBehaviour
         for(int i = 0; i < 4; i++)
         {
             GameObject normal = pr.GetChild(2 * i + 1).gameObject, gate = pr.GetChild(2 * i + 2).gameObject;
-            if (tp[i] == 1)
-            {
-                Doors.Add(gate.transform.GetChild(0).GetComponent<Door>());
-                Destroy(normal);
-            }
+            if (tp[i] == 1) Destroy(normal);
             else Destroy(gate);
         }
-        ToggleAllDoor(true);
+        //ToggleAllDoor(true);
     }
+
+    public void ToggleExtDorr(int type, bool Type)
+    {
+        Doors[type].LockToggle(Type);
+    }
+
 
     public void ToggleAllDoor(bool Type)
     {

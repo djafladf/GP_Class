@@ -185,7 +185,11 @@ public class UIManager : MonoBehaviour
     int Lastx = 0, Lasty = 0;
     public void MapSetting(int x, int y,bool IsUnknown = false)
     {
-        if (IsUnknown) PinSprites[x,y].sprite = PinType[RoomTypes[x,y]];
+        if (IsUnknown)
+        {
+            PinSprites[x, y].sprite = PinType[RoomTypes[x, y]];
+            if (RoomTypes[x, y] >= 4) GameManager.instance.OpenNearRoom(x, y);
+        }
         Pins.transform.Translate(new Vector2((Lastx - x) * 75, (Lasty - y) * 75));
         Lastx = x; Lasty = y;
     }

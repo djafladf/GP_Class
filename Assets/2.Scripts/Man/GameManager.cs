@@ -86,7 +86,8 @@ public class GameManager : MonoBehaviour
     }
 
     public int bx, by;
-
+    Vector3[] dp = { Vector3.forward, Vector3.back, Vector2.right, Vector2.left };
+    int[] dp2 = { 1, 0, 3, 2 };
     public void MapMaking()
     {
         Map.MapType = new int[Map.MapSize, Map.MapSize]; Map.Depth = new int[Map.MapSize, Map.MapSize]; Map.GoAble = new Vector4[Map.MapSize, Map.MapSize]; Map.MapCont = new MapController[Map.MapSize, Map.MapSize];
@@ -95,8 +96,8 @@ public class GameManager : MonoBehaviour
         var s = new MapQue(1, new Vector2(bx, by));
         Queue <MapQue> que = new Queue<MapQue>(); que.Enqueue(s);
 
-        Vector3[] dp = { Vector3.forward, Vector3.back, Vector2.right, Vector2.left };
-        int[] dp2 = { 1, 0, 3, 2 };
+        
+        
         float[] Depth = { 0,0.8f, 0.6f, 0.4f, 0.2f, 0 };
         while(que.Count > 0)
         {
@@ -141,7 +142,22 @@ public class GameManager : MonoBehaviour
                 if (Map.MapCont[x, y] == null) continue;
                 Map.MapCont[x, y].MakeWall(ref Map.GoAble[x, y]);
             }
+
+        Map.MapCont[bx, by].ToggleAllDoor(true);
+        OpenNearRoom(bx, by);
     }
+
+    // u, d, r, l (0,1),(1,0),
+    public void OpenNearRoom(int x, int y)
+    {
+        int nx, ny;
+        for(int i = 0; i < 4; i++)
+        {
+            nx = Mathf.FloorToInt(x + dp[i].x); ny = Mathf.FloorToInt(y + dp[i].z);
+            if (Map.GoAble[x, y][i] == 1) Map.MapCont[nx,ny].ToggleExtDorr(dp2[i],true);
+        }
+    }
+
 
     [SerializeField] Transform MapPr;
     [SerializeField] GameObject MapPref, PassPref;
