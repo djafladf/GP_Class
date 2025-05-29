@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
         GameManager.instance.Player = transform;
         GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
+        transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
     }
 
     float MoveSpeed = 5f;

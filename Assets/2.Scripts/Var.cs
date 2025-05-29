@@ -23,6 +23,11 @@ public class ItemType
 {
 
 }
+[System.Serializable]
+public class ForTestV4
+{
+    public List<Vector4> List;
+}
 
 [System.Serializable]
 public class ForTestInt

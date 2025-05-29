@@ -28,6 +28,27 @@ public class UIManager : MonoBehaviour
         GameManager.instance.UI = this;
         WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
         captured = new RenderTexture(Screen.width, Screen.height, 0);
+        GameManager.instance.MapMaking();
+        RoomTypes = GameManager.instance.Map.MapType;
+        int l = GameManager.instance.Map.MapSize;
+        var Gob = GameManager.instance.Map.GoAble;
+        PinSprites = new Image[l, l];
+        for(int y = 0; y < l; y++) for(int x = 0; x < l; x++)
+            {
+                if (RoomTypes[x, y] == 0) continue;
+                GameObject tnt = Instantiate(MapPin, Pins.GetChild(1));
+                tnt.transform.localPosition = new Vector2(75 * x, 75 * y);
+                PinSprites[x, y] = tnt.GetComponent<Image>();
+                if (Gob[x, y][2] == 1)
+                {
+                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x + 37.5f,75 * y); ppin.transform.Rotate(0, 0, 90);
+                }
+                if (Gob[x, y][0] == 1)
+                {
+                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x ,75 * y + 37.5f);
+                }
+            }
+
     }
 
 #region Weapon
@@ -157,13 +178,14 @@ public class UIManager : MonoBehaviour
 #region Map
     [Header("Map")]
     [SerializeField] List<Sprite> PinType; // 0 : Unknown, 1 : Base, 2 : Monster, 3 : Puzzle, 4 : Heal, 5 : Shop
-    [SerializeField] List<ForTestInt> RoomTypes;
-    [SerializeField] List<ForTestImage> PinSprites;
+    int[,] RoomTypes;
+    Image[,] PinSprites;
     [SerializeField] Transform Pins;
-    int Lastx = 1, Lasty = 0;
+    [SerializeField] GameObject MapPin, PassPin;
+    int Lastx = 0, Lasty = 0;
     public void MapSetting(int x, int y,bool IsUnknown = false)
     {
-        if (IsUnknown) PinSprites[y].List[x].sprite = PinType[RoomTypes[y].List[x]];
+        if (IsUnknown) PinSprites[x,y].sprite = PinType[RoomTypes[x,y]];
         Pins.transform.Translate(new Vector2((Lastx - x) * 75, (Lasty - y) * 75));
         Lastx = x; Lasty = y;
     }
