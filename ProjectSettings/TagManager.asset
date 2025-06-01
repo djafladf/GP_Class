@@ -18,8 +18,8 @@ TagManager:
   - Obstacle
   - Enemy
   - Bullet
-  - 
-  - 
+  - EnemyAttack
+  - EnemyExtraPart
   - 
   - 
   - 

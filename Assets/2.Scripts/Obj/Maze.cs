@@ -10,8 +10,10 @@ public class Maze : MonoBehaviour
     [SerializeField] GameObject CWall, RWall, StoneEffect;
     MazeMap MyMaze;
     BoxCollider col;
-    private void Awake()
+    [SerializeField] MapController MyMap;
+    private void Start()
     {
+        MyMap = transform.parent.GetChild(0).GetComponent<MapController>();
         col = GetComponent<BoxCollider>();
         MyMaze = new MazeMap();
         MyMaze.MazeMaking(Size,Size);
@@ -91,7 +93,7 @@ public class Maze : MonoBehaviour
             col.enabled = true;
             GameManager.instance.UI.ShowAscending("Find EXIT", 1);
         }
-        else { yield return GameManager.DotFive; Destroy(gameObject); }
+        else { yield return GameManager.DotFive; MyMap.UnlockNearDoor(); Destroy(pr.gameObject); Destroy(gameObject); }
         GetComponent<AudioSource>().Stop();
     }
 

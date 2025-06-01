@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,23 +30,24 @@ public class UIManager : MonoBehaviour
         WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
         captured = new RenderTexture(Screen.width, Screen.height, 0);
         GameManager.instance.MapMaking();
-        RoomTypes = GameManager.instance.Map.MapType;
         int l = GameManager.instance.Map.MapSize;
-        var Gob = GameManager.instance.Map.GoAble;
-        PinSprites = new Image[l, l];
-        for(int y = 0; y < l; y++) for(int x = 0; x < l; x++)
+        PinSprites = new Image[l, l]; Fogs = new GameObject[l, l];
+        for (int y = 0; y < l; y++) for (int x = 0; x < l; x++)
             {
-                if (RoomTypes[x, y] == 0) continue;
+                Fogs[x, y] = Instantiate(FogPin, Pins.GetChild(2));
+                Fogs[x, y].transform.localPosition = new Vector2(75 * x, 75 * y);
+                if (GameManager.instance.Map.MapType[x, y] == 0) continue;
                 GameObject tnt = Instantiate(MapPin, Pins.GetChild(1));
                 tnt.transform.localPosition = new Vector2(75 * x, 75 * y);
+
                 PinSprites[x, y] = tnt.GetComponent<Image>();
-                if (Gob[x, y][2] == 1)
+                if (GameManager.instance.Map.GoAble[x, y][2] == 1)
                 {
-                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x + 37.5f,75 * y); ppin.transform.Rotate(0, 0, 90);
+                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x + 37.5f, 75 * y); ppin.transform.Rotate(0, 0, 90);
                 }
-                if (Gob[x, y][0] == 1)
+                if (GameManager.instance.Map.GoAble[x, y][0] == 1)
                 {
-                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x ,75 * y + 37.5f);
+                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x, 75 * y + 37.5f);
                 }
             }
 
@@ -141,6 +143,7 @@ public class UIManager : MonoBehaviour
             Time -= 0.1f;
         }
         if (act != null) act.Invoke();
+        Timer.gameObject.SetActive(false);
     }
 
     public void InteractSomething()
@@ -171,24 +174,42 @@ public class UIManager : MonoBehaviour
             CurExpVar--;
             Level.text = $"LV.{++CurLevel}";
             ExpSub *= 0.92f;
+            LevelUp();
         }
         EXPBar.fillAmount = Mathf.Min(CurExpVar, 1);
+    }
+
+    [SerializeField] Image BossHP;
+    [SerializeField] TMP_Text BossName;
+    public void ToggleBoss(string name)
+    {
+        BossHP.fillAmount = 1; BossName.text = name;
+        BossHP.transform.parent.gameObject.SetActive(true);
+    }
+
+    public void BossHpChange(float amount)
+    {
+        BossHP.fillAmount = amount;
     }
     #endregion
 #region Map
     [Header("Map")]
-    [SerializeField] List<Sprite> PinType; // 0 : Unknown, 1 : Base, 2 : Monster, 3 : Puzzle, 4 : Heal, 5 : Shop
+    [SerializeField] RectTransform MapObj;
+    [SerializeField] RectTransform MaskerObj, PlayerPin;
+    [SerializeField] List<Sprite> PinType; // 0 : Unknown, 1 : Base, 2 : Monster, 3 : Puzzle, 4 : Heal, 5 : Shop, 6: Fog
     int[,] RoomTypes;
     Image[,] PinSprites;
     [SerializeField] Transform Pins;
-    [SerializeField] GameObject MapPin, PassPin;
+    [SerializeField] GameObject MapPin, PassPin,FogPin;
+    GameObject[,] Fogs;
     int Lastx = 0, Lasty = 0;
     public void MapSetting(int x, int y,bool IsUnknown = false)
     {
         if (IsUnknown)
         {
-            PinSprites[x, y].sprite = PinType[RoomTypes[x, y]];
-            if (RoomTypes[x, y] >= 4) GameManager.instance.OpenNearRoom(x, y);
+            PinSprites[x, y].sprite = PinType[GameManager.instance.Map.MapType[x, y]];
+            Fogs[x, y].SetActive(false);
+            if (GameManager.instance.Map.MapType[x, y] >= 4) GameManager.instance.OpenNearRoom(x, y);
         }
         Pins.transform.Translate(new Vector2((Lastx - x) * 75, (Lasty - y) * 75));
         Lastx = x; Lasty = y;
@@ -225,9 +246,31 @@ public class UIManager : MonoBehaviour
 
 
     #endregion
+#region Level Up
+    [Header("LevelUp Setting")]
+    [SerializeField] GameObject LevelUpObj;
+    [SerializeField] Image[] UpImage;
+    [SerializeField] Sprite[] LevelUpSpr;
+    [SerializeField] TMP_Text[] LevelUpText;
+    [SerializeField] string[] UpSubText;
+    int[] Uparray = { 0, 1, 2, 3, 4 };
+    public void LevelUp()
+    {
+        Uparray = Uparray.OrderBy(x => Guid.NewGuid()).ToArray();
+        for(int i = 0; i < 3; i++)
+        {
+            UpImage[i].sprite = LevelUpSpr[Uparray[i]]; LevelUpText[i].text = UpSubText[Uparray[i]];
+        }
+        SetStop(1);
+        LevelUpObj.SetActive(true);
+    }
+    public void ApplyLevelUp(int val)
+    {
+        GameManager.instance.PlayerScript.SetBuffer(Uparray[val]);
+    }
+    #endregion
 
 
-    
     RenderTexture captured;
     int CurStopCall = 0;
 
@@ -237,6 +280,22 @@ public class UIManager : MonoBehaviour
     public void ShowMenu()
     {
         OnMenu = OnMenu == false;
+        if (OnMenu)
+        {
+            MapObj.localPosition = Vector2.zero;
+            MapObj.sizeDelta = new Vector2(850, 850);
+            MaskerObj.sizeDelta = new Vector2(800, 800);
+            Pins.localPosition = Vector2.zero;
+            PlayerPin.localPosition = new Vector2(Lastx * 75f, Lasty * 75f);
+        }
+        else
+        {
+            MapObj.localPosition = new Vector2(750, 400);
+            MapObj.sizeDelta = new Vector2(220, 220);
+            MaskerObj.sizeDelta = new Vector2(200, 200);
+            Pins.localPosition = new Vector2(-Lastx * 75f, -Lasty * 75f);
+            PlayerPin.localPosition = Vector2.zero;
+        }
         SetStop(OnMenu ? 1 : -1);
     }
 

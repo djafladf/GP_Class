@@ -38,10 +38,16 @@ public class Player : MonoBehaviour
         GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
+        Invoke("StartBug", 1f);
+    }
+
+    void StartBug()
+    {
+        MoveAble = true;
     }
 
     float MoveSpeed = 5f;
-    bool MoveAble = true;
+    bool MoveAble = false;
     private void FixedUpdate()
     {
         if (!MoveAble) return;
@@ -143,6 +149,7 @@ public class Player : MonoBehaviour
     bool _onFire = false; bool FirstFire = true;
     void OnFire(InputValue value)
     {
+        if (!MoveAble) return;
         _onFire = value.isPressed;
         if (_onFire && FirstFire) { anim.SetBool("OnFire", true); FirstFire = false; }
 
@@ -248,19 +255,24 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("EnemyAttack") && HitAble)
         {
-            HitAble = false; Invoke("HitGap", 0.5f);
-            CurHP -= 10;
-            GameManager.instance.UI.HPChange(CurHP / MaxHP);
-            if(CurHP <= 0)
-            {
+            GetDamage(10);
+        }
+    }
 
-                GameManager.instance.Enemy.OnGameEnd();
-            }
+    public void GetDamage(int amount)
+    {
+        HitAble = false; Invoke("HitGap", 0.5f);
+        CurHP -= amount;
+        GameManager.instance.UI.HPChange(CurHP / MaxHP);
+        if (CurHP <= 0)
+        {
+
+            GameManager.instance.Enemy.OnGameEnd();
         }
     }
 
     [SerializeField] List<GameObject> BuffObjects;
-    float[] BuffAmount = { 0, 0, 0 };
+    float[] BuffAmount = { 0, 0, 0 ,1, 0};  // 공, 방, 속, 범위, 재장속
     public void HealFunction(int Count)
     {
         BuffObjects[0].SetActive(true);
@@ -268,6 +280,13 @@ public class Player : MonoBehaviour
         GameManager.instance.UI.HPChange(CurHP / MaxHP);
     }
 
+    [SerializeField] Transform GainArea;
+    public void SetBuffer(int type)
+    {
+        BuffAmount[type] += 0.1f;
+        if (type == 3) { GainArea.localScale = new Vector3(BuffAmount[3]*1.25f, BuffAmount[3]*1.25f, BuffAmount[3]*1.25f); BuffObjects[4].SetActive(true); }
+        if (type == 4) anim.SetFloat("ReloadTime", 1f + BuffAmount[4]);
+    }
     
     public void BuffOn(int type,int Last,int Amount)
     {

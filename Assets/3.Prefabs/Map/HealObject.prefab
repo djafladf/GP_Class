@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 7217078509040072556}
   - component: {fileID: 4564911559103869517}
   - component: {fileID: 2507688534967243085}
-  m_Layer: 4
+  m_Layer: 6
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1611,7 +1611,7 @@ GameObject:
   - component: {fileID: 4943241280255263289}
   - component: {fileID: 9188834375586468229}
   - component: {fileID: 1438608370440738493}
-  m_Layer: 4
+  m_Layer: 6
   m_Name: PA_Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2882,7 +2882,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1582658221633194065}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ponds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2944,8 +2944,7 @@ GameObject:
   - component: {fileID: 5088196882067136412}
   - component: {fileID: 3808571282345680813}
   - component: {fileID: 3497662728063449162}
-  - component: {fileID: 2376575268943754136}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HealObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3061,26 +3060,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2376575268943754136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7991659250163033227}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85d160211b6158409e5005a825a1664, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Rocks:
-  - {fileID: 4730002974124194558, guid: 205dc750c0f1a414097299b0486dc5b9, type: 3}
-  - {fileID: 5127935813079523073, guid: b0caf8f2b511ed948be263d59a83cd1c, type: 3}
-  - {fileID: 4049231906913572306, guid: 92708350b8f04c840ab5aedfdaf0a9ba, type: 3}
-  - {fileID: 8736115590795592677, guid: 26ff2760dcd37464996eaee30729de1b, type: 3}
-  - {fileID: 3497825398378072962, guid: 0364b6d6608ccec43a15f0fd7290ccb1, type: 3}
-  - {fileID: 1087727138527155070, guid: 6bf8783a9e4bced489d2f62821a6ff92, type: 3}
-  Radius: 5
 --- !u!1 &8351430511648861280
 GameObject:
   m_ObjectHideFlags: 0

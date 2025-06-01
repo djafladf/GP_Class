@@ -20,6 +20,7 @@ public class Altar : MonoBehaviour
 
     private void Awake()
     {
+        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
         InteractField = GetComponent<BoxCollider>();
         Wall1 = Walls.transform.GetChild(0); Wall2 = Walls.transform.GetChild(1);
         ad = GetComponent<AudioSource>();
@@ -81,7 +82,7 @@ public class Altar : MonoBehaviour
         GameManager.instance.UI.ShowAscending("Mission Clear!",2);
         if (AltarType == 0) { GameManager.instance.Enemy.KillAll(); foreach (var j in ST.SpawnPos) j.gameObject.SetActive(false); }
         SphereLight.intensity = 0;
-        MyMap.ToggleAllDoor(true);
+        MyMap.UnlockNearDoor();
         Walls.SetActive(false);
     }
 

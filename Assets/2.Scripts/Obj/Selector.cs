@@ -28,7 +28,7 @@ public class Selector : Buttons
 
     private void OnEnable()
     {
-        
+        transform.localScale = InitSize;
         ET.enabled = true;
     }
 

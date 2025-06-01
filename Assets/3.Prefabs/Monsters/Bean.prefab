@@ -1839,7 +1839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4838267607679238045
 Transform:
   m_ObjectHideFlags: 0
@@ -1954,7 +1954,7 @@ MonoBehaviour:
   - {fileID: 2379100342563568987}
   - {fileID: 6703953060370885330}
   Soul: {fileID: 6581098292497470606, guid: 05187d28a0fae9349bc121b9cac9272e, type: 3}
-  HP: 5
+  InitHP: 5
   AttackRagne: 1.5
   BloodPref: {fileID: 5919574347784969478}
 --- !u!195 &5688022323231415093

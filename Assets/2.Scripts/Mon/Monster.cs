@@ -7,13 +7,13 @@ public class Monster : MonoBehaviour
 {
     [SerializeField] List<SphereCollider> AttackCol;
     [SerializeField] GameObject Soul;
-    Rigidbody rigid;
-    Animator anim;
-    NavMeshAgent agent;
-    BoxCollider col;
-    [SerializeField] int InitHP = 5;
-    int HP;
-    [SerializeField] float AttackRagne;
+    protected Rigidbody rigid;
+    protected Animator anim;
+    protected NavMeshAgent agent;
+    protected BoxCollider col;
+    [SerializeField] protected int InitHP = 5;
+    protected int HP;
+    [SerializeField] protected float AttackRagne;
 
     public enum State
     {
@@ -23,7 +23,7 @@ public class Monster : MonoBehaviour
         OnHit,
         DIE
     }
-    State CurState = State.IDLE;
+    protected State CurState = State.IDLE;
 
     private void Awake()
     {
@@ -31,8 +31,11 @@ public class Monster : MonoBehaviour
         col = GetComponent<BoxCollider>();
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        
-        BloodEffects.Add(BloodPref.GetComponent<ParticleSystem>()); for (int i = 0; i < 4; i++) BloodEffects.Add(Instantiate(BloodPref, transform).GetComponent<ParticleSystem>()); 
+
+        if (BloodPref != null)
+        {
+            BloodEffects.Add(BloodPref.GetComponent<ParticleSystem>()); for (int i = 0; i < 4; i++) BloodEffects.Add(Instantiate(BloodPref, transform).GetComponent<ParticleSystem>());
+        }
     }
 
     private void Start()
@@ -41,10 +44,10 @@ public class Monster : MonoBehaviour
         GameManager.instance.Enemy.DeadAct.Add(ExtraDead);
     }
 
-    bool MoveAble = true;
+    protected bool MoveAble = true;
 
-    bool ChangeOccur = false;
-    IEnumerator CheckStat()
+    protected bool ChangeOccur = false;
+    protected virtual IEnumerator CheckStat()
     {
         WaitForSeconds wfs = new WaitForSeconds(0.3f);
         ChangeOccur = true;

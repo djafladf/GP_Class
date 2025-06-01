@@ -33,7 +33,12 @@ public class MapController : MonoBehaviour
 
     public void ToggleAllDoor(bool Type)
     {
-        foreach (var j in Doors) j.LockToggle(Type);
+        foreach (var j in Doors) if(j != null) j.LockToggle(Type);
+    }
+
+    public void UnlockNearDoor()
+    {
+        GameManager.instance.OpenNearRoom(Indx, Indy);
     }
 
     private void OnTriggerEnter(Collider other)
