@@ -15,9 +15,12 @@ public class Bullet : MonoBehaviour
 
     private void Awake()
     {
-        Particles[0] = Particle.GetComponent<ParticleSystem>();
-        Particles[1] = Particle.GetChild(0).GetComponent<ParticleSystem>();
-        Particles[2] = Particle.GetChild(1).GetComponent<ParticleSystem>();
+        if (Particle != null)
+        {
+            Particles[0] = Particle.GetComponent<ParticleSystem>();
+            Particles[1] = Particle.GetChild(0).GetComponent<ParticleSystem>();
+            Particles[2] = Particle.GetChild(1).GetComponent<ParticleSystem>();
+        }
         TR = GetComponent<TrailRenderer>();
         rigid = GetComponent<Rigidbody>();
         mesh = GetComponent<MeshRenderer>();
@@ -27,7 +30,7 @@ public class Bullet : MonoBehaviour
 
     private void Start()
     {
-        Particle.transform.SetParent(GameManager.instance.ParticleSet);
+        if(Particle != null) Particle.transform.SetParent(GameManager.instance.ParticleSet);
     }
     
 
@@ -47,8 +50,11 @@ public class Bullet : MonoBehaviour
             if (MyHole == null) MyHole = GameManager.instance.bullet.MakeHole();
             MyHole.transform.position = cp.point; MyHole.transform.rotation = Quaternion.FromToRotation(Vector3.up, cp.normal); MyHole.SetActive(true);
         }
-        Particle.transform.position = cp.point; Particle.transform.rotation = Quaternion.LookRotation(-cp.normal);
-        Particle.gameObject.SetActive(true);
+        if (Particle != null)
+        {
+            Particle.transform.position = cp.point; Particle.transform.rotation = Quaternion.LookRotation(-cp.normal);
+            Particle.gameObject.SetActive(true);
+        }
 
         rigid.isKinematic = false; mesh.enabled = false; rigid.velocity = Vector3.zero; coll.enabled = false;
         Invoke("NaturalTrail", 0.5f) ;

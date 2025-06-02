@@ -144,9 +144,8 @@ public class Monster : MonoBehaviour
     private void OnEnable()
     {
         HP = InitHP;
-        IsExtraDead = false;
-        agent.isStopped = true;
-        anim.SetBool("OnWalk", false);
+        IsExtraDead = false; MoveAble = true; CurState = State.IDLE;
+        anim.SetBool("OnAttack", false);
         StartCoroutine(CheckStat());
         StartCoroutine(UpdateStat());
     }

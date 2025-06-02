@@ -25137,6 +25137,8 @@ MonoBehaviour:
     LV: 0
     Obj: {fileID: 1275637406812948628, guid: f4bb9a74b33fc7e429ba8409cd144f78, type: 3}
     Im: {fileID: 21300000, guid: c181f87aed1938c46af6453bacc7a71b, type: 3}
+  Exp:
+  - {fileID: 6581098292497470606, guid: 05187d28a0fae9349bc121b9cac9272e, type: 3}
 --- !u!1 &1380494408
 GameObject:
   m_ObjectHideFlags: 0
@@ -74552,6 +74554,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5443536698740831082}
   - component: {fileID: 5443536698747722888}
+  - component: {fileID: 5443536698747722889}
   m_Layer: 0
   m_Name: PA_Drone
   m_TagString: Untagged
@@ -74711,6 +74714,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5443536698747722889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5443536698740338506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 519b7e679a52633448e31c928dd76115, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Bullet: {fileID: 6367692921632144740, guid: 2a600aebf7b73eb40a583ab108295236, type: 3}
+  Targetmask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!199 &5697559917647798994
 ParticleSystemRenderer:
   serializedVersion: 6

@@ -16,6 +16,10 @@ public class DataManager : MonoBehaviour
 
     [Header("Gun")]
     public List<WeaponInfo> Weapon;
+
+    [Header("EXP")]
+    public List<GameObject> Exp;
+
     List<int> norm, rare, legd;
 
     private void Awake()

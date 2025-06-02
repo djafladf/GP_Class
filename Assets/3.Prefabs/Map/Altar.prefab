@@ -19781,14 +19781,14 @@ MonoBehaviour:
     - 0
     SpawnGap:
     - 2
-    - 2
+    - 1
     EnemyID: 0000000001000000
     SpawnPos: []
-  - LastTime: 60
+  - LastTime: 90
     StartTime:
     - 0
     SpawnGap:
-    - 2
+    - 1
     EnemyID: 01000000
     SpawnPos: []
   SpawnPos:
