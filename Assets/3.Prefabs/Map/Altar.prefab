@@ -19767,18 +19767,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyMap: {fileID: 0}
   AltarType: 0
-  ST:
-    LastTime: 60
+  st:
+  - LastTime: 60
     StartTime:
     - 0
     SpawnGap:
     - 1
     EnemyID: 00000000
-    SpawnPos:
-    - {fileID: 3105633309120270824}
-    - {fileID: 8211255119634714598}
-    - {fileID: 6826760271962910522}
-    - {fileID: 4662969723682928113}
+    SpawnPos: []
+  - LastTime: 60
+    StartTime:
+    - 0
+    - 0
+    SpawnGap:
+    - 2
+    - 2
+    EnemyID: 0000000001000000
+    SpawnPos: []
+  - LastTime: 60
+    StartTime:
+    - 0
+    SpawnGap:
+    - 2
+    EnemyID: 01000000
+    SpawnPos: []
+  SpawnPos:
+  - {fileID: 3105633309120270824}
+  - {fileID: 8211255119634714598}
+  - {fileID: 6826760271962910522}
+  - {fileID: 4662969723682928113}
   Walls: {fileID: 3305547917302172052}
   WaveEffect: {fileID: 2026466090504354622}
   Unlock: {fileID: 6106925957858008852}

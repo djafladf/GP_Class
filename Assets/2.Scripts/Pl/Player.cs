@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] Transform Tuto;
     [SerializeField] Transform WeaponHolder;
     [SerializeField] Transform FirePos;
     [SerializeField] CinemachineVirtualCamera CV;
@@ -29,16 +30,23 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         audiodio = GetComponent<AudioSource>();
 
-        AttackGap[0] = 0.1667f;
     }
 
     private void Start()
     {
+        Weapons = new List<Transform>(GameManager.instance.Data.Weapon.Count); for (int i = 0; i < 2; i++) Weapons.Add(WeaponHolder.GetChild(i).transform);     // Init Start;
+        CurUnlocked = new List<int>(GameManager.instance.Data.Weapon.Count); CurUnlocked.Add(0); CurUnlocked.Add(3);
+        Muzzles = new List<MeshRenderer>(GameManager.instance.Data.Weapon.Count);  Muzzles.Add(Weapons[0].GetChild(0).GetComponent<MeshRenderer>()); Muzzles.Add(Weapons[1].GetChild(0).GetComponent<MeshRenderer>());
+
         GameManager.instance.Player = transform;
         GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
-        Invoke("StartBug", 1f);
+        Invoke("StartBug", 0.5f);
+        Tuto.transform.SetParent(GameManager.instance.transform);
+
+        //GameManager.instance.UI.ScoreUp(1000);
+        //WeaponLevelUp(1); WeaponLevelUp(2); WeaponLevelUp(4); WeaponLevelUp(5);
     }
 
     void StartBug()
@@ -58,10 +66,18 @@ public class Player : MonoBehaviour
         }
     }
 
+    #region Gun
+    [SerializeField]List<Transform> Weapons;
+    List<int> CurUnlocked;
+    [SerializeField] List<MeshRenderer> Muzzles;
+    public int CurWeaponInd = 0;
+    
+
+
     Vector3 Dir;
     IEnumerator Shoot_Sub()
     {
-        if (CurWeaponInd != 0) { anim.SetBool("OnFire",false); yield return new WaitForSeconds(AttackGap[CurWeaponInd] - AttackGap[0]); }
+        if (CurUnlocked[CurWeaponInd] >= 3) { anim.SetBool("OnFire",false); yield return new WaitForSeconds(GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].rpm * 0.17f - 0.165f); }
         if (_onFire) anim.SetBool("OnFire", true);
         else { anim.SetBool("OnFire", false); FirstFire = true; }
         ShootCor = null;
@@ -76,41 +92,45 @@ public class Player : MonoBehaviour
     public void Shoot()
     {
         if (ShootCor != null) return;
-        if (LeftBul[CurWeaponInd] <= 0) return;
+        if (GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag <= 0) return;
         float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
         if (Aim.localPosition.y < 3)
         {
-            Aim.Translate(0, Rebound[CurWeaponInd], 0);
+            Aim.Translate(0, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].bound * 0.02f, 0);
             if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir; }
         }
         audiodio.PlayOneShot(audioclips[0],0.8f);
         if(!muzzleFlash.enabled)StartCoroutine(ShowMuzzleFlash());
-        if (WeaponType[CurWeaponInd]) GameManager.instance.bullet.ShootBullet(FirePos.position, Weapons[CurWeaponInd].forward);
-        else
+
+        for (int _ = 0; _ < GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].bnum; _++)
         {
-            for(int _ = 0; _ < 9; _++)
-            {
-                Quaternion randomRot = Quaternion.Euler(
-                   Random.Range(-5f, 5f), // 상하
-                   Random.Range(-5f, 5f), // 좌우
+            Quaternion randomRot = Quaternion.Euler(
+                   Random.Range(-GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread), // 상하
+                   Random.Range(-GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread), // 좌우
                    0
                );
-
-                Vector3 spreadDirection = randomRot * Weapons[CurWeaponInd].forward;
-
-                GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection);
-            }
+            Vector3 spreadDirection = randomRot * Weapons[CurWeaponInd].forward;
+            GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].power);
         }
-        LeftBul[CurWeaponInd]--; BulletText.text = $"{LeftBul[CurWeaponInd]}/{MaxBul[CurWeaponInd]}"; BulletGage.fillAmount = LeftBul[CurWeaponInd] / MaxBul[CurWeaponInd];
+        GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag -= 1;
+        BulletText.text = $"{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag}/{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag}"; 
+        BulletGage.fillAmount = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag / GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
     }
 
-    public int CurWeaponInd = 0;
-    [SerializeField] List<Transform> Weapons;
-    [SerializeField] List<float> Rebound;
-    [SerializeField] List<bool> WeaponType;
-    [SerializeField] List<float> AttackGap;
-    [SerializeField] List<float> LeftBul;
-    [SerializeField] List<float> MaxBul;
+    public void WeaponLevelUp(int ind)
+    {
+        if (GameManager.instance.Data.Weapon[ind].LV == 0)
+        {
+            var cnt = Instantiate(GameManager.instance.Data.Weapon[ind].Obj, WeaponHolder); Weapons.Add(cnt.transform); CurUnlocked.Add(ind); Muzzles.Add(cnt.transform.GetChild(0).GetComponent<MeshRenderer>()); cnt.SetActive(false);
+            GameManager.instance.UI.AddWeaponImage(GameManager.instance.Data.Weapon[ind].Im);
+        }
+        GameManager.instance.Data.Weapon[ind].LV++;
+
+    }
+
+    
+    #endregion
+
 
     #region InputSystems
 
@@ -173,14 +193,15 @@ public class Player : MonoBehaviour
     void OnReload(InputValue value)
     {
         if (!MoveAble) return;
+        _onFire = false;
         MoveAble = false; Dir = Vector3.zero;
         audiodio.PlayOneShot(audioclips[1],1);
         anim.SetTrigger("OnReload");
     }
     public void ReloadEnd()
     {
-        MoveAble = true && ControllFromExtern; LeftBul[CurWeaponInd] = MaxBul[CurWeaponInd];
-        BulletText.text = $"{LeftBul[CurWeaponInd]}/{MaxBul[CurWeaponInd]}"; BulletGage.fillAmount = 1f;
+        MoveAble = true && ControllFromExtern; GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
+        BulletText.text = $"{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag}/{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag}"; BulletGage.fillAmount = 1f;
     }
 
     IEnumerator ShowMuzzleFlash()
@@ -215,9 +236,10 @@ public class Player : MonoBehaviour
         Weapons[CurWeaponInd].gameObject.SetActive(false);
         CurWeaponInd = (CurWeaponInd + dr + Weapons.Count) % Weapons.Count;
         Weapons[CurWeaponInd].gameObject.SetActive(true);
-        FirePos = Weapons[CurWeaponInd].GetChild(0); muzzleFlash = FirePos.GetComponent<MeshRenderer>();
+        FirePos = Weapons[CurWeaponInd].GetChild(0); muzzleFlash = Muzzles[CurWeaponInd];
         Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;
-        BulletText.text = $"{LeftBul[CurWeaponInd]}/{MaxBul[CurWeaponInd]}"; BulletGage.fillAmount = LeftBul[CurWeaponInd] / MaxBul[CurWeaponInd];
+        BulletText.text = $"{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag}/{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag}";
+        BulletGage.fillAmount = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag / GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
     }
     void OnScroll(InputValue value)
     {

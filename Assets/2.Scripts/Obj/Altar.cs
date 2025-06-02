@@ -7,7 +7,8 @@ public class Altar : MonoBehaviour
 {
     [SerializeField] MapController MyMap;
     [SerializeField] int AltarType;
-    [SerializeField] SpawnType ST;
+    [SerializeField] List<SpawnType> st;
+    [SerializeField] List<Transform> SpawnPos;
 
     [SerializeField] GameObject Walls;
     [SerializeField] ParticleSystem WaveEffect;
@@ -18,20 +19,18 @@ public class Altar : MonoBehaviour
     AudioSource ad;
     BoxCollider InteractField;
 
+    SpawnType ST;
     private void Awake()
     {
         MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
         InteractField = GetComponent<BoxCollider>();
         Wall1 = Walls.transform.GetChild(0); Wall2 = Walls.transform.GetChild(1);
         ad = GetComponent<AudioSource>();
+        ST = st[Random.Range(0, st.Count)]; ST.SpawnPos = SpawnPos;
     }
 
     private void Start()
     {
-        if (AltarType == 0)
-        {
-            GameManager.instance.Enemy.RegisterMonsterType(0, 150);
-        }
     }
 
     bool OnWave = false;
@@ -57,8 +56,8 @@ public class Altar : MonoBehaviour
     {
         if (AltarType == 0)
         {
-            foreach (var j in ST.SpawnPos) j.gameObject.SetActive(true);
-            GameManager.instance.Enemy.StartMaking(ref ST);
+            foreach (var j in SpawnPos) j.gameObject.SetActive(true);
+            GameManager.instance.Enemy.StartMaking(ST);
             GameManager.instance.UI.SetTimer(ST.LastTime, WaveEnd);
         }
     }

@@ -43,7 +43,7 @@ public class ShopItem : MonoBehaviour
 
     public void Purchase()
     {
-        if (shopM.ItemCost[ind] <= GameManager.instance.UI.CurScore) { Anim.SetTrigger("Close"); GameManager.instance.UI.ToggleInteract(null, false, null); }
+        if (shopM.ItemCost[ind] <= GameManager.instance.UI.CurScore) { Anim.SetTrigger("Close"); GameManager.instance.UI.ToggleInteract(null, false, null); shopM.Purchase(ind); }
         else { GameManager.instance.UI.ShowAscending("No Enough <sprite name=\"Coin\">!",1); }
     }
 

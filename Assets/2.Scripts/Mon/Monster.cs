@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Monster : MonoBehaviour
 {
-    [SerializeField] List<SphereCollider> AttackCol;
+    [SerializeField] List<Collider> AttackCol;
     [SerializeField] GameObject Soul;
     protected Rigidbody rigid;
     protected Animator anim;
@@ -107,8 +107,7 @@ public class Monster : MonoBehaviour
     void Dead()
     {
         gameObject.SetActive(false);
-        GameManager.instance.UI.ScoreUp();
-        if (!IsExtraDead) { var Obj = Instantiate(Soul, GameManager.instance.Enemy.transform); Obj.transform.position = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z); }
+        if (!IsExtraDead) { GameManager.instance.UI.ScoreUp(); var Obj = Instantiate(Soul, GameManager.instance.Enemy.transform); Obj.transform.position = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z); }
     }
 
     bool IsExtraDead;

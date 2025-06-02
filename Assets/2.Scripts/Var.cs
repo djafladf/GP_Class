@@ -9,6 +9,22 @@ using UnityEngine.UI;
 public class Event : UnityEvent<BaseEventData> { }
 
 [System.Serializable]
+public class WeaponInfo
+{
+    public string name;
+    public float power;
+    public float bound;
+    public float rpm;
+    public float spread;
+    public int bnum;
+    public float MaxMag;
+    public float CurMag;
+    public int LV;
+    public GameObject Obj;
+    public Sprite Im;
+}
+
+[System.Serializable]
 public struct SpawnType
 {
     public int LastTime;

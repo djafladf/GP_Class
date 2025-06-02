@@ -31,11 +31,11 @@ public class Bullet : MonoBehaviour
     }
     
 
-    public void Init(Vector3 Start, Vector3 _Dir)
+    public void Init(Vector3 Start, Vector3 _Dir,float Power)
     {
         transform.position = Start;
         transform.rotation = Quaternion.FromToRotation(Vector3.up, _Dir);
-        gameObject.SetActive(true); TR.Clear(); rigid.AddForce(_Dir * 50,ForceMode.Impulse);
+        gameObject.SetActive(true); TR.Clear(); rigid.AddForce(_Dir * 25f * Power,ForceMode.Impulse);
     }
 
     GameObject MyHole = null;

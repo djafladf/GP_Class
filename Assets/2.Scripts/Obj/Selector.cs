@@ -28,6 +28,7 @@ public class Selector : Buttons
 
     private void OnEnable()
     {
+        Process = 0; Trigger = -0.05f / TargetTime;
         transform.localScale = InitSize;
         ET.enabled = true;
     }

@@ -4850,6 +4850,8 @@ GameObject:
   - component: {fileID: 2192118713965450580}
   - component: {fileID: 3284439694070373401}
   - component: {fileID: 4803463980304148286}
+  - component: {fileID: 6208947346810771361}
+  - component: {fileID: 3634401430828169172}
   m_Layer: 0
   m_Name: BossPortal
   m_TagString: Untagged
@@ -9730,6 +9732,40 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!65 &6208947346810771361
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5397725760067384885}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 1}
+  m_Center: {x: 0, y: 0.00050002337, z: 0}
+--- !u!114 &3634401430828169172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5397725760067384885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6eca70d06fbb52489a22b580b2f83b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Gundam: {fileID: 1661081359702102484, guid: 629526ccd2dcbcc4b801ecd1c296c3ff, type: 3}
 --- !u!1 &8127390928873979728
 GameObject:
   m_ObjectHideFlags: 0

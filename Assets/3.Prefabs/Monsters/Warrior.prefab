@@ -9414,6 +9414,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 100068, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
+      propertyPath: m_TagString
+      value: EnemyAttack
+      objectReference: {fileID: 0}
     - target: {fileID: 100070, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -9592,15 +9596,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 0e4e6e99a1b56c442b67f18499dfe22b, type: 2}
     - target: {fileID: 9500000, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'RightLittleDistal'\n\tTransform 'RightHand'\n\tTransform
-        'RightIndexDistal'\n\tTransform 'RightRingDistal'\n\tTransform 'LeftMiddleDistal'\n\tTransform
-        'Spine'\n\tTransform 'RightIndexIntermediate'\n\tTransform 'LeftLowerLeg'\n\tTransform
-        'RightLowerArm'\n\tTransform 'Head'\n\tand more ...\n\tFrom animation clip
-        'Warrior_attack_v02'\n\tFrom animation clip 'Warrior_die'\n\tFrom animation
-        clip 'Take 001'\n\tFrom animation clip 'Warrior_Idle'\n\tFrom animation clip
-        'Warrior_Run'"
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9621,41 +9617,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100120, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
       insertIndex: -1
       addedObject: {fileID: -7761156911160017118}
-    - targetCorrespondingSourceObject: {fileID: 100126, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 100068, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5612151114689765708}
+      addedObject: {fileID: 8778838925256136020}
   m_SourcePrefab: {fileID: 100100000, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
 --- !u!4 &5002135308992636805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400120, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
   m_PrefabInstance: {fileID: 5002135308993035645}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5002135308992936547 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100126, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
-  m_PrefabInstance: {fileID: 5002135308993035645}
-  m_PrefabAsset: {fileID: 0}
---- !u!135 &5612151114689765708
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002135308992936547}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 1.8, y: 0.5, z: 0}
 --- !u!1 &5002135308992936549 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100120, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
@@ -9674,7 +9644,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AttackCol:
-  - {fileID: 5612151114689765708}
+  - {fileID: 8778838925256136020}
   Soul: {fileID: 6581098292497470606, guid: 05187d28a0fae9349bc121b9cac9272e, type: 3}
   InitHP: 3
   AttackRagne: 2.5
@@ -9749,3 +9719,29 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!1 &5002135308992936857 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100068, guid: 9e52c160328d68b4799c73e4e5cd0ed7, type: 3}
+  m_PrefabInstance: {fileID: 5002135308993035645}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &8778838925256136020
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5002135308992936857}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 0.3, y: 0.4, z: 2}
+  m_Center: {x: 0, y: -0.2, z: -0.5}

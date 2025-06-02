@@ -22,14 +22,14 @@ public class BulletManager : MonoBehaviour
             HolePool.Add(Instantiate(HolePref,transform));
         }
     }
-    public void ShootBullet(Vector3 Start, Vector3 Dir)
+    public void ShootBullet(Vector3 Start, Vector3 Dir,float Power)
     {
         for(int i = 0; i < BulletPool.Count;i++)
         {
             GameObject CurBul = BulletPool[front];
             if (!CurBul.activeSelf)
             {
-                BulletScripts[front].Init(Start, Dir);
+                BulletScripts[front].Init(Start, Dir,Power);
                 front = (front + 1) % BulletPool.Count;
                 break;
             }

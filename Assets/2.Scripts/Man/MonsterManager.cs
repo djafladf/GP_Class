@@ -22,7 +22,10 @@ public class MonsterManager : MonoBehaviour
         MakeNumCnt = new List<int>();
         LastUse = new List<int>();
         for (int i = 0; i < Pref.Count; i++) { Pool.Add(new List<GameObject>()); MakeNumCnt.Add(0); LastUse.Add(0); }
-        
+
+
+        RegisterMonsterType(0, 75);
+        RegisterMonsterType(1, 40);
     }
 
     
@@ -48,7 +51,7 @@ public class MonsterManager : MonoBehaviour
     /// <param name="StartPos"> Stand Pos </param>
     /// <param name="Size"> Size Of Space </param>
     /// <param name="ExclusiveField"> Obstalce Pos </param>
-    public void StartMaking(ref SpawnType tp)
+    public void StartMaking(SpawnType tp)
     {
         for (int i = 0; i < tp.SpawnGap.Count; i++) StartCoroutine(Make(tp.EnemyID[i], tp.StartTime[i], tp.SpawnGap[i],tp.LastTime,tp.SpawnPos));
     }

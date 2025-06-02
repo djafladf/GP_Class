@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     [HideInInspector] public int CurScore = 0;
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false;
         GameManager.instance.UI = this;
         WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
         captured = new RenderTexture(Screen.width, Screen.height, 0);
@@ -55,7 +56,7 @@ public class UIManager : MonoBehaviour
 
 #region Weapon
     [Header("Weapon Settings")]
-    [SerializeField] List<Sprite> WeaponIm;
+    public List<Sprite> WeaponIm;
     [SerializeField] RectTransform WeaponSet;
     [SerializeField] List<RectTransform> WeaponBacks;
     [SerializeField] List<Image> WeaponIms;
@@ -64,6 +65,14 @@ public class UIManager : MonoBehaviour
     WaitForSeconds SlideWait = new WaitForSeconds(0.001f);
 
     [SerializeField] List<int> CurOrder = new List<int>(new int[]{ 0, 1, 2, 3, 4 });
+
+
+    public void AddWeaponImage(Sprite sp)
+    {
+        WeaponIm.Add(sp); 
+        WeaponIms[CurOrder[1]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd - 1 + WeaponIm.Count) % WeaponIm.Count];
+        WeaponIms[CurOrder[3]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd + 1) % WeaponIm.Count];
+    }
     public void SlideWeapon(bool IsUp)
     {
         if (SlideCount != 0 && IsUp != IsRightNow) { SlideCount = 0; }
@@ -86,11 +95,11 @@ public class UIManager : MonoBehaviour
                     if (i == 10) WeaponBacks[CurOrder[1]].SetAsLastSibling();
                     WeaponBacks[CurOrder[1]].sizeDelta = new Vector2(100 + i, 100 + i);
                     WeaponBacks[CurOrder[2]].sizeDelta = new Vector2(120 - i, 120 - i);
-                    for (int l = 0; l < 4; l++) WeaponBacks[CurOrder[l]].Translate(5, 0, 0);
+                    for (int l = 0; l < 4; l++) WeaponBacks[CurOrder[l]].anchoredPosition += new Vector2(5, 0);
                     yield return SlideWait;
                 }
                 CurOrder.Insert(0, cnt); WeaponBacks[cnt].localPosition = new Vector2(-200, 0);
-                GameManager.instance.PlayerScript.ChangeWeapon(1);
+                GameManager.instance.PlayerScript.ChangeWeapon(-1);
             }
             else
             {
@@ -101,11 +110,12 @@ public class UIManager : MonoBehaviour
                     if (i == 10) WeaponBacks[CurOrder[2]].SetAsLastSibling();
                     WeaponBacks[CurOrder[2]].sizeDelta = new Vector2(100 + i, 100 + i);
                     WeaponBacks[CurOrder[1]].sizeDelta = new Vector2(120 - i, 120 - i);
-                    for (int l = 0; l < 4; l++) WeaponBacks[CurOrder[l]].Translate(-5, 0, 0);
+                    for (int l = 0; l < 4; l++) WeaponBacks[CurOrder[l]].anchoredPosition += new Vector2(-5, 0);
+
                     yield return SlideWait;
                 }
                 CurOrder.Add(cnt); WeaponBacks[cnt].localPosition = new Vector2(200, 0);
-                GameManager.instance.PlayerScript.ChangeWeapon(-1);
+                GameManager.instance.PlayerScript.ChangeWeapon(1);
             }
 
             SlideCount--;
@@ -199,7 +209,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] List<Sprite> PinType; // 0 : Unknown, 1 : Base, 2 : Monster, 3 : Puzzle, 4 : Heal, 5 : Shop, 6: Fog
     int[,] RoomTypes;
     Image[,] PinSprites;
-    [SerializeField] Transform Pins;
+    [SerializeField] RectTransform Pins;
     [SerializeField] GameObject MapPin, PassPin,FogPin;
     GameObject[,] Fogs;
     int Lastx = 0, Lasty = 0;
@@ -211,7 +221,7 @@ public class UIManager : MonoBehaviour
             Fogs[x, y].SetActive(false);
             if (GameManager.instance.Map.MapType[x, y] >= 4) GameManager.instance.OpenNearRoom(x, y);
         }
-        Pins.transform.Translate(new Vector2((Lastx - x) * 75, (Lasty - y) * 75));
+        Pins.anchoredPosition += new Vector2((Lastx - x) * 75, (Lasty - y) * 75);
         Lastx = x; Lasty = y;
     }
     #endregion
@@ -270,7 +280,7 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
-
+#region Pause
     RenderTexture captured;
     int CurStopCall = 0;
 
@@ -322,5 +332,5 @@ public class UIManager : MonoBehaviour
             GameManager.instance.SetTime(0, true);
         }
     }
-    
+    #endregion
 }
