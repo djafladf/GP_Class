@@ -50,10 +50,15 @@ public class UIManager : MonoBehaviour
                     GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x, 75 * y + 37.5f);
                 }
             }
-
+        Lastx = GameManager.instance.bx; Lasty = GameManager.instance.by;
     }
 
-#region Weapon
+    private void Start()
+    {
+        GameManager.instance.Player.gameObject.SetActive(true);
+    }
+
+    #region Weapon
     [Header("Weapon Settings")]
     public List<Sprite> WeaponIm;
     [SerializeField] RectTransform WeaponSet;
@@ -212,6 +217,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject MapPin, PassPin,FogPin;
     GameObject[,] Fogs;
     int Lastx = 0, Lasty = 0;
+    bool IsInit = true;
+    int[,] Mapdp = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
     public void MapSetting(int x, int y,bool IsUnknown = false)
     {
         if (IsUnknown)
@@ -221,6 +228,27 @@ public class UIManager : MonoBehaviour
             if (GameManager.instance.Map.MapType[x, y] >= 4) GameManager.instance.OpenNearRoom(x, y);
         }
         Pins.anchoredPosition += new Vector2((Lastx - x) * 75, (Lasty - y) * 75);
+
+        if (!IsInit)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (GameManager.instance.Map.GoAble[Lastx, Lasty][i] != 1) continue;
+                int nx = Lastx + Mapdp[i, 0], ny = Lasty + Mapdp[i, 1];
+                if (nx == x && ny == y) continue;
+                GameManager.instance.Map.RoomPrefs[nx, ny].SetActive(false);
+            }
+        }
+        else IsInit = false;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (GameManager.instance.Map.GoAble[x, y][i] != 1) continue;
+            int nx = x + Mapdp[i, 0], ny = y + Mapdp[i, 1];
+            GameManager.instance.Map.RoomPrefs[nx, ny].SetActive(true);
+        }
+
+
         Lastx = x; Lasty = y;
     }
     #endregion

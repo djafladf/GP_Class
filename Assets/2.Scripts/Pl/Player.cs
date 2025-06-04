@@ -29,6 +29,12 @@ public class Player : MonoBehaviour
         audiodio = GetComponent<AudioSource>();
         GameManager.instance.CV.Follow = transform;
         GameManager.instance.CV.LookAt = Aim;
+
+        GameManager.instance.Player = transform;
+        GameManager.instance.PlayerScript = this;
+        GameManager.instance.PlayerHealFunc = HealFunction;
+
+        gameObject.SetActive(false);
     }
 
     private void Start()
@@ -37,9 +43,7 @@ public class Player : MonoBehaviour
         CurUnlocked = new List<int>(GameManager.instance.Data.Weapon.Count); CurUnlocked.Add(0); CurUnlocked.Add(3);
         Muzzles = new List<MeshRenderer>(GameManager.instance.Data.Weapon.Count);  Muzzles.Add(Weapons[0].GetChild(0).GetComponent<MeshRenderer>()); Muzzles.Add(Weapons[1].GetChild(0).GetComponent<MeshRenderer>());
 
-        GameManager.instance.Player = transform;
-        GameManager.instance.PlayerScript = this;
-        GameManager.instance.PlayerHealFunc = HealFunction;
+        
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
         Invoke("StartBug", 0.5f);
         Tuto.transform.SetParent(GameManager.instance.transform);

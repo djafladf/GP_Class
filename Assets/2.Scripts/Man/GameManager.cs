@@ -81,6 +81,7 @@ public class GameManager : MonoBehaviour
         public int MinSpreadDepth;
         public int[,] MapType;
         public int[,] Depth;
+        public GameObject[,] RoomPrefs;
         public Vector4[,] GoAble;
         public MapController[,] MapCont;
     }
@@ -99,7 +100,7 @@ public class GameManager : MonoBehaviour
     int[] dp2 = { 1, 0, 3, 2 };
     public void MapMaking()
     {
-        Map.MapType = new int[Map.MapSize, Map.MapSize]; Map.Depth = new int[Map.MapSize, Map.MapSize]; Map.GoAble = new Vector4[Map.MapSize, Map.MapSize]; Map.MapCont = new MapController[Map.MapSize, Map.MapSize];
+        Map.MapType = new int[Map.MapSize, Map.MapSize]; Map.Depth = new int[Map.MapSize, Map.MapSize]; Map.GoAble = new Vector4[Map.MapSize, Map.MapSize]; Map.MapCont = new MapController[Map.MapSize, Map.MapSize]; Map.RoomPrefs = new GameObject[Map.MapSize, Map.MapSize];
         bx = Random.Range(1, Map.MapSize - 1); by = Random.Range(1, Map.MapSize-1);
         Map.MapType[bx,by] = 1;
         var s = new MapQue(1, new Vector2(bx, by));
@@ -131,8 +132,8 @@ public class GameManager : MonoBehaviour
         {
             MapQue cnt = que.Dequeue();
             var cmap = Instantiate(MapPref, MapPr); cmap.transform.position = new Vector3(80 * cnt.CurPos.x, 0, 80 * cnt.CurPos.y);
-            int cx = Mathf.FloorToInt(cnt.CurPos.x), cy = Mathf.FloorToInt(cnt.CurPos.y);
-            if (Map.MapType[cx,cy]!=1) Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform);
+            int cx = Mathf.FloorToInt(cnt.CurPos.x), cy = Mathf.FloorToInt(cnt.CurPos.y); Map.RoomPrefs[cx, cy] = cmap;
+            if (Map.MapType[cx, cy] != 1) Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform);
             Map.MapCont[cx, cy] = cmap.transform.GetChild(0).GetComponent<MapController>();
             Map.MapCont[cx, cy].Init(cx, cy);
             if (cnt.CurDepth == Map.MaxDepth) continue;

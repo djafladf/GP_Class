@@ -8,6 +8,11 @@ public class MapController : MonoBehaviour
     bool IsUnknown = true;
     int Indx, Indy;
 
+    private void Start()
+    {
+        if(Indx != GameManager.instance.bx || Indy != GameManager.instance.by)transform.parent.gameObject.SetActive(false);
+    }
+
     public void Init(int x, int y)
     {
         Indx = x; Indy = y;
