@@ -13,6 +13,7 @@ public class DataManager : MonoBehaviour
     [SerializeField] List<GameObject> Legend;
     [SerializeField] float[] Prob;
 
+    public GameObject Drone;
 
     [Header("Gun")]
     public List<WeaponInfo> Weapon;
@@ -78,6 +79,10 @@ public class DataManager : MonoBehaviour
         {
             int cnt = ind * 3 + Rarity;
             GameManager.instance.PlayerScript.WeaponLevelUp(cnt);
+        }
+        else
+        {
+            GameManager.instance.PlayerScript.DroneAdd();
         }
     }
 }

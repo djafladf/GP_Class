@@ -7,8 +7,6 @@ Shader "UnityChan/Hair - Double-sided"
         _SpecularPower ("Specular Power", Float) = 20
         _EdgeThickness ("Outline Thickness", Float) = 1
 
-        _Exposure ("Skin Brightness", Float) = 1.0
-
         _MainTex ("Diffuse", 2D) = "white" {}
         _FalloffSampler ("Falloff Control", 2D) = "white" {}
         _RimLightSampler ("RimLight Control", 2D) = "white" {}

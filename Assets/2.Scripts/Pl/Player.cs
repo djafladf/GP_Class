@@ -11,25 +11,24 @@ public class Player : MonoBehaviour
     [SerializeField] Transform Tuto;
     [SerializeField] Transform WeaponHolder;
     [SerializeField] Transform FirePos;
-    [SerializeField] CinemachineVirtualCamera CV;
     [SerializeField] AudioClip[] audioclips;
     [SerializeField] MeshRenderer muzzleFlash;
 
     Rigidbody rigid;
     Animator anim;
 
-    CinemachineTransposer transposer;
     AudioSource audiodio;
+
 
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
-        transposer = CV.GetCinemachineComponent<CinemachineTransposer>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         audiodio = GetComponent<AudioSource>();
-
+        GameManager.instance.CV.Follow = transform;
+        GameManager.instance.CV.LookAt = Aim;
     }
 
     private void Start()
@@ -44,6 +43,8 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
         Invoke("StartBug", 0.5f);
         Tuto.transform.SetParent(GameManager.instance.transform);
+
+        /*DroneAdd(); DroneAdd(); DroneAdd();*/
 
         //GameManager.instance.UI.ScoreUp(1000);
         //WeaponLevelUp(1); WeaponLevelUp(2); WeaponLevelUp(4); WeaponLevelUp(5);
@@ -117,15 +118,42 @@ public class Player : MonoBehaviour
         BulletGage.fillAmount = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag / GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
     }
 
-    public void WeaponLevelUp(int ind)
+    public bool WeaponLevelUp(int ind)
     {
         if (GameManager.instance.Data.Weapon[ind].LV == 0)
         {
             var cnt = Instantiate(GameManager.instance.Data.Weapon[ind].Obj, WeaponHolder); Weapons.Add(cnt.transform); CurUnlocked.Add(ind); Muzzles.Add(cnt.transform.GetChild(0).GetComponent<MeshRenderer>()); cnt.SetActive(false);
             GameManager.instance.UI.AddWeaponImage(GameManager.instance.Data.Weapon[ind].Im);
         }
-        GameManager.instance.Data.Weapon[ind].LV++;
+        else
+        {
+            switch (GameManager.instance.Data.Weapon[ind].LV)
+            {
+                case 1:
+                    GameManager.instance.Data.Weapon[ind].MaxMag *= 2; break;
+                case 2:
+                    GameManager.instance.Data.Weapon[ind].bound *= 0.9f; break;
+                case 3:     // Damage Increase
+                    break;
+                case 4:
+                    GameManager.instance.Data.Weapon[ind].spread *= 0.9f; break;
+                case 5:
+                    GameManager.instance.Data.Weapon[ind].power *= 1.25f; break;
+                case 6:
+                    GameManager.instance.Data.Weapon[ind].bnum *= 2; return true; break;
 
+            }
+        }
+        GameManager.instance.Data.Weapon[ind].LV++;
+        return false;
+
+    }
+
+    int DroneCount = 0;
+    public void DroneAdd()
+    {
+        var cnt = Instantiate(GameManager.instance.Data.Drone,transform); float deg; if (DroneCount % 2 == 0) deg = DroneCount * 30f * Mathf.Deg2Rad; else deg = (210 - DroneCount * 30) * Mathf.Deg2Rad;
+        cnt.transform.localPosition = new Vector3(0.1f + Mathf.Cos(deg),1.5f + Mathf.Sin(deg),Random.Range(-0.3f,0.3f)); DroneCount++;
     }
 
     
@@ -138,6 +166,7 @@ public class Player : MonoBehaviour
     // WASD, Shaft
     void OnMove(InputValue value)
     {
+        Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
         Dir = value.Get<Vector2>();
         anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
         anim.SetBool("OnMove", !Dir.Equals(Vector2.zero));
@@ -180,10 +209,10 @@ public class Player : MonoBehaviour
     {
         if (!MoveAble) return;
         _onFocus = _onFocus == false;
-        if (_onFocus) transposer.m_FollowOffset = new Vector3(0.5f, 1.7f, 0.2f);
+        if (_onFocus) GameManager.instance.CVtr.m_FollowOffset = new Vector3(0.5f, 1.7f, 0.2f);
         else
         {
-            transposer.m_FollowOffset = new Vector3(0.5f, 2, -1.5f);
+            GameManager.instance.CVtr.m_FollowOffset = new Vector3(0.5f, 2, -1.5f);
             Aim.localPosition = new Vector3(0.5f, 1.5f, Aim.localPosition.z);
         }
     }
@@ -294,10 +323,10 @@ public class Player : MonoBehaviour
     }
 
     [SerializeField] List<GameObject> BuffObjects;
-    float[] BuffAmount = { 0, 0, 0 ,1, 0};  // 공, 방, 속, 범위, 재장속
+    public float[] BuffAmount = { 0, 0, 0 ,1, 0,1,1};  // 공, 방, 속, 범위, 재장속, 돈, 경치
     public void HealFunction(int Count)
     {
-        BuffObjects[0].SetActive(true);
+        BuffObjects[0].SetActive(true); audiodio.PlayOneShot(audioclips[4]);
         CurHP = Mathf.Min(MaxHP, CurHP + Count);
         GameManager.instance.UI.HPChange(CurHP / MaxHP);
     }

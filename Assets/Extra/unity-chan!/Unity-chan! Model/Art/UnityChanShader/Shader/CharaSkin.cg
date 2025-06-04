@@ -12,7 +12,6 @@ float4 _Color;
 float4 _ShadowColor;
 float4 _LightColor0;
 float4 _MainTex_ST;
-float _Exposure;
 
 // Textures
 sampler2D _MainTex;
@@ -109,11 +108,9 @@ float4 frag( v2f i ) : COLOR
 	falloffU = saturate( rimlightDot * falloffU );
 	//falloffU = saturate( ( rimlightDot * falloffU - 0.5 ) * 32.0 );
 	falloffU = tex2D( _RimLightSampler, float2( falloffU, 0.25f ) ).r;
-	float3_t lightColor = diffSamplerColor.rgb; // * 0.5f;
+	float3_t lightColor = diffSamplerColor.rgb * 0.5; // * 2.0;
 	combinedColor += falloffU * lightColor;
 
-	//combinedColor = pow(combinedColor, float3(0.8, 0.8, 0.8));
-	combinedColor = combinedColor / (combinedColor + 1.0f + _Exposure);
 
 	#define SHADOW_ATTENUATION(a) 1.0
 	#define LIGHT_ATTENUATION(a) SHADOW_ATTENUATION(a)

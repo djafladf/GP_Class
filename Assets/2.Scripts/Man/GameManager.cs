@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,12 +26,12 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public DataManager Data;
     [HideInInspector] public Transform ParticleSet;
 
-    
-
+    public CinemachineVirtualCamera CV;
+    public CinemachineTransposer CVtr;
     public Action<int> PlayerHealFunc;
     private void Awake()
     {
-        if (instance == null) instance = this;
+        if (instance == null) { instance = this; CVtr = CV.GetCinemachineComponent<CinemachineTransposer>(); }
         else Destroy(gameObject);
     }
 
@@ -39,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
 
     }
-
+    
     [SerializeField] Volume Volume_Day;
     [SerializeField] Volume Volume_Night;
     [SerializeField] float TimeVar = 1;
@@ -125,7 +126,7 @@ public class GameManager : MonoBehaviour
         }
         Map.MapType[lastx, lasty] = 6; // Boss
         
-        float[] Depth = { 0,0.75f, 0.5f, 0.4f, 0.2f, 0 };
+        float[] Depth = { 0,0.7f, 0.4f, 0.3f, 0.2f, 0 };
         while(que.Count > 0)
         {
             MapQue cnt = que.Dequeue();

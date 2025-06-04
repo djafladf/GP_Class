@@ -26,7 +26,6 @@ public class UIManager : MonoBehaviour
     [HideInInspector] public int CurScore = 0;
     private void Awake()
     {
-        Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false;
         GameManager.instance.UI = this;
         WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
         captured = new RenderTexture(Screen.width, Screen.height, 0);
@@ -165,7 +164,7 @@ public class UIManager : MonoBehaviour
     }
     public void ScoreUp(int amount = 10)
     {
-        CurScore += amount;
+        CurScore += Mathf.FloorToInt(amount * GameManager.instance.PlayerScript.BuffAmount[5]);
         Score.text = $"{CurScore}".PadLeft(5, '0');
     }
     public void HPChange(float rf)
@@ -178,7 +177,7 @@ public class UIManager : MonoBehaviour
     int CurLevel = 1;
     public void ExpChange(float amount)
     {
-        CurExpVar += ExpSub * amount;
+        CurExpVar += ExpSub * amount * GameManager.instance.PlayerScript.BuffAmount[6];
         if (CurExpVar >= 1)
         {
             CurExpVar--;
@@ -263,7 +262,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] Sprite[] LevelUpSpr;
     [SerializeField] TMP_Text[] LevelUpText;
     [SerializeField] string[] UpSubText;
-    int[] Uparray = { 0, 1, 2, 3, 4 };
+    int[] Uparray = { 0, 1, 2, 3, 4,5,6 };
     public void LevelUp()
     {
         Uparray = Uparray.OrderBy(x => Guid.NewGuid()).ToArray();

@@ -4,7 +4,6 @@ Shader "UnityChan/Eye - Transparent"
     {
         _Color ("Main Color", Color) = (1, 1, 1, 1)
         _ShadowColor ("Shadow Color", Color) = (0.8, 0.8, 1, 1)
-        _Exposure ("Skin Brightness", Float) = 1
 
         _MainTex ("Diffuse", 2D) = "white" {}
         _FalloffSampler ("Falloff Control", 2D) = "white" {}

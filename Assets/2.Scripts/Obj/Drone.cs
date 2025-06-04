@@ -6,6 +6,10 @@ public class Drone : MonoBehaviour
 {
     [SerializeField] GameObject Bullet;
     [SerializeField] LayerMask Targetmask;
+    [SerializeField] AudioClip Laser;
+
+    [SerializeField] AudioSource audioio;
+    [SerializeField] Animator anim;
     List<Bullet> MyBull = new List<Bullet>();
 
     private void Start()
@@ -17,11 +21,12 @@ public class Drone : MonoBehaviour
     int LastBull = 0;
     IEnumerator Fire()
     {
-        WaitForSeconds wfs = new WaitForSeconds(1f);
+        WaitForSeconds wfs = new WaitForSeconds(2f);
         while (true)
         {
-            if(Physics.SphereCast(transform.position, 10, transform.forward, out RaycastHit hit, 10,Targetmask))
+            if(Physics.SphereCast(transform.position, 5, transform.forward, out RaycastHit hit, 5,Targetmask))
             {
+                audioio.PlayOneShot(Laser,0.5f); anim.SetTrigger("Attack");
                 MyBull[LastBull++].Init(transform.position, (hit.transform.position - transform.position).normalized, 3); LastBull = LastBull % 3;
                 yield return wfs;
             }

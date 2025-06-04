@@ -19768,7 +19768,7 @@ MonoBehaviour:
   MyMap: {fileID: 0}
   AltarType: 0
   st:
-  - LastTime: 60
+  - LastTime: 45
     StartTime:
     - 0
     SpawnGap:
@@ -19778,13 +19778,13 @@ MonoBehaviour:
   - LastTime: 60
     StartTime:
     - 0
-    - 0
-    SpawnGap:
-    - 2
     - 1
+    SpawnGap:
+    - 1.5
+    - 1.5
     EnemyID: 0000000001000000
     SpawnPos: []
-  - LastTime: 90
+  - LastTime: 75
     StartTime:
     - 0
     SpawnGap:

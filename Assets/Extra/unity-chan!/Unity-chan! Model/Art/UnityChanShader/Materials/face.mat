@@ -38,7 +38,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _EdgeThickness: 0.5
-    - _Exposure: -0.9
+    - _Exposure: 0
     - _FalloffPower: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
