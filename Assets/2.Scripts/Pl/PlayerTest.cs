@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class PlayerTest : MonoBehaviour
 {
-    [SerializeField] CinemachineVirtualCamera CV;
     [SerializeField] Transform WeaponHolder;
     Rigidbody rigid;
     Animator anim;
@@ -18,28 +17,25 @@ public class PlayerTest : MonoBehaviour
 
     Transform Spine;
 
+    [SerializeField] Vector3 FolllowOffset;
+    [SerializeField] Vector3 FollowOffset_Z;
+
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
-
-        transposer = CV.GetCinemachineComponent<CinemachineTransposer>();
-
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         audiodio = GetComponent<AudioSource>();
         MoveAble = true;
-        WeaponIdleRot = WeaponHolder.localRotation;
-
         Spine = anim.GetBoneTransform(HumanBodyBones.Spine);
+        GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
     }
 
     Quaternion WeaponIdleRot;
 
     float MoveSpeed = 5f;
     bool MoveAble = false;
-
-    [SerializeField] Vector3 GapHold;
 
     private void FixedUpdate()
     {
@@ -50,13 +46,11 @@ public class PlayerTest : MonoBehaviour
             rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * (MoveSpeed));
         }
     }
-
-
-    [SerializeField] float angle;
+    float angle;
     private void LateUpdate()
     {
         angle = Mathf.Atan2(Aim.localPosition.y - 1.2f, 1) * Mathf.Rad2Deg;
-        Spine.localRotation = Quaternion.Euler(0, 0, angle);
+        Spine.localRotation = Quaternion.Euler(-10, 0, angle);
     }
 
     #region Gun
@@ -124,10 +118,10 @@ public class PlayerTest : MonoBehaviour
     {
         if (!MoveAble) return;
         _onFocus = _onFocus == false;
-        if (_onFocus) transposer.m_FollowOffset = new Vector3(0.2f, 1.6f, 0.25f);
+        if (_onFocus) GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
         else
         {
-            transposer.m_FollowOffset = new Vector3(0.2f, 2, -1.5f);
+            GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
             Aim.localPosition = new Vector3(0.2f, 1.5f, Aim.localPosition.z);
         }
     }
