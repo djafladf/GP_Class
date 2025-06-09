@@ -7,8 +7,6 @@ public class Drone : MonoBehaviour
     [SerializeField] GameObject Bullet;
     [SerializeField] LayerMask Targetmask;
     [SerializeField] AudioClip Laser;
-
-    [SerializeField] AudioSource audioio;
     [SerializeField] Animator anim;
     List<Bullet> MyBull = new List<Bullet>();
 
@@ -26,7 +24,8 @@ public class Drone : MonoBehaviour
         {
             if(Physics.SphereCast(transform.position, 5, transform.forward, out RaycastHit hit, 5,Targetmask))
             {
-                audioio.PlayOneShot(Laser,0.5f); anim.SetTrigger("Attack");
+                GameManager.instance.Audio.PlayClip(2, 0.5f, Laser);
+                anim.SetTrigger("Attack");
                 MyBull[LastBull++].Init(transform.position, (hit.transform.position - transform.position).normalized, 3); LastBull = LastBull % 3;
                 yield return wfs;
             }

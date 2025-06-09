@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3674855217472570993}
   - component: {fileID: 4991065105181339598}
   - component: {fileID: 4194075351651189366}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 4258783681574573809}
   - component: {fileID: 8738710019852512543}
   - component: {fileID: 5399252547279926311}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 2478265585389652968}
   - component: {fileID: 2095149527981738969}
   - component: {fileID: 2361269038350864597}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -455,7 +455,7 @@ GameObject:
   - component: {fileID: 5146069254574943217}
   - component: {fileID: 3853776835207474423}
   - component: {fileID: 1857612013191987362}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -560,7 +560,7 @@ GameObject:
   - component: {fileID: 1972383527915001564}
   - component: {fileID: 2072287823067858140}
   - component: {fileID: 5760012561896391103}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -665,7 +665,7 @@ GameObject:
   - component: {fileID: 8152855268237628103}
   - component: {fileID: 5838501303724394485}
   - component: {fileID: 5927718289074184965}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 8435113480401241923}
   - component: {fileID: 1509891649088365112}
   - component: {fileID: 604413292848141856}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -875,7 +875,7 @@ GameObject:
   - component: {fileID: 4160480921404068309}
   - component: {fileID: 2050363318654802682}
   - component: {fileID: 7670040363236461424}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -980,7 +980,7 @@ GameObject:
   - component: {fileID: 3135857840095066708}
   - component: {fileID: 8894234992801583196}
   - component: {fileID: 2571581655653611036}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock (4)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1085,7 +1085,7 @@ GameObject:
   - component: {fileID: 7626147816708509819}
   - component: {fileID: 6772908096198444792}
   - component: {fileID: 3998827570957542689}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock (3)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1190,7 +1190,7 @@ GameObject:
   - component: {fileID: 8224235294042236861}
   - component: {fileID: 1753866140703202353}
   - component: {fileID: 874493173406281502}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock (6)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1295,7 +1295,7 @@ GameObject:
   - component: {fileID: 4001460698859746931}
   - component: {fileID: 6074158114337479205}
   - component: {fileID: 2090231273482967225}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1400,7 +1400,7 @@ GameObject:
   - component: {fileID: 6582796247954361893}
   - component: {fileID: 6682837676629944872}
   - component: {fileID: 2493381444454780518}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1505,7 +1505,7 @@ GameObject:
   - component: {fileID: 2863125068675483853}
   - component: {fileID: 4334398542386499480}
   - component: {fileID: 18347328287929193}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1696,7 +1696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4691902de476acf45b3d11ebed593669, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cost: 0
+  Cost: 150
 --- !u!65 &1438608370440738493
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1730,7 +1730,7 @@ GameObject:
   - component: {fileID: 1541787162915585406}
   - component: {fileID: 4510032528806592780}
   - component: {fileID: 3251461891710416717}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1835,7 +1835,7 @@ GameObject:
   - component: {fileID: 6696152795884421713}
   - component: {fileID: 6617562921256597487}
   - component: {fileID: 5768309513597340202}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock (1)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1940,7 +1940,7 @@ GameObject:
   - component: {fileID: 8560688223877806298}
   - component: {fileID: 2917277003930602781}
   - component: {fileID: 1261484922679101144}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock (5)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2045,7 +2045,7 @@ GameObject:
   - component: {fileID: 2860507298008778708}
   - component: {fileID: 6760257129359297171}
   - component: {fileID: 199046617525212979}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2150,7 +2150,7 @@ GameObject:
   - component: {fileID: 1215311246009156521}
   - component: {fileID: 6985103535383926453}
   - component: {fileID: 6663930062500560312}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2255,7 +2255,7 @@ GameObject:
   - component: {fileID: 3023867231713898665}
   - component: {fileID: 1227264251561792371}
   - component: {fileID: 140148776698860926}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2360,7 +2360,7 @@ GameObject:
   - component: {fileID: 1196863154683172009}
   - component: {fileID: 1962314377000578890}
   - component: {fileID: 165247990805010768}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2465,7 +2465,7 @@ GameObject:
   - component: {fileID: 3005730521545115350}
   - component: {fileID: 2811546233690807128}
   - component: {fileID: 6514946228917311806}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2570,7 +2570,7 @@ GameObject:
   - component: {fileID: 6422925546692289622}
   - component: {fileID: 3020948352845826843}
   - component: {fileID: 4595423172335560765}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2675,7 +2675,7 @@ GameObject:
   - component: {fileID: 232654493161638065}
   - component: {fileID: 2476762198488759806}
   - component: {fileID: 942477240537154269}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock (2)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2780,7 +2780,7 @@ GameObject:
   - component: {fileID: 3805463703929972563}
   - component: {fileID: 2118327720727335519}
   - component: {fileID: 7358566883782183928}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -3072,7 +3072,7 @@ GameObject:
   - component: {fileID: 2874199174625496859}
   - component: {fileID: 695194155349741633}
   - component: {fileID: 1870872049458173637}
-  m_Layer: 6
+  m_Layer: 12
   m_Name: Rock
   m_TagString: Floor
   m_Icon: {fileID: 0}

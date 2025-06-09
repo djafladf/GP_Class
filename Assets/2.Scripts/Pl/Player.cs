@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,12 +13,13 @@ public class Player : MonoBehaviour
     [SerializeField] Transform WeaponHolder;
     [SerializeField] Transform FirePos;
     [SerializeField] AudioClip[] audioclips;
-    [SerializeField] MeshRenderer muzzleFlash;
+    MeshRenderer muzzleFlash;
+
+    [SerializeField] Vector3 FolllowOffset;
+    [SerializeField] Vector3 FollowOffset_Z;
 
     Rigidbody rigid;
     Animator anim;
-
-    AudioSource audiodio;
 
 
     private void Awake()
@@ -26,29 +28,31 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        audiodio = GetComponent<AudioSource>();
         GameManager.instance.CV.Follow = transform;
         GameManager.instance.CV.LookAt = Aim;
+        GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
 
         GameManager.instance.Player = transform;
         GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
+
+        Weapons = new List<Transform>(GameManager.instance.Data.Weapon.Count);// Init Start;
+        CurUnlocked = new List<int>(GameManager.instance.Data.Weapon.Count);
+        Muzzles = new List<MeshRenderer>(GameManager.instance.Data.Weapon.Count);
+        NextShoottime = new WaitForSeconds(0.1667f);
+        
+
+        if (anim.avatar != null) Spine = anim.GetBoneTransform(HumanBodyBones.Spine);
 
         gameObject.SetActive(false);
     }
 
     private void Start()
     {
-        Weapons = new List<Transform>(GameManager.instance.Data.Weapon.Count); for (int i = 0; i < 2; i++) Weapons.Add(WeaponHolder.GetChild(i).transform);     // Init Start;
-        CurUnlocked = new List<int>(GameManager.instance.Data.Weapon.Count); CurUnlocked.Add(0); CurUnlocked.Add(3);
-        Muzzles = new List<MeshRenderer>(GameManager.instance.Data.Weapon.Count);  Muzzles.Add(Weapons[0].GetChild(0).GetComponent<MeshRenderer>()); Muzzles.Add(Weapons[1].GetChild(0).GetComponent<MeshRenderer>());
-
-        
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
-        Invoke("StartBug", 0.5f);
         Tuto.transform.SetParent(GameManager.instance.transform);
-
-        /*DroneAdd(); DroneAdd(); DroneAdd();*/
+        Invoke("StartBug", 0.5f);
+        //DroneAdd(); DroneAdd(); DroneAdd();
 
         //GameManager.instance.UI.ScoreUp(1000);
         //WeaponLevelUp(1); WeaponLevelUp(2); WeaponLevelUp(4); WeaponLevelUp(5);
@@ -67,97 +71,108 @@ public class Player : MonoBehaviour
         if (!Dir.Equals(Vector2.zero))
         {
             Vector3 NextDir = (transform.forward * Dir.y + transform.right * Dir.x).normalized;
-            rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * (MoveSpeed + BuffAmount[2]));
+            rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * MoveSpeed * BuffAmount[2]);
         }
     }
 
+    Transform Spine;
+    float Spineangle, Subangle;
+    private void LateUpdate()
+    {
+        if (Spine == null) return;
+        Spineangle = Mathf.Atan2(Aim.localPosition.y - 1.2f, 1) * Mathf.Rad2Deg;
+        Subangle = Mathf.Atan2(Aim.localPosition.x, Aim.localPosition.z) * Mathf.Rad2Deg;
+        Spine.localRotation = Quaternion.Euler(-Subangle, 0, Spineangle);
+    }
+
+
     #region Gun
-    [SerializeField]List<Transform> Weapons;
+    List<Transform> Weapons;
     List<int> CurUnlocked;
-    [SerializeField] List<MeshRenderer> Muzzles;
+    List<MeshRenderer> Muzzles;
     public int CurWeaponInd = 0;
     
-
-
     Vector3 Dir;
-    IEnumerator Shoot_Sub()
+
+    bool _onFire = false;
+    void OnFire(InputValue value)
+    {
+        if (!MoveAble | anim.GetBool("OnChangeWeapon") | Time.timeScale == 0 | _onReload) return;
+        if (value.isPressed)
+        {
+            _onFire = true;
+            anim.SetBool("OnFire", true);
+            SlowSetting(true,1);
+            if (ShootCor == null) ShootCor = StartCoroutine(ShootTrigger());
+        }
+        else
+        {
+            SlowSetting(false,1);
+            _onFire = false;
+            anim.SetBool("OnFire", false);
+        }
+    }
+    WaitForSeconds NextShoottime;
+    IEnumerator ShootTrigger()
+    {
+        while (_onFire)
+        {
+            ShootFunction();
+            yield return NextShoottime;
+        }
+        
+        ShootCor = null;
+    }
+
+    /*IEnumerator Shoot_Sub()
     {
         if (CurUnlocked[CurWeaponInd] >= 3) { anim.SetBool("OnFire",false); yield return new WaitForSeconds(GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].rpm * 0.17f - 0.165f); }
         if (_onFire) anim.SetBool("OnFire", true);
         else { anim.SetBool("OnFire", false); FirstFire = true; }
         ShootCor = null;
-    }
+    }*/
 
     Coroutine ShootCor = null;
-    void EndShoot()
-    {
-        if(ShootCor == null) ShootCor = StartCoroutine(Shoot_Sub());
-    }
 
-    public void Shoot()
+
+    public void ShootFunction()
     {
-        if (ShootCor != null) return;
-        if (GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag <= 0) return;
+        if (CurWeaponInfo.CurMag <= 0) return;
         float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-        if (Aim.localPosition.y < 3)
-        {
-            Aim.Translate(0, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].bound * 0.02f, 0);
-            if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir; }
-        }
-        audiodio.PlayOneShot(audioclips[0],0.8f);
-        if(!muzzleFlash.enabled)StartCoroutine(ShowMuzzleFlash());
+        Aim.Translate(0, Mathf.Clamp(CurWeaponInfo.bound * 0.02f,0,3f), 0);
+        GameManager.instance.Audio.PlayClip(2, 0.8f, audioclips[0]);
+        if(!muzzleFlash.enabled) StartCoroutine(ShowMuzzleFlash());
 
-        for (int _ = 0; _ < GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].bnum; _++)
+        for (int _ = 0; _ < CurWeaponInfo.bnum; _++)
         {
             Quaternion randomRot = Quaternion.Euler(
-                   Random.Range(-GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread), // 상하
-                   Random.Range(-GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].spread), // 좌우
+                   Random.Range(-CurWeaponInfo.spread, CurWeaponInfo.spread), // 상하
+                   Random.Range(-CurWeaponInfo.spread, CurWeaponInfo.spread), // 좌우
                    0
                );
             Vector3 spreadDirection = randomRot * Weapons[CurWeaponInd].forward;
-            GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection, GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].power);
+            GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection, CurWeaponInfo.power);
         }
-        GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag -= 1;
-        BulletText.text = $"{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag}/{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag}"; 
-        BulletGage.fillAmount = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag / GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
+        CurWeaponInfo.CurMag -= 1;
+        BulletText.text = $"{CurWeaponInfo.CurMag}/{CurWeaponInfo.MaxMag}"; 
+        BulletGage.fillAmount = CurWeaponInfo.CurMag / CurWeaponInfo.MaxMag;
     }
 
-    public bool WeaponLevelUp(int ind)
+    public void WeaponAdd(int ind)
     {
-        if (GameManager.instance.Data.Weapon[ind].LV == 0)
+        var cnt = Instantiate(GameManager.instance.Data.Weapon[ind].Obj, WeaponHolder); Weapons.Add(cnt.transform); CurUnlocked.Add(ind); Muzzles.Add(cnt.transform.GetChild(0).GetComponent<MeshRenderer>()); cnt.SetActive(false);
+        GameManager.instance.UI.AddWeaponImage(GameManager.instance.Data.Weapon[ind].Im);
+        if(Weapons.Count == 1)
         {
-            var cnt = Instantiate(GameManager.instance.Data.Weapon[ind].Obj, WeaponHolder); Weapons.Add(cnt.transform); CurUnlocked.Add(ind); Muzzles.Add(cnt.transform.GetChild(0).GetComponent<MeshRenderer>()); cnt.SetActive(false);
-            GameManager.instance.UI.AddWeaponImage(GameManager.instance.Data.Weapon[ind].Im);
+            muzzleFlash = Muzzles[0]; FirePos = Weapons[0].GetChild(0); CurWeaponInfo = GameManager.instance.Data.Weapon[0]; Weapons[0].gameObject.SetActive(true);
         }
-        else
-        {
-            switch (GameManager.instance.Data.Weapon[ind].LV)
-            {
-                case 1:
-                    GameManager.instance.Data.Weapon[ind].MaxMag *= 2; break;
-                case 2:
-                    GameManager.instance.Data.Weapon[ind].bound *= 0.9f; break;
-                case 3:     // Damage Increase
-                    break;
-                case 4:
-                    GameManager.instance.Data.Weapon[ind].spread *= 0.9f; break;
-                case 5:
-                    GameManager.instance.Data.Weapon[ind].power *= 1.25f; break;
-                case 6:
-                    GameManager.instance.Data.Weapon[ind].bnum *= 2; return true; break;
-
-            }
-        }
-        GameManager.instance.Data.Weapon[ind].LV++;
-        return false;
-
     }
 
     int DroneCount = 0;
     public void DroneAdd()
     {
         var cnt = Instantiate(GameManager.instance.Data.Drone,transform); float deg; if (DroneCount % 2 == 0) deg = DroneCount * 30f * Mathf.Deg2Rad; else deg = (210 - DroneCount * 30) * Mathf.Deg2Rad;
-        cnt.transform.localPosition = new Vector3(0.1f + Mathf.Cos(deg),1.5f + Mathf.Sin(deg),Random.Range(-0.3f,0.3f)); DroneCount++;
+        cnt.transform.localPosition = new Vector3(Mathf.Cos(deg),1.2f + Mathf.Sin(deg),Random.Range(-0.3f,0.3f)); DroneCount++;
     }
 
     
@@ -167,74 +182,166 @@ public class Player : MonoBehaviour
     #region InputSystems
 
     Coroutine WalkSoundCor = null;
-    // WASD, Shaft
+
+    bool[] SlowCall = { false,false,false}; // Move, Shoot, Reload;
+    void SlowSetting(bool IsSlow,int ind)
+    {
+        SlowCall[ind] = IsSlow;
+        if (SlowCall[0] | SlowCall[1] | SlowCall[2]) MoveSpeed = 3.5f;
+        else MoveSpeed = 5f;
+    }
+
     void OnMove(InputValue value)
     {
         Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
+
         Dir = value.Get<Vector2>();
+        if (Dir.y < 0) SlowSetting(true,0);
+        else SlowSetting(false,0);
         anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
         anim.SetBool("OnMove", !Dir.Equals(Vector2.zero));
+
         if (!Dir.Equals(Vector2.zero) && WalkSoundCor == null) WalkSoundCor = StartCoroutine(WalkSound());
     }
+
     bool walkType = false;
-    IEnumerator WalkSound() { while (!Dir.Equals(Vector2.zero)) { audiodio.PlayOneShot(walkType ? audioclips[2] : audioclips[3], 0.8f); walkType =walkType == false; yield return GameManager.DotThree; } WalkSoundCor = null; }
+    IEnumerator WalkSound() { while (!Dir.Equals(Vector2.zero)) { GameManager.instance.Audio.PlayClip(2, 0.7f,  walkType ? audioclips[2] : audioclips[3]); walkType =walkType == false; if (MoveSpeed == 5) yield return GameManager.DotFive; else yield return GameManager.OneSec; } WalkSoundCor = null; }
 
     // Space
-    bool JumpAble = false;
+    bool JumpAble = true;
+    [SerializeField] LayerMask GroundMask;
     void OnJump(InputValue value)
     {
-        if (JumpAble && MoveAble) { rigid.AddForce(Vector3.up * (5 + BuffAmount[2]), ForceMode.Impulse); JumpAble = false; }
+        if (MoveAble && JumpAble) 
+        {
+            Vector3 leftRayOrigin = transform.position + new Vector3(-0.05f, 0.05f, 0);
+            Vector3 rightRayOrigin = transform.position + new Vector3(0.05f, 0.05f, 0);
+            if (Physics.Raycast(rightRayOrigin, Vector3.down, 0.1f, GroundMask) || Physics.Raycast(leftRayOrigin, Vector3.down, 0.1f, GroundMask))
+            {
+                anim.SetTrigger("Jump"); MoveAble = false;
+            }
+        }
+    }
+
+    void Jump()
+    {
+        rigid.AddForce(Vector3.up * (5 + BuffAmount[2]), ForceMode.Impulse); MoveAble = true;
     }
 
     // Mouse
+    public void SettingCameraFollowOffset(Vector3 offset)
+    {
+        
+        if (offset.x != 0) FolllowOffset.x = (offset.x-3) * 0.1f;
+        if (offset.y != 0) FolllowOffset.y = offset.y * 0.1f;
+        if (offset.z != 0) FolllowOffset.z = (offset.z-20) * 0.1f;
+
+        if (!_onFocus)
+        {
+            GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
+            Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z);
+        }
+    }
+    public void SettingCameraFollowOffsetZoom(Vector3 offset)
+    {
+        if (offset.x != 0) FollowOffset_Z.x = (offset.x -4) * 0.1f;
+        if (offset.y != 0) FollowOffset_Z.y = offset.y * 0.1f;
+        if (offset.z != 0) FollowOffset_Z.z = (offset.z-4) * 0.1f;
+        AimPos = new Vector3(FollowOffset_Z.x, FollowOffset_Z.y, FollowOffset_Z.z + 1.9f);
+        if (_onFocus)
+        {
+            GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
+            Aim.localPosition = AimPos;
+        }
+    }
+
+    public void SettingCameraSpeed(Vector3 offset)
+    {
+        if (offset.x != 0) MouseSpeed.x = offset.x * 5;
+        if (offset.y != 0) MouseSpeed.y = offset.y * 0.1f;
+    }
+
+    public void SettingCameraDamping(Vector3 offset)
+    {
+        DampingVar = offset;
+        GameManager.instance.CVtr.m_XDamping = DampingVar.x;
+        GameManager.instance.CVtr.m_YDamping = DampingVar.y;
+        GameManager.instance.CVtr.m_ZDamping = DampingVar.z;
+    }
+
     [SerializeField] Transform Aim;
+    Vector3 MouseSpeed = new Vector3(25,0.4f,0);
     Vector2 MouseDir;
+    Vector3 DampingVar = new Vector3(0,0,0);
+    Vector3 DampingSubVar;
     void OnLook(InputValue value)
     {
         if (!MoveAble) return;
         MouseDir = value.Get<Vector2>();
-        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * 0.4f, 0f, 3f);
-        Aim.localPosition = new Vector3(0.5f, Ny, Aim.localPosition.z);
-        if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;  }
-        transform.Rotate(Vector3.up * 25f * Time.deltaTime * MouseDir.x);
+        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * MouseSpeed.y, 0f, 3f);
+        Aim.localPosition = new Vector3(Aim.localPosition.x, Ny, Aim.localPosition.z);
+        //if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;  }
+        transform.Rotate(Vector3.up * MouseSpeed.x * Time.deltaTime * MouseDir.x);
     }
 
-    bool _onFire = false; bool FirstFire = true;
-    void OnFire(InputValue value)
-    {
-        if (!MoveAble) return;
-        _onFire = value.isPressed;
-        if (_onFire && FirstFire) { anim.SetBool("OnFire", true); FirstFire = false; }
 
-    }
+    [SerializeField] LayerMask OnZoom;
+    [SerializeField] LayerMask OnDefault;
+    [SerializeField] Vector3 AimPos;
 
-    bool _onFocus = false;
-    void OnFocus(InputValue value)
+    bool _onFocus = false; bool ControlFocusFromOther = false;
+
+    public void ControllFocus(bool On)
     {
-        if (!MoveAble) return;
-        _onFocus = _onFocus == false;
-        if (_onFocus) GameManager.instance.CVtr.m_FollowOffset = new Vector3(0.5f, 1.7f, 0.2f);
+        if (On)
+        {
+            ControlFocusFromOther = true;
+            _onFocus = false; JumpAble = false;
+        }
         else
         {
-            GameManager.instance.CVtr.m_FollowOffset = new Vector3(0.5f, 2, -1.5f);
-            Aim.localPosition = new Vector3(0.5f, 1.5f, Aim.localPosition.z);
+            ControlFocusFromOther = false;
+            GameManager.instance.CV.Follow = transform; GameManager.instance.CV.LookAt = Aim;
+            Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z); Camera.main.cullingMask = OnDefault; JumpAble = true;
+        }
+    }
+
+    void OnFocus(InputValue value)
+    {
+        if (!MoveAble || ControlFocusFromOther) return;
+        _onFocus = _onFocus == false;
+        if (_onFocus) 
+        {
+            DampingSubVar = DampingVar; SettingCameraDamping(Vector3.zero);
+            GameManager.instance.CV.PreviousStateIsValid = false;
+            Camera.main.cullingMask = OnZoom; GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
+            Aim.localPosition = AimPos;
+        }
+        else
+        {
+            SettingCameraDamping(DampingSubVar);
+            GameManager.instance.CV.PreviousStateIsValid = false;
+            Camera.main.cullingMask = OnDefault;
+            GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
+            Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z);
         }
     }
 
     [SerializeField] Image BulletGage;
     [SerializeField] TMP_Text BulletText;
+    bool _onReload = false;
     void OnReload(InputValue value)
     {
-        if (!MoveAble) return;
-        _onFire = false;
-        MoveAble = false; Dir = Vector3.zero;
-        audiodio.PlayOneShot(audioclips[1],1);
-        anim.SetTrigger("OnReload");
+        if (!MoveAble | _onReload) return;
+        _onFire = false; SlowSetting(true,2); _onReload = true;
+        GameManager.instance.Audio.PlayClip(2, 1, audioclips[1]);
+        anim.SetBool("OnReload",true);
     }
     public void ReloadEnd()
     {
-        MoveAble = true && ControllFromExtern; GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
-        BulletText.text = $"{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag}/{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag}"; BulletGage.fillAmount = 1f;
+        CurWeaponInfo.CurMag = CurWeaponInfo.MaxMag; anim.SetBool("OnReload", false);  _onReload = false;
+        BulletText.text = $"{CurWeaponInfo.CurMag}/{CurWeaponInfo.MaxMag}"; BulletGage.fillAmount = 1f;
+        SlowSetting(false,2); anim.SetBool("OnFire", false); SlowSetting(false, 1);
     }
 
     IEnumerator ShowMuzzleFlash()
@@ -260,7 +367,7 @@ public class Player : MonoBehaviour
         GameManager.instance.UI.InteractSomething();
     }
 
-
+    WeaponInfo CurWeaponInfo;
     bool CatchScroll = true;
     bool CurRight = true;
 
@@ -270,15 +377,18 @@ public class Player : MonoBehaviour
         CurWeaponInd = (CurWeaponInd + dr + Weapons.Count) % Weapons.Count;
         Weapons[CurWeaponInd].gameObject.SetActive(true);
         FirePos = Weapons[CurWeaponInd].GetChild(0); muzzleFlash = Muzzles[CurWeaponInd];
-        Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;
-        BulletText.text = $"{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag}/{GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag}";
-        BulletGage.fillAmount = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].CurMag / GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]].MaxMag;
+        CurWeaponInfo = GameManager.instance.Data.Weapon[CurUnlocked[CurWeaponInd]];
+
+        NextShoottime = new WaitForSeconds(CurWeaponInfo.rpm * 0.1667f);
+        //Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;
+        BulletText.text = $"{CurWeaponInfo.CurMag}/{CurWeaponInfo.MaxMag}";
+        BulletGage.fillAmount = CurWeaponInfo.CurMag / CurWeaponInfo.MaxMag;
     }
     void OnScroll(InputValue value)
     {
         if (CatchScroll && !anim.GetBool("OnFire") && MoveAble)
         {
-            anim.SetBool("OnChangeWeapon", true);
+            anim.SetBool("OnChangeWeapon", true); anim.SetBool("OnFire", false);
             var scrollV = value.Get<float>();
             if (scrollV > 0) CurRight = true;
             else if(scrollV < 0) CurRight = false;
@@ -300,7 +410,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Floor")) JumpAble = true;
+        if (collision.gameObject.CompareTag("Floor")) { JumpAble = true; }
     }
 
     bool HitAble = true;
@@ -327,10 +437,10 @@ public class Player : MonoBehaviour
     }
 
     [SerializeField] List<GameObject> BuffObjects;
-    public float[] BuffAmount = { 0, 0, 0 ,1, 0,1,1};  // 공, 방, 속, 범위, 재장속, 돈, 경치
+    public float[] BuffAmount = { 1, 1, 1 ,1, 1,1};  // 공, 체, 속, 범위, 재장속, 돈 + 경치
     public void HealFunction(int Count)
     {
-        BuffObjects[0].SetActive(true); audiodio.PlayOneShot(audioclips[4]);
+        BuffObjects[0].SetActive(true); GameManager.instance.Audio.PlayClip(2,1,audioclips[4]);
         CurHP = Mathf.Min(MaxHP, CurHP + Count);
         GameManager.instance.UI.HPChange(CurHP / MaxHP);
     }
@@ -339,24 +449,27 @@ public class Player : MonoBehaviour
     public void SetBuffer(int type)
     {
         BuffAmount[type] += 0.1f;
+        if (type == 2) { MaxHP += 10; CurHP += 10; GameManager.instance.UI.HPChange(CurHP / MaxHP); }
         if (type == 3) { GainArea.localScale = new Vector3(BuffAmount[3]*1.25f, BuffAmount[3]*1.25f, BuffAmount[3]*1.25f); BuffObjects[4].SetActive(true); }
-        if (type == 4) anim.SetFloat("ReloadTime", 1f + BuffAmount[4]);
+        if (type == 4) anim.SetFloat("ReloadTime", BuffAmount[4]);
+        GameManager.instance.UI.ApplyOnUI(type, BuffAmount[type] -1);
     }
-    
+    int[] LastBuffAmount = { 0, 0, 0 ,0,0,0};
     public void BuffOn(int type,int Last,int Amount)
     {
-        if (Amount > BuffAmount[type - 1])
+        if (Amount > LastBuffAmount[type - 1])
         {
-            BuffAmount[type - 1] = Amount;
+            BuffAmount[type - 1] += Amount; LastBuffAmount[type - 1] = Amount;
             BuffObjects[type].SetActive(true);
             GameManager.instance.UI.SetBuff(type, Last);
+            GameManager.instance.UI.ApplyOnUI(type-1, BuffAmount[type-1] - 1);
         }
     }
 
     public void BuffOff(int type)
     {
-        BuffAmount[type-1] = 0;
-        BuffObjects[type].SetActive(false);
+        BuffAmount[type-1] -= LastBuffAmount[type-1]; LastBuffAmount[type - 1] = 0;
+        BuffObjects[type].SetActive(false); GameManager.instance.UI.ApplyOnUI(type - 1, BuffAmount[type - 1] - 1);
     }
 
     bool ControllFromExtern = true;

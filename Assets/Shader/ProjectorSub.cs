@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ProjectorSub : MonoBehaviour
 {
+    [SerializeField] Color c = new Color(0.2f, 0.3f, 0.5f, 1);
     Image mi;
     private void Awake()
     {
@@ -13,7 +14,7 @@ public class ProjectorSub : MonoBehaviour
 
     private void OnEnable()
     {
-        mi.material.SetColor("_Color", new Color(0.2f, 0.3f, 0.5f, 1));
+        mi.material.SetColor("_Color",c);
     }
 
     private void Update()

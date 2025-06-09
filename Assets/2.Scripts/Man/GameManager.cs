@@ -24,7 +24,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public BulletManager bullet;
     [HideInInspector] public UIManager UI;
     [HideInInspector] public DataManager Data;
+    [HideInInspector] public AudioManager Audio;
     [HideInInspector] public Transform ParticleSet;
+    [HideInInspector] public FloatMessage FloatM;
 
     public CinemachineVirtualCamera CV;
     public CinemachineTransposer CVtr;
@@ -51,6 +53,8 @@ public class GameManager : MonoBehaviour
         if (TimeVar >= 1 || TimeVar <= 0.5) Trig *= -1;
         Volume_Day.weight = TimeVar; Volume_Night.weight = 1 - TimeVar;
     }
+
+    
 
 
     List<float> TimeSet = new List<float>();

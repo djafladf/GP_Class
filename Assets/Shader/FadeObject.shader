@@ -6,6 +6,7 @@ Shader "Custom/FadeObject"
         _Ratio("Ratio", Float) = 1
         _Min("MinAlpha",Range(0,1)) = 0.1
         _Color("Color",Color) = (1,1,1,1)
+        _UnscaledTime("UnScaledTime",Float) = 0
     }
         SubShader
         {
@@ -54,6 +55,7 @@ Shader "Custom/FadeObject"
                 float4 _Color;
                 float _Ratio;
                 float  _Min;
+                float _UnscaledTime;
 
                 v2f vert (appdata v)
                 {
@@ -66,7 +68,7 @@ Shader "Custom/FadeObject"
                 half4 frag (v2f i) : SV_Target
                 {
                     half4 col = tex2D(_MainTex,i.uv) * _Color;
-                    return half4(col.rgb,( abs( cos(_Time.x * _Ratio) ) * (1 - _Min) + _Min)*col.a);
+                    return half4(col.rgb,( abs( cos(_UnscaledTime * 0.05f * _Ratio) ) * (1 - _Min) + _Min)*col.a);
                 }
                 ENDHLSL
             }

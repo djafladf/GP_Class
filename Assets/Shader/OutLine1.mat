@@ -47,7 +47,7 @@ Material:
     - _BlurRadius: 5
     - _BlurSize: 1
     - _BorderThickness: 0.13
-    - _Depth: 0.047
+    - _Depth: 0.05
     - _EnableExternalAlpha: 0
     - _OnBlur: 0
     - _Power: 10
@@ -55,8 +55,8 @@ Material:
     - _RatioX: 3
     - _RatioY: 2.2
     m_Colors:
-    - _Back: {r: 0, g: 0, b: 0, a: 0.7490196}
-    - _Color: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 1}
+    - _Back: {r: 0.08235294, g: 0.07450981, b: 0.07450981, a: 0.7490196}
+    - _Color: {r: 0.078431316, g: 0.07058818, b: 0.07058818, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _Outline: {r: 1, g: 0, b: 0, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}

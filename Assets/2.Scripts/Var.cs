@@ -12,6 +12,7 @@ public class Event : UnityEvent<BaseEventData> { }
 public class WeaponInfo
 {
     public string name;
+    public int Rarity;
     public float power;
     public float bound;
     public float rpm;
@@ -22,6 +23,20 @@ public class WeaponInfo
     public int LV;
     public GameObject Obj;
     public Sprite Im;
+
+    public string DescribeSelf()
+    {
+        string cnt = "";
+
+        cnt = $@"<color=black><size=150%>{name}</size></color> <color=red><size=75%>Lv.{LV}</size></color>
+Åº¼Ó : {power * 25}
+¹Ýµ¿ : {bound * 0.02f}
+¿¬»ç °£°Ý : {rpm * 0.1667f}
+ÅºÆÛÁü : {spread}%
+ÅºÃ¢ : {MaxMag}
+1È¸ ¹ß»ç ¼ö : {bnum}";
+        return cnt;
+    }
 }
 
 [System.Serializable]

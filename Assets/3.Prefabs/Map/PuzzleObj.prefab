@@ -9803,6 +9803,7 @@ MonoBehaviour:
   CWall: {fileID: 4424956140490491749, guid: 41088d031a62c7845a258fa3550b74d6, type: 3}
   RWall: {fileID: 8179733739146303422, guid: 8db399820d596754dafbd0c4257338cb, type: 3}
   StoneEffect: {fileID: 4193111488511780688, guid: 7637408db85ac7547bca48360691e703, type: 3}
+  MyMap: {fileID: 0}
   pr: {fileID: 5843029417855294029}
 --- !u!82 &8230655315886031035
 AudioSource:
@@ -9813,7 +9814,7 @@ AudioSource:
   m_GameObject: {fileID: 6687326701019764399}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -2872115123772714139, guid: 9488391a4685f164fac465f3ddc6a351, type: 2}
   m_audioClip: {fileID: 8300000, guid: 5ae4d298ed547ba4c88587effb75d7e1, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1

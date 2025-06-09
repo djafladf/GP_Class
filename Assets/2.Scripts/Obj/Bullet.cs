@@ -71,7 +71,7 @@ public class Bullet : MonoBehaviour
         {
             yield return GameManager.OneSec;
             float Dist = Vector2.Distance(transform.position, GameManager.instance.Player.position);
-            if (Dist > 100) gameObject.SetActive(false);
+            if (Dist > 75) gameObject.SetActive(false);
         }
     }
 

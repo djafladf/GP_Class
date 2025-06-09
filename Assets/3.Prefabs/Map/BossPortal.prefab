@@ -9765,7 +9765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6eca70d06fbb52489a22b580b2f83b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Gundam: {fileID: 1661081359702102484, guid: 629526ccd2dcbcc4b801ecd1c296c3ff, type: 3}
+  Gundam: {fileID: 491841396256088078, guid: 7caad45b12ff8e14098680264c1c9c1d, type: 3}
 --- !u!1 &8127390928873979728
 GameObject:
   m_ObjectHideFlags: 0

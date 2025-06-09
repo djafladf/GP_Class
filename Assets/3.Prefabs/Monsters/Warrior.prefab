@@ -9645,9 +9645,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackCol:
   - {fileID: 8778838925256136020}
-  Soul: {fileID: 6581098292497470606, guid: 05187d28a0fae9349bc121b9cac9272e, type: 3}
-  InitHP: 2
-  AttackRagne: 2.5
+  InitHP: 1
+  AttackRagne: 2
   BloodPref: {fileID: 8533670230509782626}
 --- !u!195 &7865429296377210819
 NavMeshAgent:
@@ -9662,7 +9661,7 @@ NavMeshAgent:
   m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 180
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

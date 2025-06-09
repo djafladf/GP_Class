@@ -50,12 +50,16 @@ public class UIManager : MonoBehaviour
                     GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x, 75 * y + 37.5f);
                 }
             }
-        Lastx = GameManager.instance.bx; Lasty = GameManager.instance.by;
     }
 
     private void Start()
     {
         GameManager.instance.Player.gameObject.SetActive(true);
+    }
+
+    void Test()
+    {
+        ExpChange(100);
     }
 
     #region Weapon
@@ -177,20 +181,21 @@ public class UIManager : MonoBehaviour
         HPBar.fillAmount = rf;
     }
 
-    float ExpSub = 0.1f;
+    float ExpSub = 10;
     float CurExpVar = 0;
+    float ExpVarForBar = 0.1f;
     int CurLevel = 1;
     public void ExpChange(float amount)
     {
-        CurExpVar += ExpSub * amount * GameManager.instance.PlayerScript.BuffAmount[6];
-        if (CurExpVar >= 1)
+        CurExpVar += amount * GameManager.instance.PlayerScript.BuffAmount[5];
+        if (CurExpVar >= ExpSub)
         {
-            CurExpVar--;
+            CurExpVar -= ExpSub;
             Level.text = $"LV.{++CurLevel}";
-            ExpSub *= 0.92f;
+            ExpSub *= 1.08f; ExpVarForBar *= 0.92f;
             LevelUp();
         }
-        EXPBar.fillAmount = Mathf.Min(CurExpVar, 1);
+        EXPBar.fillAmount = Mathf.Min(CurExpVar * ExpVarForBar, 1);
     }
 
     [SerializeField] Image BossHP;
@@ -235,7 +240,7 @@ public class UIManager : MonoBehaviour
             {
                 if (GameManager.instance.Map.GoAble[Lastx, Lasty][i] != 1) continue;
                 int nx = Lastx + Mapdp[i, 0], ny = Lasty + Mapdp[i, 1];
-                if (nx == x && ny == y) continue;
+                if ((nx == x && ny == y) || (nx == Lastx && ny == Lasty)) continue;
                 GameManager.instance.Map.RoomPrefs[nx, ny].SetActive(false);
             }
         }
@@ -290,7 +295,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] Sprite[] LevelUpSpr;
     [SerializeField] TMP_Text[] LevelUpText;
     [SerializeField] string[] UpSubText;
-    int[] Uparray = { 0, 1, 2, 3, 4,5,6 };
+    int[] Uparray = { 0, 1, 2, 3, 4, 5};
     public void LevelUp()
     {
         Uparray = Uparray.OrderBy(x => Guid.NewGuid()).ToArray();
@@ -304,22 +309,30 @@ public class UIManager : MonoBehaviour
     public void ApplyLevelUp(int val)
     {
         GameManager.instance.PlayerScript.SetBuffer(Uparray[val]);
+        if (CurExpVar >= 1) ExpChange(0);
+    }
+
+    [SerializeField] TMP_Text[] MenuTexts;
+
+    public void ApplyOnUI(int ind, float val)
+    {
+        MenuTexts[ind].text = $"{Mathf.FloorToInt(val * 100)}%";
     }
     #endregion
 
-#region Pause
+#region Menu
     RenderTexture captured;
     int CurStopCall = 0;
-
-
     bool OnMenu = false;
-
+    [Header("Menu Setting")]
+    [SerializeField] GameObject MenuObj;
     public void ShowMenu()
     {
         OnMenu = OnMenu == false;
         if (OnMenu)
         {
-            MapObj.localPosition = Vector2.zero;
+            MenuObj.SetActive(true);
+            MapObj.localPosition = new Vector2(125, 0);
             MapObj.sizeDelta = new Vector2(850, 850);
             MaskerObj.sizeDelta = new Vector2(800, 800);
             Pins.localPosition = Vector2.zero;
@@ -327,6 +340,8 @@ public class UIManager : MonoBehaviour
         }
         else
         {
+            MenuObj.SetActive(false);
+            MapObj.gameObject.SetActive(true);
             MapObj.localPosition = new Vector2(750, 400);
             MapObj.sizeDelta = new Vector2(220, 220);
             MaskerObj.sizeDelta = new Vector2(200, 200);
