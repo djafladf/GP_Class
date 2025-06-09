@@ -29928,7 +29928,6 @@ GameObject:
   - component: {fileID: 2432491744725898375}
   - component: {fileID: 1609402626352015446}
   - component: {fileID: 1223699567463637977}
-  - component: {fileID: 4084169752402994226}
   m_Layer: 3
   m_Name: NewChan
   m_TagString: Player
@@ -58490,22 +58489,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4084169752402994226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234931827781422145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82f29973b3573794b8aff4cd7957c9d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PressurePlat: {fileID: 2002640200747294181, guid: d090a1c756eb41c4baee2b2603a51663, type: 3}
-  CubePlat: {fileID: 2002640200747294181, guid: 84ebb122f02552b4fa8b2f2e835f478e, type: 3}
-  WallSet: {fileID: 2752102604778490637, guid: c00424cffc7115846bb695bf08c29bbc, type: 3}
-  pr: {fileID: 1534571547}
 --- !u!114 &4087300592528772531
 MonoBehaviour:
   m_ObjectHideFlags: 0

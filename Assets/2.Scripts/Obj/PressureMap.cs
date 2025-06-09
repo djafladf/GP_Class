@@ -12,6 +12,9 @@ public class PressureMap : MonoBehaviour
     [SerializeField] GameObject WallSet;
     [SerializeField] Transform pr;
 
+    Collider coll;
+
+    MapController MyMap;
     GameObject Wall;
     Transform LookPos;
 
@@ -22,9 +25,13 @@ public class PressureMap : MonoBehaviour
 
     int min_Fill = 30;
     int Cur_Fill = 0;
+
+    List<Action> RestFunc = new List<Action>();
     private void Start()
     {
-        Wall = Instantiate(WallSet, pr); LookPos = Wall.transform.GetChild(0);
+        coll = GetComponent<BoxCollider>();
+        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
+        Wall = Instantiate(WallSet, pr); LookPos = Wall.transform.GetChild(1);
         visitCount = new int[n, n];
         mn = (n - 1) / 2;
         Vector2Int StartPos = new Vector2Int(mn, mn);
@@ -54,7 +61,7 @@ public class PressureMap : MonoBehaviour
                 if (pt.x == mn && pt.y == mn) continue;
                 if (visitCount[pt.x, pt.y] == 0)
                 {
-                    var plate = Instantiate(PressurePlat, pr); plate.GetComponentInChildren<PressurePlat>().PressureAct = OnOffTrigger;
+                    var plate = Instantiate(PressurePlat, pr); var script = plate.GetComponentInChildren<PressurePlat>();script.PressureAct = OnOffTrigger; RestFunc.Add(script.ResetFunc);
                     plate.transform.localPosition = new Vector3((pt.x - mn) * 2, 0, (pt.y - mn) * 2);
                     Cur_Fill++;
                 }
@@ -65,7 +72,8 @@ public class PressureMap : MonoBehaviour
         }
         visitCount[mn, mn] = 1;
         for (int x = 0; x < n; x++) for (int y = 0; y < n; y++) if (visitCount[x, y] == 0) Instantiate(CubePlat, pr).transform.localPosition = new Vector3((x - mn) * 2, 0, (y - mn) * 2);
-        Invoke("Test", 0.1f);
+        
+        pr.SetParent(transform.parent.parent); pr.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public void OnOffTrigger(bool OnOff)
@@ -73,35 +81,36 @@ public class PressureMap : MonoBehaviour
         if (OnOff)
         {
             Cur_Fill--;
-            if (Cur_Fill <= 0) EndTask();
+            if (Cur_Fill <= 0)
+            {
+                StopAllCoroutines();
+                GameManager.instance.PlayerScript.ControllMoveAble(false);
+                Wall.transform.GetChild(0).gameObject.SetActive(true);
+                Invoke("EndTask",1);
+            }
         }
         else Cur_Fill++;
     }
 
     void EndTask()
     {
-        GameManager.instance.PlayerScript.ControllFocus(false);
-
+        GameManager.instance.PlayerScript.ControllFocus(false, null); GameManager.instance.PlayerScript.ControllMoveAble(true);
+        Wall.transform.GetChild(0).gameObject.SetActive(false);
         GameManager.instance.Data.ResetPool();
         var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
         cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.5f, Random.Range(-1f, 1f));
         for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.1f, Random.Range(-1f, 1f)); }
-        //Destroy(gameObject);
+        Destroy(pr.gameObject); Destroy(transform.parent.gameObject);
     }
 
-    void Test()
+    IEnumerator FollowCam()
     {
-        GameManager.instance.UI.ShowAscending("Trigger All",1);
-        pr.SetParent(GameManager.instance.transform);
-        GameManager.instance.PlayerScript.ControllFocus(true);
-        GameManager.instance.CV.Follow = LookPos; GameManager.instance.CV.LookAt = GameManager.instance.Player;
+        while (true)
+        {
+            LookPos.transform.position = new Vector3(GameManager.instance.Player.position.x, LookPos.position.y, GameManager.instance.Player.position.z);
+            yield return GameManager.DotOne;
+        }
     }
-
-   private void FixedUpdate()
-    {
-        LookPos.transform.position = new Vector3(GameManager.instance.Player.position.x, LookPos.position.y, GameManager.instance.Player.position.z);
-    }
-
     Vector2Int[] Dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
 
     List<Vector2Int> FindPathAStar(Vector2Int start,Vector2Int goal)
@@ -171,5 +180,39 @@ public class PressureMap : MonoBehaviour
         }
         path.Reverse();
         return path;
+    }
+
+    public void Init()
+    {
+        pr.gameObject.SetActive(true);
+        OnGame = true;
+        StartCoroutine(FollowCam());
+        GameManager.instance.UI.ShowAscending("Trigger All", 2);
+        GameManager.instance.PlayerScript.ControllFocus(true, new Tuple<Transform, Transform>(LookPos, GameManager.instance.Player));
+        coll.enabled = false;
+    }
+
+    public void Reset()
+    {
+        Cur_Fill = 0;
+        foreach (var j in RestFunc) j.Invoke();
+    }
+
+    bool OnGame = false;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if(!OnGame) GameManager.instance.UI.ToggleInteract(Init, true, "Press<sprite name=\"e\"> To Interact");
+            else GameManager.instance.UI.ToggleInteract(Reset, true, "Press<sprite name=\"e\"> To Reset");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            GameManager.instance.UI.ToggleInteract(null, false, null);
+        }
     }
 }

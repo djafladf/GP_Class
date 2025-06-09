@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -30,6 +32,8 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         GameManager.instance.CV.Follow = transform;
         GameManager.instance.CV.LookAt = Aim;
+
+        ViewTarget = new Tuple<Transform, Transform>(transform,Aim);
         GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
 
         GameManager.instance.Player = transform;
@@ -280,7 +284,6 @@ public class Player : MonoBehaviour
         MouseDir = value.Get<Vector2>();
         float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * MouseSpeed.y, 0f, 3f);
         Aim.localPosition = new Vector3(Aim.localPosition.x, Ny, Aim.localPosition.z);
-        //if (Weapons[CurWeaponInd] != null) { Vector3 WDir = Weapons[CurWeaponInd].eulerAngles; WDir.x = Camera.main.transform.eulerAngles.x; Weapons[CurWeaponInd].eulerAngles = WDir;  }
         transform.Rotate(Vector3.up * MouseSpeed.x * Time.deltaTime * MouseDir.x);
     }
 
@@ -290,31 +293,32 @@ public class Player : MonoBehaviour
     [SerializeField] Vector3 AimPos;
 
     bool _onFocus = false; bool ControlFocusFromOther = false;
-
-    public void ControllFocus(bool On)
+    Tuple<Transform, Transform> ViewTarget;
+    Tuple<Transform, Transform> ExtViewTarget;
+    public void ControllFocus(bool On, Tuple<Transform,Transform> ExtSetting)
     {
         if (On)
         {
             ControlFocusFromOther = true;
-            _onFocus = false; JumpAble = false;
+            JumpAble = false; ExtViewTarget = ExtSetting;
         }
         else
         {
             ControlFocusFromOther = false;
-            GameManager.instance.CV.Follow = transform; GameManager.instance.CV.LookAt = Aim;
             Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z); Camera.main.cullingMask = OnDefault; JumpAble = true;
         }
     }
 
     void OnFocus(InputValue value)
     {
-        if (!MoveAble || ControlFocusFromOther) return;
+        if (!MoveAble) return;
         _onFocus = _onFocus == false;
         if (_onFocus) 
         {
             DampingSubVar = DampingVar; SettingCameraDamping(Vector3.zero);
             GameManager.instance.CV.PreviousStateIsValid = false;
             Camera.main.cullingMask = OnZoom; GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
+            GameManager.instance.CV.Follow = ControlFocusFromOther ? ExtViewTarget.Item1 : ViewTarget.Item1; GameManager.instance.CV.LookAt = ControlFocusFromOther ? ExtViewTarget.Item2 : ViewTarget.Item2;
             Aim.localPosition = AimPos;
         }
         else
@@ -323,6 +327,7 @@ public class Player : MonoBehaviour
             GameManager.instance.CV.PreviousStateIsValid = false;
             Camera.main.cullingMask = OnDefault;
             GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
+            GameManager.instance.CV.Follow =ViewTarget.Item1; GameManager.instance.CV.LookAt =ViewTarget.Item2;
             Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z);
         }
     }

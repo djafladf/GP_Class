@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
             MapQue cnt = que.Dequeue();
             var cmap = Instantiate(MapPref, MapPr); cmap.transform.position = new Vector3(80 * cnt.CurPos.x, 0, 80 * cnt.CurPos.y);
             int cx = Mathf.FloorToInt(cnt.CurPos.x), cy = Mathf.FloorToInt(cnt.CurPos.y); Map.RoomPrefs[cx, cy] = cmap;
-            if (Map.MapType[cx, cy] != 1) Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform);
+            if (Map.MapType[cx, cy] != 1) { var tmp = Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform); if (Map.MapType[cx, cy] == 3) Destroy(tmp.transform.GetChild(Random.Range(1,2)).gameObject); }
             Map.MapCont[cx, cy] = cmap.transform.GetChild(0).GetComponent<MapController>();
             Map.MapCont[cx, cy].Init(cx, cy);
             if (cnt.CurDepth == Map.MaxDepth) continue;

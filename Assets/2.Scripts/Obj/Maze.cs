@@ -10,16 +10,17 @@ public class Maze : MonoBehaviour
     [SerializeField] GameObject CWall, RWall, StoneEffect;
     MazeMap MyMaze;
     BoxCollider col;
-    [SerializeField] MapController MyMap;
+    MapController MyMap;
     private void Start()
     {
-        MyMap = transform.parent.GetChild(0).GetComponent<MapController>();
+        print("Maze!");
+        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
         col = GetComponent<BoxCollider>();
         MyMaze = new MazeMap();
         MyMaze.MazeMaking(Size,Size);
         MyMaze.Maze[Size / 2-1, Size / 2].Right = true; MyMaze.Maze[Size / 2, Size / 2-1].Down = true;
         MyMaze.Maze[Size / 2, Size / 2].Right = true; MyMaze.Maze[Size / 2, Size / 2].Down = true;
-        pr.SetParent(transform.parent);
+        pr.SetParent(transform.parent.parent);
         ad = GetComponent<AudioSource>();
         MakeWalls();
     }
@@ -85,10 +86,10 @@ public class Maze : MonoBehaviour
         {
             switch (Random.Range(0, 4))
             {
-                case 0: transform.localPosition = new Vector3(-18.5f + 4f * Random.Range(0, Size), 0, 18.5f); break;
-                case 1: transform.localPosition = new Vector3(-18.5f + 4f * Random.Range(0, Size), 0, -17.5f); break;
-                case 2: transform.localPosition = new Vector3(17.5f, 0, 18.5f - 4f * Random.Range(0, Size)); break;
-                case 3: transform.localPosition = new Vector3(-18.5f, 0, 18.5f - 4f * Random.Range(0, Size)); break;
+                case 0: transform.parent.localPosition = new Vector3(-18.5f + 4f * Random.Range(0, Size), 0, 18.5f); break;
+                case 1: transform.parent.localPosition = new Vector3(-18.5f + 4f * Random.Range(0, Size), 0, -17.5f); break;
+                case 2: transform.parent.localPosition = new Vector3(17.5f, 0, 18.5f - 4f * Random.Range(0, Size)); break;
+                case 3: transform.parent.localPosition = new Vector3(-18.5f, 0, 18.5f - 4f * Random.Range(0, Size)); break;
             }
             col.enabled = true;
             GameManager.instance.UI.ShowAscending("Find EXIT", 1);
@@ -98,7 +99,7 @@ public class Maze : MonoBehaviour
             var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
             cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(Random.Range(-3f, 3f), 0.5f, Random.Range(-3f, 3f));
             for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-3f, 3f), 0.1f, Random.Range(-3f, 3f)); }
-            Destroy(pr.gameObject); Destroy(gameObject);
+            Destroy(pr.gameObject); Destroy(transform.parent.gameObject);
         }
         GetComponent<AudioSource>().Stop();
     }
