@@ -112,6 +112,7 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
+    - _MinH: 0.2
     - _NormalFade: 0.022
     - _OcclusionStrength: 1
     - _Parallax: 0.005

@@ -6,7 +6,7 @@ public class MapController : MonoBehaviour
 {
     [SerializeField] List<Door> Doors;
     bool IsUnknown = true;
-    int Indx, Indy;
+    public int Indx, Indy;
 
     private void Start()
     {

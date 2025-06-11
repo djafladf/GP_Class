@@ -13,7 +13,6 @@ public class Maze : MonoBehaviour
     MapController MyMap;
     private void Start()
     {
-        print("Maze!");
         MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
         col = GetComponent<BoxCollider>();
         MyMaze = new MazeMap();
@@ -29,7 +28,7 @@ public class Maze : MonoBehaviour
     // Len : -19.5 ~ 19.5
     void MakeWalls()
     {
-        int x, y, Y;
+        int x, Y;
         float cx = 0,cy = 0;
         for (Y = 0; Y < Size; Y++)
         {

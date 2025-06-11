@@ -216,7 +216,6 @@ GameObject:
   m_Component:
   - component: {fileID: 213541757014231969}
   - component: {fileID: 8572119330711609663}
-  - component: {fileID: 6267789214014832586}
   - component: {fileID: 4042825067391253279}
   - component: {fileID: 1575928774556115200}
   - component: {fileID: 121938050021493672}
@@ -236,7 +235,7 @@ Transform:
   m_GameObject: {fileID: 491841396256088078}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -200, y: 0, z: -230}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -272,28 +271,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!195 &6267789214014832586
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491841396256088078}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: -0.1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!54 &4042825067391253279
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -354,11 +331,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1269809e1ba0d4c4bb6cbaa934b1e561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHP: 200
+  MaxHP: 250
   Bullet: {fileID: 6367692921632144740, guid: 2e10f3c00b329b2459436e3b17c51d1a, type: 3}
   ShootPos: {fileID: 7043147137399697296}
   Pattern1: {fileID: 4650274299395666193, guid: cd42e606e9020654ea071812d92ac86c, type: 3}
   Pattern2: {fileID: 5719834581538908827, guid: 59b14dc48055a8e46b9e6c118d165d28, type: 3}
+  clip: {fileID: 8300000, guid: 4310474905e266640852f43bd609a1a4, type: 3}
   Test: 20
 --- !u!1 &639690166805008295
 GameObject:

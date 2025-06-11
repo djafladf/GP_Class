@@ -15,7 +15,7 @@ public class BulletManager : MonoBehaviour
     private void Awake()
     {
         GameManager.instance.bullet = this;
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 100; i++)
         {
             GameObject cntPref = Instantiate(BulletPref, transform); cntPref.SetActive(false);
             BulletPool.Add(cntPref); BulletScripts.Add(cntPref.GetComponent<Bullet>());

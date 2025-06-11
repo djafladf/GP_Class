@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -53,18 +54,21 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        CurWeaponInfo = GameManager.instance.Data.Weapon[CurWeaponInd]; ReloadEnd(); 
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
         Tuto.transform.SetParent(GameManager.instance.transform);
+
         Invoke("StartBug", 0.5f);
+        //BuffOn(3, 60, 0.3f);
         //DroneAdd(); DroneAdd(); DroneAdd();
 
         //GameManager.instance.UI.ScoreUp(1000);
-        //WeaponLevelUp(1); WeaponLevelUp(2); WeaponLevelUp(4); WeaponLevelUp(5);
     }
 
     void StartBug()
     {
         MoveAble = true;
+        //GetDamage(100);
     }
 
     float MoveSpeed = 5f;
@@ -98,12 +102,14 @@ public class Player : MonoBehaviour
     
     Vector3 Dir;
 
+    [SerializeField] GameObject RedDot;
     bool _onFire = false;
     void OnFire(InputValue value)
     {
-        if (!MoveAble | anim.GetBool("OnChangeWeapon") | Time.timeScale == 0 | _onReload) return;
+        if (!MoveAble | _OnChangeWeapon | Time.timeScale == 0 | _onReload) return;
         if (value.isPressed)
         {
+            RedDot.gameObject.SetActive(true);
             _onFire = true;
             anim.SetBool("OnFire", true);
             SlowSetting(true,1);
@@ -114,6 +120,7 @@ public class Player : MonoBehaviour
             SlowSetting(false,1);
             _onFire = false;
             anim.SetBool("OnFire", false);
+            RedDot.gameObject.SetActive(false);
         }
     }
     WaitForSeconds NextShoottime;
@@ -143,7 +150,8 @@ public class Player : MonoBehaviour
     {
         if (CurWeaponInfo.CurMag <= 0) return;
         float Theta = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-        Aim.Translate(0, Mathf.Clamp(CurWeaponInfo.bound * 0.02f,0,3f), 0);
+        float Ny = Mathf.Clamp(Aim.localPosition.y + CurWeaponInfo.bound * 0.02f, 0f, 2.4f);
+        Aim.localPosition = new Vector3(Aim.localPosition.x, Ny, Aim.localPosition.z);
         GameManager.instance.Audio.PlayClip(2, 0.8f, audioclips[0]);
         if(!muzzleFlash.enabled) StartCoroutine(ShowMuzzleFlash());
 
@@ -155,7 +163,7 @@ public class Player : MonoBehaviour
                    0
                );
             Vector3 spreadDirection = randomRot * Weapons[CurWeaponInd].forward;
-            GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection, CurWeaponInfo.power);
+            GameManager.instance.bullet.ShootBullet(FirePos.position, spreadDirection, CurWeaponInfo.power * Random.Range(0.5f,1.5f));
         }
         CurWeaponInfo.CurMag -= 1;
         BulletText.text = $"{CurWeaponInfo.CurMag}/{CurWeaponInfo.MaxMag}"; 
@@ -220,8 +228,9 @@ public class Player : MonoBehaviour
         {
             Vector3 leftRayOrigin = transform.position + new Vector3(-0.05f, 0.05f, 0);
             Vector3 rightRayOrigin = transform.position + new Vector3(0.05f, 0.05f, 0);
-            if (Physics.Raycast(rightRayOrigin, Vector3.down, 0.1f, GroundMask) || Physics.Raycast(leftRayOrigin, Vector3.down, 0.1f, GroundMask))
+            if (Physics.Raycast(rightRayOrigin, Vector3.down, 0.15f, GroundMask) || Physics.Raycast(leftRayOrigin, Vector3.down, 0.1f, GroundMask))
             {
+                
                 anim.SetTrigger("Jump"); MoveAble = false;
             }
         }
@@ -229,6 +238,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
+        GameManager.instance.Audio.PlayClip(2, 1f, audioclips[5]);
         rigid.AddForce(Vector3.up * (5 + BuffAmount[2]), ForceMode.Impulse); MoveAble = true;
     }
 
@@ -251,7 +261,7 @@ public class Player : MonoBehaviour
         if (offset.x != 0) FollowOffset_Z.x = (offset.x -4) * 0.1f;
         if (offset.y != 0) FollowOffset_Z.y = offset.y * 0.1f;
         if (offset.z != 0) FollowOffset_Z.z = (offset.z-4) * 0.1f;
-        AimPos = new Vector3(FollowOffset_Z.x, FollowOffset_Z.y, FollowOffset_Z.z + 1.9f);
+        AimPos = new Vector3(FollowOffset_Z.x, FollowOffset_Z.y, 3);
         if (_onFocus)
         {
             GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
@@ -282,7 +292,7 @@ public class Player : MonoBehaviour
     {
         if (!MoveAble) return;
         MouseDir = value.Get<Vector2>();
-        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * MouseSpeed.y, 0f, 3f);
+        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * MouseSpeed.y, 0f, 2.4f);
         Aim.localPosition = new Vector3(Aim.localPosition.x, Ny, Aim.localPosition.z);
         transform.Rotate(Vector3.up * MouseSpeed.x * Time.deltaTime * MouseDir.x);
     }
@@ -337,7 +347,7 @@ public class Player : MonoBehaviour
     bool _onReload = false;
     void OnReload(InputValue value)
     {
-        if (!MoveAble | _onReload) return;
+        if (!MoveAble | _onReload | _OnChangeWeapon) return;
         _onFire = false; SlowSetting(true,2); _onReload = true;
         GameManager.instance.Audio.PlayClip(2, 1, audioclips[1]);
         anim.SetBool("OnReload",true);
@@ -365,6 +375,7 @@ public class Player : MonoBehaviour
     void OnMenu(InputValue value)
     {
         GameManager.instance.UI.ShowMenu();
+        _onFire = false; anim.SetBool("OnFire", false);
     }
 
     void OnInteract(InputValue value)
@@ -375,6 +386,7 @@ public class Player : MonoBehaviour
     WeaponInfo CurWeaponInfo;
     bool CatchScroll = true;
     bool CurRight = true;
+    bool _OnChangeWeapon = false;
 
     public void ChangeWeapon(int dr)
     {
@@ -391,9 +403,10 @@ public class Player : MonoBehaviour
     }
     void OnScroll(InputValue value)
     {
-        if (CatchScroll && !anim.GetBool("OnFire") && MoveAble)
+        if (CatchScroll && !_onFire && MoveAble && !_onReload)
         {
-            anim.SetBool("OnChangeWeapon", true); anim.SetBool("OnFire", false);
+            _OnChangeWeapon = true;
+            anim.SetBool("OnFire", false);
             var scrollV = value.Get<float>();
             if (scrollV > 0) CurRight = true;
             else if(scrollV < 0) CurRight = false;
@@ -404,7 +417,7 @@ public class Player : MonoBehaviour
     }
     public void ChangeWeaponEnd()
     {
-        anim.SetBool("OnChangeWeapon", false);
+        _OnChangeWeapon = false;
     }
 
     void ChangeScroll()
@@ -413,11 +426,6 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Floor")) { JumpAble = true; }
-    }
-
     bool HitAble = true;
     float MaxHP = 100;
     float CurHP = 100;
@@ -425,6 +433,7 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("EnemyAttack") && HitAble)
         {
+            GameManager.instance.Audio.PlayClip(2, 0.5f, audioclips[6]);
             GetDamage(10);
         }
     }
@@ -436,8 +445,11 @@ public class Player : MonoBehaviour
         GameManager.instance.UI.HPChange(CurHP / MaxHP);
         if (CurHP <= 0)
         {
-
+            anim.SetTrigger("Lose"); StopAllCoroutines();
             GameManager.instance.Enemy.OnGameEnd();
+            GameManager.instance.UI.EndGame();
+            Destroy(this);
+            
         }
     }
 
@@ -453,14 +465,14 @@ public class Player : MonoBehaviour
     [SerializeField] Transform GainArea;
     public void SetBuffer(int type)
     {
-        BuffAmount[type] += 0.1f;
-        if (type == 2) { MaxHP += 10; CurHP += 10; GameManager.instance.UI.HPChange(CurHP / MaxHP); }
-        if (type == 3) { GainArea.localScale = new Vector3(BuffAmount[3]*1.25f, BuffAmount[3]*1.25f, BuffAmount[3]*1.25f); BuffObjects[4].SetActive(true); }
-        if (type == 4) anim.SetFloat("ReloadTime", BuffAmount[4]);
+        BuffAmount[type] += type == 2 ? 0.05f : 0.1f;
+        if (type == 1) { MaxHP += 10; CurHP += 10; GameManager.instance.UI.HPChange(CurHP / MaxHP); }
+        else if (type == 3) { GainArea.localScale = new Vector3(BuffAmount[3]*1.25f, BuffAmount[3]*1.25f, BuffAmount[3]*1.25f); BuffObjects[4].SetActive(true); }
+        else if (type == 4) anim.SetFloat("ReloadTime", BuffAmount[4]);
         GameManager.instance.UI.ApplyOnUI(type, BuffAmount[type] -1);
     }
-    int[] LastBuffAmount = { 0, 0, 0 ,0,0,0};
-    public void BuffOn(int type,int Last,int Amount)
+    float[] LastBuffAmount = { 0, 0, 0 ,0,0,0};
+    public void BuffOn(int type,int Last,float Amount)
     {
         if (Amount > LastBuffAmount[type - 1])
         {
@@ -487,5 +499,11 @@ public class Player : MonoBehaviour
     void HitGap()
     {
         HitAble = true;
+    }
+
+    public void Win()
+    {
+        anim.SetTrigger("Win");
+        Destroy(this);
     }
 }

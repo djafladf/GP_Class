@@ -47,4 +47,14 @@ public class AudioManager : MonoBehaviour
     {
         Sources[type].PlayOneShot(clip, vol);
     }
+
+    public void ChangePitch()
+    {
+        mixer.SetFloat("SFX_Pitch", Mathf.Log(Mathf.Clamp(Time.timeScale, 0.01f, 1f),2f) * 12f);
+    }
+
+    public void StopBGM()
+    {
+        Sources[1].Stop();
+    }
 }

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.U2D;
 
 public class Gundam : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class Gundam : MonoBehaviour
     [SerializeField] GameObject Bullet;
     [SerializeField] Transform ShootPos;
     [SerializeField] GameObject Pattern1, Pattern2;
+    [SerializeField] AudioClip clip;
 
     float HP;
     Animator anim;
@@ -46,7 +49,7 @@ public class Gundam : MonoBehaviour
     float dist;
     private void FixedUpdate()
     {
-        Dir = (GameManager.instance.Player.position - transform.position); Dir.y = 0; dist = Dir.magnitude; Dir = Dir.normalized;
+        Dir = (GameManager.instance.Player.position - transform.position); dist = Dir.magnitude; Dir = Dir.normalized;
         transform.rotation = Quaternion.LookRotation(Dir); 
 
         if (dist < 12) { Dir *= -2f; anim.SetBool("OnWalk", true); anim.SetFloat("dy", -1); }
@@ -61,9 +64,10 @@ public class Gundam : MonoBehaviour
 
     public void Shoot()
     {
+        GameManager.instance.Audio.PlayClip(2, 1, clip);
         var cnt = Instantiate(Bullet, GameManager.instance.bullet.transform); cnt.transform.position = ShootPos.position;
         Vector3 dir = (GameManager.instance.Player.position + Vector3.up - cnt.transform.position).normalized; cnt.transform.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        cnt.GetComponent<Rigidbody>().AddForce(dir * 30, ForceMode.Impulse);
+        cnt.GetComponent<Rigidbody>().AddForce(dir * 40, ForceMode.Impulse);
     }
 
 
@@ -77,7 +81,7 @@ public class Gundam : MonoBehaviour
     {
         HP -= 2; rigid.velocity = Vector3.zero;
         CantMove = true;
-        if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); }
+        if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); GameManager.instance.PlayerScript.Win(); }
         else
         {
 
@@ -95,5 +99,10 @@ public class Gundam : MonoBehaviour
             if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); }
             else GameManager.instance.UI.BossHpChange(HP / MaxHP);
         }
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 }

@@ -2,6 +2,7 @@ Shader "Custom/CubeUVFade"
 {
     Properties
     {
+        _MinH ("Min Height",Range(0,1)) = 0.2
         _Color ("Color Tint", Color) = (1,1,1,1)
     }
     SubShader
@@ -35,6 +36,7 @@ Shader "Custom/CubeUVFade"
             float2  localPos    : TEXCOORD2;
         };
         float4 _Color;
+        float _MinH;
 
         Varyings Vert(Attributes IN)
         {
@@ -51,7 +53,7 @@ Shader "Custom/CubeUVFade"
 
            if (IN.worldNormal.y > 0.01) discard;
            float y = saturate(IN.localPos.y + 0.5f);
-           return float4(_Color.rgb,0.2f + (abs(sin(_Time.w)  * 0.1f) - y));
+           return float4(_Color.rgb,(_MinH + (abs(sin(_Time.w)  * 0.1f) - y)) * _Color.a);
         }
         ENDHLSL
         }

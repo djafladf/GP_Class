@@ -11,6 +11,7 @@ public class PressureMap : MonoBehaviour
     [SerializeField] GameObject CubePlat;
     [SerializeField] GameObject WallSet;
     [SerializeField] Transform pr;
+    [SerializeField] AudioClip clip;
 
     Collider coll;
 
@@ -72,7 +73,7 @@ public class PressureMap : MonoBehaviour
         }
         visitCount[mn, mn] = 1;
         for (int x = 0; x < n; x++) for (int y = 0; y < n; y++) if (visitCount[x, y] == 0) Instantiate(CubePlat, pr).transform.localPosition = new Vector3((x - mn) * 2, 0, (y - mn) * 2);
-        
+        min_Fill = Cur_Fill;
         pr.SetParent(transform.parent.parent); pr.transform.localPosition = new Vector3(0, 0, 0);
     }
 
@@ -86,7 +87,8 @@ public class PressureMap : MonoBehaviour
                 StopAllCoroutines();
                 GameManager.instance.PlayerScript.ControllMoveAble(false);
                 Wall.transform.GetChild(0).gameObject.SetActive(true);
-                Invoke("EndTask",1);
+                Invoke("EndTask",2);
+                GameManager.instance.Audio.PlayClip(2, 1, clip);
             }
         }
         else Cur_Fill++;
@@ -94,6 +96,7 @@ public class PressureMap : MonoBehaviour
 
     void EndTask()
     {
+        MyMap.UnlockNearDoor();
         GameManager.instance.PlayerScript.ControllFocus(false, null); GameManager.instance.PlayerScript.ControllMoveAble(true);
         Wall.transform.GetChild(0).gameObject.SetActive(false);
         GameManager.instance.Data.ResetPool();
@@ -107,7 +110,7 @@ public class PressureMap : MonoBehaviour
     {
         while (true)
         {
-            LookPos.transform.position = new Vector3(GameManager.instance.Player.position.x, LookPos.position.y, GameManager.instance.Player.position.z);
+            LookPos.position = new Vector3(GameManager.instance.Player.position.x, 15, GameManager.instance.Player.position.z);
             yield return GameManager.DotOne;
         }
     }
@@ -186,15 +189,20 @@ public class PressureMap : MonoBehaviour
     {
         pr.gameObject.SetActive(true);
         OnGame = true;
-        StartCoroutine(FollowCam());
+        //StartCoroutine(FollowCam());
         GameManager.instance.UI.ShowAscending("Trigger All", 2);
         GameManager.instance.PlayerScript.ControllFocus(true, new Tuple<Transform, Transform>(LookPos, GameManager.instance.Player));
-        coll.enabled = false;
+        coll.enabled = false; Invoke("Testt", 1);
+    }
+
+    void Testt()
+    {
+        coll.enabled = true;
     }
 
     public void Reset()
     {
-        Cur_Fill = 0;
+        Cur_Fill = min_Fill;
         foreach (var j in RestFunc) j.Invoke();
     }
 

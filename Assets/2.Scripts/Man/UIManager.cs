@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         GameManager.instance.UI = this;
-        WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
+        //WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
         captured = new RenderTexture(Screen.width, Screen.height, 0);
         GameManager.instance.MapMaking();
         int l = GameManager.instance.Map.MapSize;
@@ -57,11 +57,6 @@ public class UIManager : MonoBehaviour
         GameManager.instance.Player.gameObject.SetActive(true);
     }
 
-    void Test()
-    {
-        ExpChange(100);
-    }
-
     #region Weapon
     [Header("Weapon Settings")]
     public List<Sprite> WeaponIm;
@@ -77,7 +72,7 @@ public class UIManager : MonoBehaviour
 
     public void AddWeaponImage(Sprite sp)
     {
-        WeaponIm.Add(sp); 
+        WeaponIm.Add(sp); if (WeaponIm.Count == 1) WeaponIms[CurOrder[2]].sprite = WeaponIm[0];
         WeaponIms[CurOrder[1]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd - 1 + WeaponIm.Count) % WeaponIm.Count];
         WeaponIms[CurOrder[3]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd + 1) % WeaponIm.Count];
     }
@@ -176,9 +171,12 @@ public class UIManager : MonoBehaviour
         CurScore += Mathf.FloorToInt(amount * GameManager.instance.PlayerScript.BuffAmount[5]);
         Score.text = $"{CurScore}".PadLeft(5, '0');
     }
+
+    [SerializeField] Image HitEffect;
     public void HPChange(float rf)
     {
         HPBar.fillAmount = rf;
+        var col = HitEffect.color; col.a = (1 - rf) * 0.75f; HitEffect.color = col;
     }
 
     float ExpSub = 10;
@@ -298,6 +296,7 @@ public class UIManager : MonoBehaviour
     int[] Uparray = { 0, 1, 2, 3, 4, 5};
     public void LevelUp()
     {
+        GameManager.instance.PlayerHealFunc(20);
         Uparray = Uparray.OrderBy(x => Guid.NewGuid()).ToArray();
         for(int i = 0; i < 3; i++)
         {
@@ -372,6 +371,35 @@ public class UIManager : MonoBehaviour
             PauseUI.gameObject.SetActive(false); PlayUI.SetActive(true);
             Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false;
             GameManager.instance.SetTime(0, true);
+        }
+    }
+
+    [SerializeField] Image GameOver;
+    [SerializeField] AudioClip OverSound;
+    public void EndGame()
+    {
+        StopAllCoroutines();
+        StartCoroutine(EndAct());
+    }
+
+    IEnumerator EndAct()
+    {
+        yield return new WaitForSeconds(2);
+        
+        GameManager.instance.Audio.StopBGM();
+        gameObject.AddComponent<AudioSource>().PlayOneShot(OverSound,2);
+        var cnt = GameOver.GetComponent<RectTransform>();
+        var tmp = GameOver.transform.parent.GetComponent<RectTransform>();
+        var ttmp = tmp.GetComponent<Image>();
+        var wwfs = new WaitForSeconds(0.01f);
+        tmp.gameObject.SetActive(true);
+        for (int i = 0; i < 500; i++)
+        {
+            cnt.sizeDelta = new Vector2(4 * i, 0.8f * i);
+            GameOver.color = new Color(1, 1, 1, i * 0.002f);
+            tmp.sizeDelta = new Vector2(2000, 0.8f * i);
+            ttmp.color = new Color(0, 0, 0, i * 0.002f);
+            yield return wwfs;
         }
     }
     #endregion

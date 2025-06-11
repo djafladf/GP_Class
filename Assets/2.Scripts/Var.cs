@@ -42,10 +42,10 @@ public class WeaponInfo
 [System.Serializable]
 public struct SpawnType
 {
-    public int LastTime;
-    public List<float> StartTime;
-    public List<float> SpawnGap;
-    public List<int> EnemyID;
+    public string name;
+    public float SpawnGap;
+    public int EnemyID;
+    public int MinLevel;
     public List<Transform> SpawnPos;
 }
 

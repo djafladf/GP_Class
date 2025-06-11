@@ -25,7 +25,7 @@ public class HealPond : MonoBehaviour
         {
             GameManager.instance.UI.CurScore -= Cost;
             GameManager.instance.UI.ShowAscending("All <color=red>HP</color> has been regained..", 1);
-            GameManager.instance.PlayerScript.BuffOn(Random.Range(1, 4), 120, 1);
+            GameManager.instance.PlayerScript.BuffOn(Random.Range(1, 4), 120, 0.3f);
             GameManager.instance.PlayerHealFunc.Invoke(10000);
             GameManager.instance.UI.ToggleInteract(null, false, null);
             gameObject.SetActive(false);

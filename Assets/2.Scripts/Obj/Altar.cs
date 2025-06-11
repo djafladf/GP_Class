@@ -7,7 +7,6 @@ public class Altar : MonoBehaviour
 {
     [SerializeField] MapController MyMap;
     [SerializeField] int AltarType;
-    [SerializeField] List<SpawnType> st;
     [SerializeField] List<Transform> SpawnPos;
 
     [SerializeField] GameObject Walls;
@@ -16,21 +15,21 @@ public class Altar : MonoBehaviour
     [SerializeField] ParticleSystem ClearEffect;
     [SerializeField] Light SphereLight;
 
+
+    int Difficulty;
     AudioSource ad;
     BoxCollider InteractField;
-
-    SpawnType ST;
     private void Awake()
     {
         MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
         InteractField = GetComponent<BoxCollider>();
         Wall1 = Walls.transform.GetChild(0); Wall2 = Walls.transform.GetChild(1);
         ad = GetComponent<AudioSource>();
-        ST = st[Random.Range(0, st.Count)]; ST.SpawnPos = SpawnPos;
     }
 
     private void Start()
     {
+        Difficulty = Mathf.Max(Mathf.Abs(MyMap.Indx - GameManager.instance.bx), Mathf.Abs(MyMap.Indy - GameManager.instance.by)) + GameManager.instance.CurDepth;
     }
 
     bool OnWave = false;
@@ -57,8 +56,8 @@ public class Altar : MonoBehaviour
         if (AltarType == 0)
         {
             foreach (var j in SpawnPos) j.gameObject.SetActive(true);
-            GameManager.instance.Enemy.StartMaking(ST);
-            GameManager.instance.UI.SetTimer(ST.LastTime, WaveEnd);
+            GameManager.instance.Enemy.StartMaking(Difficulty, 30 + Difficulty * 15,ref SpawnPos);
+            GameManager.instance.UI.SetTimer(30 + Difficulty * 15, WaveEnd);
         }
     }
 
@@ -79,14 +78,14 @@ public class Altar : MonoBehaviour
             yield return GameManager.DotOne;
         }
         GameManager.instance.UI.ShowAscending("Mission Clear!",2);
-        if (AltarType == 0) { GameManager.instance.Enemy.KillAll(); foreach (var j in ST.SpawnPos) j.gameObject.SetActive(false); }
+        if (AltarType == 0) { GameManager.instance.Enemy.KillAll(); foreach (var j in SpawnPos) j.gameObject.SetActive(false); }
         SphereLight.intensity = 0;
         MyMap.UnlockNearDoor();
         Walls.SetActive(false);
         GameManager.instance.Data.ResetPool();
         var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
-        cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(15 + Random.Range(-1f,1f), 0.5f, Random.Range(-1f, 1f));
-        for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(15 + Random.Range(-1f, 1f), 0.1f, Random.Range(-1f, 1f)); }
+        cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(15 + Random.Range(-1f,1f), -1.5f, Random.Range(-1f, 1f));
+        for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(15 + Random.Range(-1f, 1f), -1.5f, Random.Range(-1f, 1f)); }
     }
 
     public void InterAct()
@@ -129,7 +128,7 @@ public class Altar : MonoBehaviour
         }
         Camera.main.GetComponent<CinemachineBrain>().enabled = true;
         ad.Stop();
-        if(AltarType == 0)GameManager.instance.UI.ShowAscending($"Survive <color=red>{ST.LastTime}</color> Seconds",2,UnLockStart);
+        if(AltarType == 0)GameManager.instance.UI.ShowAscending($"Survive <color=red>{30 + Difficulty * 15}</color> Seconds",2,UnLockStart);
     }
 
 

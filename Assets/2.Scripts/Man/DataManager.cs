@@ -37,9 +37,9 @@ public class DataManager : MonoBehaviour
 
     public void ResetPool()
     {
-        norm = Enumerable.Range(0, Normal.Count).OrderBy(x => Guid.NewGuid()).ToList();
-        rare = Enumerable.Range(0, Rare.Count).OrderBy(x => Guid.NewGuid()).ToList();
-        legd = Enumerable.Range(0, Legend.Count).OrderBy(x => Guid.NewGuid()).ToList();
+        norm = GameManager.RandomIndex_Return(Enumerable.Range(0, Normal.Count).ToList());
+        rare = GameManager.RandomIndex_Return(Enumerable.Range(0, Rare.Count).ToList());
+        legd = GameManager.RandomIndex_Return(Enumerable.Range(0, Legend.Count).ToList());
     }
 
 

@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using UnityEngine;
+using static Unity.Burst.Intrinsics.X86;
 using Random = UnityEngine.Random;
 
 public class MonsterManager : MonoBehaviour
@@ -11,6 +13,7 @@ public class MonsterManager : MonoBehaviour
     [HideInInspector] public List<Action> GameEnd;
     [HideInInspector] public List<Action> DeadAct;
     [SerializeField] List<GameObject> Pref;
+    [SerializeField] List<SpawnType> tp;
     List<int> LastUse;
 
     [HideInInspector] public List<List<GameObject>> Pool;
@@ -24,8 +27,9 @@ public class MonsterManager : MonoBehaviour
         for (int i = 0; i < Pref.Count; i++) { Pool.Add(new List<GameObject>()); MakeNumCnt.Add(0); LastUse.Add(0); }
 
 
-        RegisterMonsterType(0, 75);
-        RegisterMonsterType(1, 40);
+        RegisterMonsterType(0, 60);
+        RegisterMonsterType(1, 60);
+        RegisterMonsterType(2, 30);
     }
 
     
@@ -44,41 +48,36 @@ public class MonsterManager : MonoBehaviour
         if (Test) for (int i = 0; i < Pref.Count; i++) for (int x = Pool[i].Count; x < MakeNumCnt[i]; x++) { GameObject cnt = Instantiate(Pref[i], transform); cnt.SetActive(false); Pool[i].Add(cnt); }
     }
 
-    /// <summary>
-    /// Make Mop
-    /// </summary>
-    /// <param name="tp"> Spawn Type </param>
-    /// <param name="StartPos"> Stand Pos </param>
-    /// <param name="Size"> Size Of Space </param>
-    /// <param name="ExclusiveField"> Obstalce Pos </param>
-    public void StartMaking(SpawnType tp)
+
+
+    public void StartMaking(int dif, int time, ref List<Transform> SpawnPos)
     {
-        for (int i = 0; i < tp.SpawnGap.Count; i++) StartCoroutine(Make(tp.EnemyID[i], tp.StartTime[i], tp.SpawnGap[i],tp.LastTime,tp.SpawnPos));
+        foreach(var j in tp)
+        {
+            if (j.MinLevel <= dif) StartCoroutine(Make(j.EnemyID,time,SpawnPos));
+        }
     }
 
-    IEnumerator Make(int ind, float StartTime, float SpawnGap, int Last,List<Transform> SpawnPos)
+    IEnumerator Make(int id,int time, List<Transform> SpawnPos)
     {
-        if(StartTime != 0) yield return new WaitForSeconds(StartTime);
-        int l = Mathf.FloorToInt(Last / SpawnGap);
-
-        var wfs = new WaitForSeconds(SpawnGap);
-        Vector3 PosCnt = Vector3.zero;
-        int MaxFind = Pool[ind].Count;
-        for(int i = 0; i < l; i++)
+        int Count = Mathf.FloorToInt(time / tp[id].SpawnGap);
+        var wfs = new WaitForSeconds(tp[id].SpawnGap);
+        int MaxFind = Pool[id].Count; int l = SpawnPos.Count;
+        for (int _ = 0; _ < Count; _++)
         {
-            PosCnt = SpawnPos[Random.Range(0, SpawnPos.Count)].position;
-            for(int _ = 0; _ < MaxFind; _++)
+            for (int i = 0; i < MaxFind; i++)
             {
-                LastUse[ind]++; if (LastUse[ind] == MaxFind) LastUse[ind] = 0;
-                if (!Pool[ind][LastUse[ind]].activeSelf)
+                LastUse[id]++; if (LastUse[id] == MaxFind) LastUse[id] = 0;
+                if (!Pool[id][LastUse[id]].activeSelf)
                 {
-                    Pool[ind][LastUse[ind]].transform.position = PosCnt;
-                    Pool[ind][LastUse[ind]].SetActive(true);
+                    Pool[id][LastUse[id]].transform.position = SpawnPos[GameManager.rng.Next(l)].position;
+                    Pool[id][LastUse[id]].SetActive(true);
                     break;
                 }
             }
             yield return wfs;
         }
+
     }
 
     public void KillAll()

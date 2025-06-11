@@ -31,6 +31,29 @@ public class GameManager : MonoBehaviour
     public CinemachineVirtualCamera CV;
     public CinemachineTransposer CVtr;
     public Action<int> PlayerHealFunc;
+
+    [HideInInspector] public int CurDepth = 0;
+
+    public readonly static System.Random rng = new System.Random();
+
+    public static void RandomIndex<T>(List<T> list)
+    {
+        for(int i = list.Count-1; i > 0; i--)
+        {
+            int swapInd = rng.Next(i + 1);
+            (list[i], list[swapInd]) = (list[swapInd], list[i]);
+        }
+    }
+    public static List<T> RandomIndex_Return<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int swapInd = rng.Next(i + 1);
+            (list[i], list[swapInd]) = (list[swapInd], list[i]);
+        }
+        return list;
+    }
+
     private void Awake()
     {
         if (instance == null) { instance = this; CVtr = CV.GetCinemachineComponent<CinemachineTransposer>(); }
@@ -73,6 +96,7 @@ public class GameManager : MonoBehaviour
             TimeSet.Add(var);
             TimeSet.Sort();
         }
+        //Audio.ChangePitch();
     }
 
     
@@ -137,7 +161,7 @@ public class GameManager : MonoBehaviour
             MapQue cnt = que.Dequeue();
             var cmap = Instantiate(MapPref, MapPr); cmap.transform.position = new Vector3(80 * cnt.CurPos.x, 0, 80 * cnt.CurPos.y);
             int cx = Mathf.FloorToInt(cnt.CurPos.x), cy = Mathf.FloorToInt(cnt.CurPos.y); Map.RoomPrefs[cx, cy] = cmap;
-            if (Map.MapType[cx, cy] != 1) { var tmp = Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform); if (Map.MapType[cx, cy] == 3) Destroy(tmp.transform.GetChild(Random.Range(1,2)).gameObject); }
+            if (Map.MapType[cx, cy] != 1) { var tmp = Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform); if (Map.MapType[cx, cy] == 3) Destroy(tmp.transform.GetChild(Random.Range(1,3)).gameObject); }
             Map.MapCont[cx, cy] = cmap.transform.GetChild(0).GetComponent<MapController>();
             Map.MapCont[cx, cy].Init(cx, cy);
             if (cnt.CurDepth == Map.MaxDepth) continue;
