@@ -15,8 +15,6 @@ public class Altar : MonoBehaviour
     [SerializeField] ParticleSystem ClearEffect;
     [SerializeField] Light SphereLight;
 
-
-    int Difficulty;
     AudioSource ad;
     BoxCollider InteractField;
     private void Awake()
@@ -26,12 +24,6 @@ public class Altar : MonoBehaviour
         Wall1 = Walls.transform.GetChild(0); Wall2 = Walls.transform.GetChild(1);
         ad = GetComponent<AudioSource>();
     }
-
-    private void Start()
-    {
-        Difficulty = Mathf.Max(Mathf.Abs(MyMap.Indx - GameManager.instance.bx), Mathf.Abs(MyMap.Indy - GameManager.instance.by)) + GameManager.instance.CurDepth;
-    }
-
     bool OnWave = false;
     Transform Wall1, Wall2;
     private void FixedUpdate()
@@ -47,7 +39,7 @@ public class Altar : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.instance.UI.ToggleInteract(InterAct, true, "Press<sprite name=\"e\"> To Interact");
+            GameManager.instance.UI.ToggleInteract(InterAct, true, $"À§Çèµµ <color=red>{MyMap.Difficulty}</color>\nPress<sprite name=\"e\"> To Interact");
         }
     }
 
@@ -56,8 +48,8 @@ public class Altar : MonoBehaviour
         if (AltarType == 0)
         {
             foreach (var j in SpawnPos) j.gameObject.SetActive(true);
-            GameManager.instance.Enemy.StartMaking(Difficulty, 30 + Difficulty * 15,ref SpawnPos);
-            GameManager.instance.UI.SetTimer(30 + Difficulty * 15, WaveEnd);
+            GameManager.instance.Enemy.StartMaking(MyMap.Difficulty, 30 + MyMap.Difficulty * 15,ref SpawnPos);
+            GameManager.instance.UI.SetTimer(30 + MyMap.Difficulty * 15, WaveEnd);
         }
     }
 
@@ -83,9 +75,9 @@ public class Altar : MonoBehaviour
         MyMap.UnlockNearDoor();
         Walls.SetActive(false);
         GameManager.instance.Data.ResetPool();
-        var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
+        var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet, MyMap.Difficulty * 0.1f); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
         cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(15 + Random.Range(-1f,1f), -1.5f, Random.Range(-1f, 1f));
-        for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(15 + Random.Range(-1f, 1f), -1.5f, Random.Range(-1f, 1f)); }
+        for (int i = 0; i < MyMap.Difficulty * 5; i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(15 + Random.Range(-1f, 1f), -1.5f, Random.Range(-1f, 1f)); }
     }
 
     public void InterAct()
@@ -128,7 +120,7 @@ public class Altar : MonoBehaviour
         }
         Camera.main.GetComponent<CinemachineBrain>().enabled = true;
         ad.Stop();
-        if(AltarType == 0)GameManager.instance.UI.ShowAscending($"Survive <color=red>{30 + Difficulty * 15}</color> Seconds",2,UnLockStart);
+        if(AltarType == 0)GameManager.instance.UI.ShowAscending($"Survive <color=red>{30 + MyMap.Difficulty * 10}</color> Seconds",2,UnLockStart);
     }
 
 

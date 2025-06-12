@@ -32,7 +32,7 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        RemoveItem(0, 0); RemoveItem(0, 1);
+        RemoveItem(0, 0); RemoveItem(0, 1); GameManager.instance.PlayerScript.DroneAdd();
     }
 
     public void ResetPool()
@@ -43,12 +43,12 @@ public class DataManager : MonoBehaviour
     }
 
 
-    public Tuple<int, int, GameObject> ReturnItem(Transform parent)
+    public Tuple<int, int, GameObject> ReturnItem(Transform parent,float weight)
     {
         int ct = 0;
         while (++ct < 100)
         {
-            float z = Random.Range(0f, 1f);
+            float z = Random.Range(weight, 1f);
             if (z < Prob[0]) // Normal
             {
                 if (norm.Count != 0)

@@ -9,14 +9,12 @@ public class PressureMap : MonoBehaviour
 {
     [SerializeField] GameObject PressurePlat;
     [SerializeField] GameObject CubePlat;
-    [SerializeField] GameObject WallSet;
     [SerializeField] Transform pr;
     [SerializeField] AudioClip clip;
 
     Collider coll;
 
     MapController MyMap;
-    GameObject Wall;
     Transform LookPos;
 
     int n = 11;
@@ -24,37 +22,35 @@ public class PressureMap : MonoBehaviour
 
     int[,] visitCount;
 
-    int min_Fill = 30;
+    int min_Fill = 45;
     int Cur_Fill = 0;
+
+    int min_dist;
 
     List<Action> RestFunc = new List<Action>();
     private void Start()
     {
         coll = GetComponent<BoxCollider>();
         MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
-        Wall = Instantiate(WallSet, pr); LookPos = Wall.transform.GetChild(1);
+        n = 3 + MyMap.Difficulty * 3; 
+        min_Fill = n * n / 2; min_dist = n / 3;
+        LookPos = new GameObject().transform; LookPos.SetParent(transform); LookPos.localPosition = new Vector3(0, n * 1.5f, 0);
         visitCount = new int[n, n];
         mn = (n - 1) / 2;
         Vector2Int StartPos = new Vector2Int(mn, mn);
         Vector2Int next;
 
-        List<Vector2Int> MustVisit = new List<Vector2Int>();
-
         int l = 100;
-        while (min_Fill > Cur_Fill || MustVisit.Count != 0)
+
+       
+
+        while (min_Fill > Cur_Fill)
         {
-            if (MustVisit.Count != 0)
-            {
-                next = MustVisit[0]; MustVisit.RemoveAt(0);
-            }
-            else
-            {
-                var cand = new List<Vector2Int>();
-                for (int x = 0; x < n; x++) for (int y = 0; y < n; y++) { if (!(x == StartPos.x && y == StartPos.y) && Heuristic(StartPos, new Vector2Int(x, y)) > 3) cand.Add(new Vector2Int(x, y)); }
-                if (cand.Count == 0) break;
-                cand = cand.OrderBy(_ => Guid.NewGuid()).ToList();
-                next = cand[0];
-            }
+            var cand = new List<Vector2Int>();
+            for (int x = 0; x < n; x++) for (int y = 0; y < n; y++) { if (Heuristic(StartPos, new Vector2Int(x, y)) >= min_dist) cand.Add(new Vector2Int(x, y)); }
+            if (cand.Count == 0) break;
+            cand = cand.OrderBy(_ => Guid.NewGuid()).ToList();
+            next = cand[0];
             var Path = FindPathAStar(StartPos, next);
             for (int i = 1; i < Path.Count; i++)
             {
@@ -66,13 +62,13 @@ public class PressureMap : MonoBehaviour
                     plate.transform.localPosition = new Vector3((pt.x - mn) * 2, 0, (pt.y - mn) * 2);
                     Cur_Fill++;
                 }
-                visitCount[pt.x, pt.y]++; if (visitCount[pt.x, pt.y] % 2 == 0) MustVisit.Add(new Vector2Int(pt.x, pt.y));
+                visitCount[pt.x, pt.y]++;
             }
             StartPos = next;
             if (--l < 0) break; // 데드락 바잊
         }
         visitCount[mn, mn] = 1;
-        for (int x = 0; x < n; x++) for (int y = 0; y < n; y++) if (visitCount[x, y] == 0) Instantiate(CubePlat, pr).transform.localPosition = new Vector3((x - mn) * 2, 0, (y - mn) * 2);
+        for (int x = -1; x <= n; x++) for (int y = -1; y <= n; y++) if ((x == -1 | x == n | y == -1 | y == n) ||visitCount[x, y] == 0) Instantiate(CubePlat, pr).transform.localPosition = new Vector3((x - mn) * 2, 0, (y - mn) * 2);
         min_Fill = Cur_Fill;
         pr.SetParent(transform.parent.parent); pr.transform.localPosition = new Vector3(0, 0, 0);
     }
@@ -86,7 +82,6 @@ public class PressureMap : MonoBehaviour
             {
                 StopAllCoroutines();
                 GameManager.instance.PlayerScript.ControllMoveAble(false);
-                Wall.transform.GetChild(0).gameObject.SetActive(true);
                 Invoke("EndTask",2);
                 GameManager.instance.Audio.PlayClip(2, 1, clip);
             }
@@ -98,11 +93,10 @@ public class PressureMap : MonoBehaviour
     {
         MyMap.UnlockNearDoor();
         GameManager.instance.PlayerScript.ControllFocus(false, null); GameManager.instance.PlayerScript.ControllMoveAble(true);
-        Wall.transform.GetChild(0).gameObject.SetActive(false);
         GameManager.instance.Data.ResetPool();
-        var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
+        var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet, MyMap.Difficulty * 0.1f); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
         cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.5f, Random.Range(-1f, 1f));
-        for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.1f, Random.Range(-1f, 1f)); }
+        for (int i = 0; i < MyMap.Difficulty * 5; i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.1f, Random.Range(-1f, 1f)); }
         Destroy(pr.gameObject); Destroy(transform.parent.gameObject);
     }
 
@@ -126,7 +120,7 @@ public class PressureMap : MonoBehaviour
 
         while (openSet.Count > 0)
         {
-            var current = openSet.OrderBy(pos => fScore.ContainsKey(pos) ? fScore[pos] : int.MaxValue).First(); // PQ
+            var current = openSet.OrderBy(pos => gScore.GetValueOrDefault(pos, int.MaxValue)+ Heuristic(pos, goal)).First(); // PQ
             if (current == goal)
                 return ReconstructPath(cameFrom, current);
 
@@ -144,19 +138,15 @@ public class PressureMap : MonoBehaviour
                 if (closedSet.Contains(neighbor))
                     continue;
 
-                int tentativeG = gScore[current] + visitCount[neighbor.x, neighbor.y] %2 != 0 ? 300 * visitCount[neighbor.x,neighbor.y] : 1;
+                int tentativeG = gScore[current] + (visitCount[neighbor.x, neighbor.y] %2 != 0 ? mn * mn * visitCount[neighbor.x,neighbor.y] : 1);
 
                 if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
                 {
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeG;
-                    int cnt = tentativeG + Heuristic(neighbor, goal);
-                    fScore[neighbor] = cnt;
+                    fScore[neighbor] = tentativeG + Heuristic(neighbor, goal);
 
-                    if (!openSet.Contains(neighbor))
-                    {
-                        openSet.Add(neighbor);
-                    }
+                    if (!openSet.Contains(neighbor)) openSet.Add(neighbor);
                 }
             }
         }
@@ -211,7 +201,7 @@ public class PressureMap : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if(!OnGame) GameManager.instance.UI.ToggleInteract(Init, true, "Press<sprite name=\"e\"> To Interact");
+            if(!OnGame) GameManager.instance.UI.ToggleInteract(Init, true, $"난이도 <color=red>{MyMap.Difficulty}</color>\nPress<sprite name=\"e\"> To Interact");
             else GameManager.instance.UI.ToggleInteract(Reset, true, "Press<sprite name=\"e\"> To Reset");
         }
     }

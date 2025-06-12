@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class Shop : MonoBehaviour
 {
     public int[] ItemCost = new int[3];
-    int[] RarityCost = { 100, 300, 750 };
+    int[] RarityCost = { 500, 1000, 1500 };
 
     Tuple<int, int>[] CurItem = { null, null, null }; 
     private void Start()
@@ -15,7 +15,7 @@ public class Shop : MonoBehaviour
         GameManager.instance.Data.ResetPool();
         for(int i = 0; i < 3; i++)
         {
-            var cnt = GameManager.instance.Data.ReturnItem(transform.GetChild(i).GetChild(0));
+            var cnt = GameManager.instance.Data.ReturnItem(transform.GetChild(i).GetChild(0),GameManager.instance.CurDepth * 0.1f);
             CurItem[i] = new Tuple<int, int>(cnt.Item1,cnt.Item2);
             ItemCost[i] = RarityCost[cnt.Item1];
         }

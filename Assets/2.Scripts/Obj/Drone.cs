@@ -24,9 +24,9 @@ public class Drone : MonoBehaviour
         {
             if(Physics.SphereCast(transform.position, 5, transform.forward, out RaycastHit hit, 5,Targetmask))
             {
-                GameManager.instance.Audio.PlayClip(2, 0.5f, Laser);
+                GameManager.instance.Audio.PlayClip(2, 1, Laser);
                 anim.SetTrigger("Attack");
-                MyBull[LastBull++].Init(transform.position, (hit.transform.position - transform.position).normalized, 3); LastBull = LastBull % 3;
+                MyBull[LastBull++].Init(transform.position, (hit.transform.position - transform.position).normalized, 4); LastBull = LastBull % 3;
                 yield return wfs;
             }
             yield return GameManager.DotOne;

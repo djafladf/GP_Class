@@ -1953,7 +1953,7 @@ MonoBehaviour:
   AttackCol:
   - {fileID: 2379100342563568987}
   - {fileID: 6703953060370885330}
-  InitHP: 2
+  InitHP: 3
   AttackRagne: 1.5
   BloodPref: {fileID: 5919574347784969478}
 --- !u!195 &5688022323231415093

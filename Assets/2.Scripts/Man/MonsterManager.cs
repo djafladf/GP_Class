@@ -27,9 +27,11 @@ public class MonsterManager : MonoBehaviour
         for (int i = 0; i < Pref.Count; i++) { Pool.Add(new List<GameObject>()); MakeNumCnt.Add(0); LastUse.Add(0); }
 
 
-        RegisterMonsterType(0, 60);
+        RegisterMonsterType(0, 40);
         RegisterMonsterType(1, 60);
         RegisterMonsterType(2, 30);
+        RegisterMonsterType(3, 15);
+        RegisterMonsterType(4, 15);
     }
 
     
@@ -54,7 +56,7 @@ public class MonsterManager : MonoBehaviour
     {
         foreach(var j in tp)
         {
-            if (j.MinLevel <= dif) StartCoroutine(Make(j.EnemyID,time,SpawnPos));
+            if (j.MinLevel <= dif && j.MaxLevel >= dif) StartCoroutine(Make(j.EnemyID,time,SpawnPos));
         }
     }
 

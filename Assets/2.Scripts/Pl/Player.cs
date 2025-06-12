@@ -1,10 +1,8 @@
-using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -317,6 +315,12 @@ public class Player : MonoBehaviour
             ControlFocusFromOther = false;
             Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z); Camera.main.cullingMask = OnDefault; JumpAble = true;
         }
+        _onFocus = false; 
+        GameManager.instance.CV.PreviousStateIsValid = false;
+        Camera.main.cullingMask = OnDefault;
+        GameManager.instance.CVtr.m_FollowOffset = FolllowOffset;
+        GameManager.instance.CV.Follow = ViewTarget.Item1; GameManager.instance.CV.LookAt = ViewTarget.Item2;
+        Aim.localPosition = new Vector3(FolllowOffset.x, 1.5f, AimPos.z);
     }
 
     void OnFocus(InputValue value)
@@ -327,7 +331,7 @@ public class Player : MonoBehaviour
         {
             DampingSubVar = DampingVar; SettingCameraDamping(Vector3.zero);
             GameManager.instance.CV.PreviousStateIsValid = false;
-            Camera.main.cullingMask = OnZoom; GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
+            Camera.main.cullingMask = ControlFocusFromOther ? OnDefault : OnZoom; GameManager.instance.CVtr.m_FollowOffset = FollowOffset_Z;
             GameManager.instance.CV.Follow = ControlFocusFromOther ? ExtViewTarget.Item1 : ViewTarget.Item1; GameManager.instance.CV.LookAt = ControlFocusFromOther ? ExtViewTarget.Item2 : ViewTarget.Item2;
             Aim.localPosition = AimPos;
         }

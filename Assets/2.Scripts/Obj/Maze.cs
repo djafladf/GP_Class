@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class Maze : MonoBehaviour
 {
-    [SerializeField] int Size;
-
+    int Size;
+    int l;
     [SerializeField] GameObject CWall, RWall, StoneEffect;
     MazeMap MyMaze;
     BoxCollider col;
     MapController MyMap;
     private void Start()
     {
-        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>();
+        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>(); Size = 3 + MyMap.Difficulty * 2; l = Size * 2 - 1;
         col = GetComponent<BoxCollider>();
         MyMaze = new MazeMap();
         MyMaze.MazeMaking(Size,Size);
@@ -22,6 +22,7 @@ public class Maze : MonoBehaviour
         pr.SetParent(transform.parent.parent);
         ad = GetComponent<AudioSource>();
         MakeWalls();
+
     }
 
     [SerializeField] Transform pr;
@@ -34,7 +35,7 @@ public class Maze : MonoBehaviour
         {
             for (x = 0; x < Size; x++)
             {
-                cx = -18.5f + x * 4f; cy = 18.5f - Y * 4f;
+                cx = -l + x * 4f; cy = l - Y * 4f;
                 if (!MyMaze.Maze[x, Y].Left && x==0)
                 {
                     GameObject cnt = Instantiate(CWall, pr);
@@ -85,19 +86,19 @@ public class Maze : MonoBehaviour
         {
             switch (Random.Range(0, 4))
             {
-                case 0: transform.parent.localPosition = new Vector3(-18.5f + 4f * Random.Range(0, Size), 0, 18.5f); break;
-                case 1: transform.parent.localPosition = new Vector3(-18.5f + 4f * Random.Range(0, Size), 0, -17.5f); break;
-                case 2: transform.parent.localPosition = new Vector3(17.5f, 0, 18.5f - 4f * Random.Range(0, Size)); break;
-                case 3: transform.parent.localPosition = new Vector3(-18.5f, 0, 18.5f - 4f * Random.Range(0, Size)); break;
+                case 0: transform.parent.localPosition = new Vector3(-l + 4f * Random.Range(0, Size), 0, l - 1.5f); break;
+                case 1: transform.parent.localPosition = new Vector3(-l + 4f * Random.Range(0, Size), 0, -l + 1.5f); break;
+                case 2: transform.parent.localPosition = new Vector3(l - 1.5f , 0, l - 4f * Random.Range(0, Size)); break;
+                case 3: transform.parent.localPosition = new Vector3(-l + 1.5f, 0, l - 4f * Random.Range(0, Size)); break;
             }
             col.enabled = true;
             GameManager.instance.UI.ShowAscending("Find EXIT", 1);
         }
         else { yield return GameManager.DotFive; MyMap.UnlockNearDoor();
             GameManager.instance.Data.ResetPool();
-            var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
+            var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet,MyMap.Difficulty * 0.1f); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
             cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(Random.Range(-3f, 3f), 0.5f, Random.Range(-3f, 3f));
-            for (int i = 0; i < Random.Range(5, 10); i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-3f, 3f), 0.1f, Random.Range(-3f, 3f)); }
+            for (int i = 0; i < MyMap.Difficulty * 5; i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-3f, 3f), 0.1f, Random.Range(-3f, 3f)); }
             Destroy(pr.gameObject); Destroy(transform.parent.gameObject);
         }
         GetComponent<AudioSource>().Stop();
@@ -144,7 +145,7 @@ public class Maze : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.instance.UI.ToggleInteract(SetMaze, true,"Press<sprite name=\"e\"> To Interact");
+            GameManager.instance.UI.ToggleInteract(SetMaze, true, $"≥≠¿Ãµµ <color=red>{MyMap.Difficulty}</color>\nPress<sprite name=\"e\"> To Interact");
         }
     }
 

@@ -7,6 +7,7 @@ public class MapController : MonoBehaviour
     [SerializeField] List<Door> Doors;
     bool IsUnknown = true;
     public int Indx, Indy;
+    public int Difficulty;
 
     private void Start()
     {
@@ -15,7 +16,7 @@ public class MapController : MonoBehaviour
 
     public void Init(int x, int y)
     {
-        Indx = x; Indy = y;
+        Indx = x; Indy = y; Difficulty = Mathf.Abs(x - GameManager.instance.bx) + Mathf.Abs(y - GameManager.instance.by) + GameManager.instance.CurDepth; 
     }
 
     public void MakeWall(ref Vector4 tp)

@@ -5050,7 +5050,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AttackCol: []
-  InitHP: 1
+  InitHP: 2
   AttackRagne: 15
   BloodPref: {fileID: 0}
   bul: {fileID: 6367692921632144740, guid: 2e10f3c00b329b2459436e3b17c51d1a, type: 3}

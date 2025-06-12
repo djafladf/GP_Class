@@ -46,7 +46,7 @@ public struct SpawnType
     public float SpawnGap;
     public int EnemyID;
     public int MinLevel;
-    public List<Transform> SpawnPos;
+    public int MaxLevel;
 }
 
 [System.Serializable]

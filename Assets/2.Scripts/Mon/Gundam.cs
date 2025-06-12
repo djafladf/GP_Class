@@ -28,19 +28,26 @@ public class Gundam : MonoBehaviour
     {
         WaitForSeconds wfs = new WaitForSeconds(time);
 
-        while (true)
+        while (GameManager.instance.PlayerScript != null)
         {
             yield return wfs;
-            GameObject tmp = Instantiate(cnt, GameManager.instance.ParticleSet); Vector3 pos = GameManager.instance.Player.position + new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));pos.y = 0.1f; tmp.transform.position = pos;
-            
+            for (int _ = 0; _ < PatternCount; _++)
+            {
+                GameObject tmp = Instantiate(cnt, GameManager.instance.ParticleSet); Vector3 pos = GameManager.instance.Player.position + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f)); pos.y = 0.1f; tmp.transform.position = pos;
+                yield return GameManager.DotOne;
+            }
+
         }
     }
 
     private void Start()
     {
         GameManager.instance.UI.ToggleBoss("Gundam");
-        StartCoroutine(Pattern(Pattern1, 10)); StartCoroutine(Pattern(Pattern2, 30));
+        StartCoroutine(Pattern(Pattern1, 10)); StartCoroutine(Pattern(Pattern2, 25));
     }
+
+    int PatternCount = 1;
+    float SpeedSub = 1;
 
     bool CantMove = false;
     public float Test = 20;
@@ -52,9 +59,9 @@ public class Gundam : MonoBehaviour
         Dir = (GameManager.instance.Player.position - transform.position); dist = Dir.magnitude; Dir = Dir.normalized;
         transform.rotation = Quaternion.LookRotation(Dir); 
 
-        if (dist < 12) { Dir *= -2f; anim.SetBool("OnWalk", true); anim.SetFloat("dy", -1); }
-        else if (dist < 15) { anim.SetBool("OnWalk", false); Dir = Vector3.zero; }
-        else { Dir *= 3.5f; anim.SetBool("OnWalk", true); anim.SetFloat("dy", 1); }
+        if (dist < 8) { Dir *= -3f * SpeedSub; anim.SetBool("OnWalk", true); anim.SetFloat("dy", -1); }
+        else if (dist < 16) { anim.SetBool("OnWalk", false); Dir = Vector3.zero; }
+        else { Dir *= 4f * SpeedSub; anim.SetBool("OnWalk", true); anim.SetFloat("dy", 1); }
 
         if (CantMove) return;
 
@@ -79,13 +86,15 @@ public class Gundam : MonoBehaviour
 
     public void WeakPoint()
     {
-        HP -= 2; rigid.velocity = Vector3.zero;
+        HP -= 2 * GameManager.instance.PlayerScript.BuffAmount[0]; rigid.velocity = Vector3.zero;
         CantMove = true;
+        GameManager.instance.UI.BossHpChange(Mathf.Max(0, HP / MaxHP));
         if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); GameManager.instance.PlayerScript.Win(); }
         else
         {
-
-            GameManager.instance.UI.BossHpChange(HP / MaxHP); anim.SetTrigger("OnHit");
+            anim.SetTrigger("OnHit");
+            if (HP < MaxHP * 0.65f && PatternCount == 1) { SpeedSub = 1.25f; PatternCount = 2; anim.SetFloat("Multi", SpeedSub); }
+            else if (HP < MaxHP * 0.3f && PatternCount == 2) { SpeedSub = 1.5f; PatternCount = 3; anim.SetFloat("Multi", SpeedSub); }
         }
     }
 
@@ -94,12 +103,19 @@ public class Gundam : MonoBehaviour
     {
         if (collision.gameObject.layer == 8 && HP > 0)
         {
-            HP--;
+            HP-= GameManager.instance.PlayerScript.BuffAmount[0];
+            GameManager.instance.UI.BossHpChange(Mathf.Max(0,HP / MaxHP));
             rigid.velocity = Vector3.zero;
-            if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); }
-            else GameManager.instance.UI.BossHpChange(HP / MaxHP);
+            if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); GameManager.instance.PlayerScript.Win(); }
+            else
+            {
+                
+                if (HP < MaxHP * 0.65f && PatternCount == 1) { SpeedSub = 1.25f; PatternCount = 2; anim.SetFloat("Multi", SpeedSub); }
+                else if (HP < MaxHP * 0.3f && PatternCount == 2) { SpeedSub = 1.5f; PatternCount = 3; anim.SetFloat("Multi", SpeedSub); }
+            }
         }
     }
+
 
     public void Die()
     {

@@ -11,7 +11,7 @@ public class Monster : MonoBehaviour
     protected NavMeshAgent agent;
     protected BoxCollider col;
     [SerializeField] protected int InitHP = 5;
-    protected int HP;
+    protected float HP;
     [SerializeField] protected float AttackRagne;
 
     public enum State
@@ -135,7 +135,7 @@ public class Monster : MonoBehaviour
     {
         if (collision.gameObject.layer == 8 && HP > 0) 
         {
-            HP--;
+            HP-= GameManager.instance.PlayerScript.BuffAmount[0];
             MoveAble = false; agent.isStopped = true;
             Vector3 pos = collision.GetContact(0).point;
             Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);

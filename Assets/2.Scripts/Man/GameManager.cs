@@ -77,26 +77,14 @@ public class GameManager : MonoBehaviour
         Volume_Day.weight = TimeVar; Volume_Night.weight = 1 - TimeVar;
     }
 
-    
 
 
-    List<float> TimeSet = new List<float>();
+    private readonly SortedSet<float> TimeSet = new SortedSet<float>();
     public void SetTime(float var, bool IsRemove = false)
     {
-        if (IsRemove)
-        {
-            TimeSet.Remove(var);
-            if (TimeSet.Count == 0) Time.timeScale = 1;
-            else Time.timeScale = TimeSet[0];
-        }
-        else
-        {
-            if (TimeSet.Count == 0) Time.timeScale = var;
-            else if (var < TimeSet[0]) Time.timeScale = var;
-            TimeSet.Add(var);
-            TimeSet.Sort();
-        }
-        //Audio.ChangePitch();
+        if (IsRemove) TimeSet.Remove(var);
+        else TimeSet.Add(var);
+        Time.timeScale = TimeSet.Count > 0 ? TimeSet.Min : 1f;
     }
 
     
@@ -129,27 +117,32 @@ public class GameManager : MonoBehaviour
     public void MapMaking()
     {
         Map.MapType = new int[Map.MapSize, Map.MapSize]; Map.Depth = new int[Map.MapSize, Map.MapSize]; Map.GoAble = new Vector4[Map.MapSize, Map.MapSize]; Map.MapCont = new MapController[Map.MapSize, Map.MapSize]; Map.RoomPrefs = new GameObject[Map.MapSize, Map.MapSize];
-        bx = Random.Range(1, Map.MapSize - 1); by = Random.Range(1, Map.MapSize-1);
+        bx = Random.Range(2, Map.MapSize - 2); by = Random.Range(2, Map.MapSize-2);
         Map.MapType[bx,by] = 1;
         var s = new MapQue(1, new Vector2(bx, by));
         Queue <MapQue> que = new Queue<MapQue>(); que.Enqueue(s);
 
         int lastx = bx, lasty = by;
         int[,] dpz = { { 0,1 }, { 0,-1 }, {1,0 }, {-1,0 } };
-        for(int i = 1; i < Map.MaxDepth; i++)
+        Tuple<int, int, int> sb = new Tuple<int, int, int>(bx, by, 1);
+        List<int> rd = Enumerable.Range(0, 4).ToList();
+        for (int i = 1; i < Map.MaxDepth; i++)
         {
-            List<Tuple<int, int,int>> sb = new List<Tuple<int, int,int>>();
+            GameManager.RandomIndex(rd);
             for(int z = 0; z < 4; z++)
             {
-                int nx = lastx + dpz[z,0], ny = lasty + dpz[z,1];
+                int nx = lastx + dpz[rd[z],0], ny = lasty + dpz[rd[z],1];
                 if (nx < 0 || nx >= Map.MapSize || ny < 0 || ny >= Map.MapSize) continue;
                 if (Map.MapType[nx, ny] > 0) continue;
-                sb.Add(new Tuple<int, int,int>(nx,ny,z));
+                if (Mathf.Abs(sb.Item1 - bx) + Mathf.Abs(sb.Item2 - by) <= Mathf.Abs(nx - bx) + Mathf.Abs(ny - by))
+                {
+                    sb = new Tuple<int, int, int>(nx, ny, z); 
+                }
             }
-            var cnt = sb[Random.Range(0, sb.Count)];
-            var cpass = Instantiate(PassPref, MapPr); cpass.transform.position = new Vector3(80f * lastx + dpz[cnt.Item3,0] * 40f, 0, 80f * lasty + dpz[cnt.Item3, 1] * 40f); if (cnt.Item3 >= 2) cpass.transform.Rotate(0, 90, 0);
-            Map.GoAble[lastx,lasty][cnt.Item3] = 1; Map.GoAble[cnt.Item1, cnt.Item2][dp2[cnt.Item3]] = 1; Map.Depth[cnt.Item1, cnt.Item2] = i + 1;
-            Map.MapType[cnt.Item1, cnt.Item2] = 2; lastx = cnt.Item1; lasty = cnt.Item2;
+
+            var cpass = Instantiate(PassPref, MapPr); cpass.transform.position = new Vector3(80f * lastx + dpz[rd[sb.Item3],0] * 40f, 0, 80f * lasty + dpz[rd[sb.Item3], 1] * 40f); if (rd[sb.Item3] >= 2) cpass.transform.Rotate(0, 90, 0);
+            Map.GoAble[lastx,lasty][rd[sb.Item3]] = 1; Map.GoAble[sb.Item1, sb.Item2][dp2[rd[sb.Item3]]] = 1; Map.Depth[sb.Item1, sb.Item2] = i + 1;
+            Map.MapType[sb.Item1, sb.Item2] = Random.Range(0,3) == 2 ? 3 : 2; lastx = sb.Item1; lasty = sb.Item2;
 
             que.Enqueue(new MapQue(i+1,new Vector2(lastx,lasty)));
         }
@@ -161,9 +154,9 @@ public class GameManager : MonoBehaviour
             MapQue cnt = que.Dequeue();
             var cmap = Instantiate(MapPref, MapPr); cmap.transform.position = new Vector3(80 * cnt.CurPos.x, 0, 80 * cnt.CurPos.y);
             int cx = Mathf.FloorToInt(cnt.CurPos.x), cy = Mathf.FloorToInt(cnt.CurPos.y); Map.RoomPrefs[cx, cy] = cmap;
-            if (Map.MapType[cx, cy] != 1) { var tmp = Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform); if (Map.MapType[cx, cy] == 3) Destroy(tmp.transform.GetChild(Random.Range(1,3)).gameObject); }
             Map.MapCont[cx, cy] = cmap.transform.GetChild(0).GetComponent<MapController>();
             Map.MapCont[cx, cy].Init(cx, cy);
+            if (Map.MapType[cx, cy] != 1) { var tmp = Instantiate(ObjPrefs[Map.MapType[cx, cy]], cmap.transform); if (Map.MapType[cx, cy] == 3) Destroy(tmp.transform.GetChild(Random.Range(1,3)).gameObject); }
             if (cnt.CurDepth == Map.MaxDepth) continue;
 
             int l = -1;

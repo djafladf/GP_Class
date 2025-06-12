@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1269809e1ba0d4c4bb6cbaa934b1e561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHP: 250
+  MaxHP: 500
   Bullet: {fileID: 6367692921632144740, guid: 2e10f3c00b329b2459436e3b17c51d1a, type: 3}
   ShootPos: {fileID: 7043147137399697296}
   Pattern1: {fileID: 4650274299395666193, guid: cd42e606e9020654ea071812d92ac86c, type: 3}
