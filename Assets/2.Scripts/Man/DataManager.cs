@@ -9,6 +9,7 @@ public class DataManager : MonoBehaviour
     [Header("Items")]
     [SerializeField] List<GameObject> Normal;
     [SerializeField] List<GameObject> Rare;
+    [SerializeField] List<GameObject> Epic;
     [SerializeField] List<GameObject> Legend;
     [SerializeField] float[] Prob;
     public Color[] RarityColor;
@@ -22,7 +23,7 @@ public class DataManager : MonoBehaviour
     [Header("EXP")]
     public List<GameObject> Exp;
 
-    List<int> norm, rare, legd;
+    List<int> norm, rare, epic,legd;
 
 
     private void Awake()
@@ -32,13 +33,14 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        RemoveItem(0, 0); RemoveItem(0, 1); GameManager.instance.PlayerScript.DroneAdd();
+        RemoveItem(0, 0); RemoveItem(0, 1); GameManager.instance.PlayerScript.DroneAdd(); //RemoveItem(3, 0); RemoveItem(3, 1);
     }
 
     public void ResetPool()
     {
         norm = GameManager.RandomIndex_Return(Enumerable.Range(0, Normal.Count).ToList());
         rare = GameManager.RandomIndex_Return(Enumerable.Range(0, Rare.Count).ToList());
+        epic = GameManager.RandomIndex_Return(Enumerable.Range(0, Epic.Count).ToList());
         legd = GameManager.RandomIndex_Return(Enumerable.Range(0, Legend.Count).ToList());
     }
 
@@ -65,10 +67,18 @@ public class DataManager : MonoBehaviour
                     return new Tuple<int, int, GameObject>(1, ind, cnt);
                 }
             }
+            else if(z < Prob[2]) // Epic
+            {
+                if(Epic.Count != 0)
+                {
+                    GameObject cnt = Instantiate(Epic[epic[0]], parent); int ind = epic[0]; epic.RemoveAt(0);
+                    return new Tuple<int, int, GameObject>(2, ind, cnt);
+                }
+            }
             else if (legd.Count != 0)
             {
                 GameObject cnt = Instantiate(Legend[legd[0]], parent); int ind = legd[0]; legd.RemoveAt(0);
-                return new Tuple<int, int, GameObject>(2, ind, cnt);
+                return new Tuple<int, int, GameObject>(3, ind, cnt);
             }
         }
         return null;
@@ -88,7 +98,7 @@ public class DataManager : MonoBehaviour
         }
         else if (ind != 2)   // Apply Weapon
         {
-            int cnt = ind * 3 + Rarity;
+            int cnt = ind * 4 + Rarity;
             switch (Weapon[cnt].LV)
             {
                 case 0:
@@ -99,11 +109,11 @@ public class DataManager : MonoBehaviour
                 case 1:
                     Weapon[cnt].MaxMag *= 2; break;
                 case 2:
-                    Weapon[cnt].bound *= 0.9f; break;
+                    Weapon[cnt].bound *= 0.8f; break;
                 case 3:     // Damage Increase
                     break;
                 case 4:
-                    Weapon[cnt].spread *= 0.9f; break;
+                    Weapon[cnt].spread *= 0.8f; break;
                 case 5:
                     Weapon[cnt].power *= 1.25f; break;
                 case 6:

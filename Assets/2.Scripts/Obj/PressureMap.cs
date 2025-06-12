@@ -93,8 +93,9 @@ public class PressureMap : MonoBehaviour
     {
         MyMap.UnlockNearDoor();
         GameManager.instance.PlayerScript.ControllFocus(false, null); GameManager.instance.PlayerScript.ControllMoveAble(true);
+        GameManager.instance.UI.ScoreUp(MyMap.Difficulty * 250);
         GameManager.instance.Data.ResetPool();
-        var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet, MyMap.Difficulty * 0.1f); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
+        var cnt = GameManager.instance.Data.ReturnItem(GameManager.instance.ParticleSet, (MyMap.Difficulty - 1) * 0.1f); cnt.Item3.AddComponent<DropItem>(); cnt.Item3.transform.localScale = Vector3.one * 2;
         cnt.Item3.GetComponent<DropItem>().Init(cnt.Item1, cnt.Item2); cnt.Item3.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.5f, Random.Range(-1f, 1f));
         for (int i = 0; i < MyMap.Difficulty * 5; i++) { var tmp = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.ParticleSet); tmp.transform.position = transform.position + new Vector3(Random.Range(-1f, 1f), 0.1f, Random.Range(-1f, 1f)); }
         Destroy(pr.gameObject); Destroy(transform.parent.gameObject);

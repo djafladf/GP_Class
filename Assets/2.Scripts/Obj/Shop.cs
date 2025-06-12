@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class Shop : MonoBehaviour
 {
     public int[] ItemCost = new int[3];
-    int[] RarityCost = { 500, 1000, 1500 };
+    int[] RarityCost = { 500, 1000, 1500, 5000 };
 
     Tuple<int, int>[] CurItem = { null, null, null }; 
     private void Start()

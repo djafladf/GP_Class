@@ -47,7 +47,7 @@ Material:
     - _BlurRadius: 5
     - _BlurSize: 1
     - _BorderThickness: 0.13
-    - _Depth: 0.05
+    - _Depth: 0.03
     - _EnableExternalAlpha: 0
     - _OnBlur: 0
     - _Power: 10

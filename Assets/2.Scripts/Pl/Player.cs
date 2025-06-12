@@ -58,6 +58,7 @@ public class Player : MonoBehaviour
 
         Invoke("StartBug", 0.5f);
         //BuffOn(3, 60, 0.3f);
+
         //DroneAdd(); DroneAdd(); DroneAdd();
 
         //GameManager.instance.UI.ScoreUp(1000);
@@ -181,7 +182,7 @@ public class Player : MonoBehaviour
     int DroneCount = 0;
     public void DroneAdd()
     {
-        var cnt = Instantiate(GameManager.instance.Data.Drone,transform); float deg; if (DroneCount % 2 == 0) deg = DroneCount * 30f * Mathf.Deg2Rad; else deg = (210 - DroneCount * 30) * Mathf.Deg2Rad;
+        var cnt = Instantiate(GameManager.instance.Data.Drone,transform); float deg; if (DroneCount % 2 == 0) deg = DroneCount * 15f * Mathf.Deg2Rad; else deg = (195 - DroneCount * 15) * Mathf.Deg2Rad;
         cnt.transform.localPosition = new Vector3(Mathf.Cos(deg),1.2f + Mathf.Sin(deg),Random.Range(-0.3f,0.3f)); DroneCount++;
     }
 

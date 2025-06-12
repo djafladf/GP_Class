@@ -7,6 +7,7 @@ public class ParticleAttack : MonoBehaviour
     [SerializeField] int Damage;
     private void OnParticleCollision(GameObject other)
     {
+        if(GameManager.instance.PlayerScript != null)
         GameManager.instance.PlayerScript.GetDamage(Damage);
     }
 }

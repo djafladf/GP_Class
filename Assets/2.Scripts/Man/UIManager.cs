@@ -331,6 +331,7 @@ public class UIManager : MonoBehaviour
         if (OnMenu)
         {
             MenuObj.SetActive(true);
+            MapObj.transform.SetParent(MenuObj.transform.GetChild(2));
             MapObj.localPosition = new Vector2(125, 0);
             MapObj.sizeDelta = new Vector2(850, 850);
             MaskerObj.sizeDelta = new Vector2(800, 800);
@@ -340,7 +341,7 @@ public class UIManager : MonoBehaviour
         else
         {
             MenuObj.SetActive(false);
-            MapObj.gameObject.SetActive(true);
+            MapObj.transform.SetParent(PlayUI.transform);
             MapObj.localPosition = new Vector2(750, 400);
             MapObj.sizeDelta = new Vector2(220, 220);
             MaskerObj.sizeDelta = new Vector2(200, 200);

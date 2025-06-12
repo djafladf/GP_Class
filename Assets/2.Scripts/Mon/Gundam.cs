@@ -33,7 +33,8 @@ public class Gundam : MonoBehaviour
             yield return wfs;
             for (int _ = 0; _ < PatternCount; _++)
             {
-                GameObject tmp = Instantiate(cnt, GameManager.instance.ParticleSet); Vector3 pos = GameManager.instance.Player.position + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f)); pos.y = 0.1f; tmp.transform.position = pos;
+                GameObject tmp = Instantiate(cnt, GameManager.instance.ParticleSet); tmp.transform.localScale = tmp.transform.localScale * SpeedSub;
+                Vector3 pos = GameManager.instance.Player.position + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f)); pos.y = 0.1f; tmp.transform.position = pos;
                 yield return GameManager.DotOne;
             }
 
@@ -74,7 +75,7 @@ public class Gundam : MonoBehaviour
         GameManager.instance.Audio.PlayClip(2, 1, clip);
         var cnt = Instantiate(Bullet, GameManager.instance.bullet.transform); cnt.transform.position = ShootPos.position;
         Vector3 dir = (GameManager.instance.Player.position + Vector3.up - cnt.transform.position).normalized; cnt.transform.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        cnt.GetComponent<Rigidbody>().AddForce(dir * 40, ForceMode.Impulse);
+        cnt.GetComponent<Rigidbody>().AddForce(dir * 40 * SpeedSub, ForceMode.Impulse);
     }
 
 
