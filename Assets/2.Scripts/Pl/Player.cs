@@ -73,13 +73,18 @@ public class Player : MonoBehaviour
 
     float MoveSpeed = 5f;
     bool MoveAble = false;
+
+    [SerializeField] LayerMask MoveObstacleMask;
     private void FixedUpdate()
     {
         if (!MoveAble) return;
         if (!Dir.Equals(Vector2.zero))
         {
             Vector3 NextDir = (transform.forward * Dir.y + transform.right * Dir.x).normalized;
-            rigid.MovePosition(rigid.position + NextDir * Time.deltaTime * MoveSpeed * BuffAmount[2]);
+            
+            float moveDist = Time.deltaTime * MoveSpeed * BuffAmount[2];
+            var ray = Physics.Raycast(origin: transform.position + Vector3.up, direction: NextDir, maxDistance : moveDist + 0.3f,layerMask : MoveObstacleMask, queryTriggerInteraction: QueryTriggerInteraction.Ignore);
+            if (!ray)  rigid.MovePosition(rigid.position + NextDir * moveDist);
         }
     }
 

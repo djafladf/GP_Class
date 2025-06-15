@@ -110,7 +110,8 @@ public class DataManager : MonoBehaviour
                     Weapon[cnt].MaxMag *= 2; break;
                 case 2:
                     Weapon[cnt].bound *= 0.8f; break;
-                case 3:     // Damage Increase
+                case 3:
+                    Weapon[cnt].rpm *= 0.8f; break;
                     break;
                 case 4:
                     Weapon[cnt].spread *= 0.8f; break;

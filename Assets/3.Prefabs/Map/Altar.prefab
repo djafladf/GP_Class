@@ -5111,7 +5111,7 @@ GameObject:
   - component: {fileID: 4889661288432171325}
   - component: {fileID: 8266844997967268629}
   - component: {fileID: 4810225265121292432}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19905,7 +19905,7 @@ GameObject:
   - component: {fileID: 1519743678702548547}
   - component: {fileID: 5837972183054543529}
   - component: {fileID: 3431441305850352113}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Pillar_B (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39686,7 +39686,7 @@ GameObject:
   - component: {fileID: 1166679269416478911}
   - component: {fileID: 2026466090504354622}
   - component: {fileID: 2756697303750582704}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54345,7 +54345,7 @@ GameObject:
   - component: {fileID: 3964765678029496117}
   - component: {fileID: 7948237172715621980}
   - component: {fileID: 5526434996401589133}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: FireWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64222,7 +64222,7 @@ GameObject:
   - component: {fileID: 6759547260821137970}
   - component: {fileID: 4203448582537510228}
   - component: {fileID: 2432425260336131859}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PA_Oldtext
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64305,7 +64305,7 @@ GameObject:
   - component: {fileID: 192897921316411207}
   - component: {fileID: 6076399137156867363}
   - component: {fileID: 6557562805139112808}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78925,7 +78925,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 902633372461179297}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78963,7 +78963,7 @@ GameObject:
   - component: {fileID: 927158529346429623}
   - component: {fileID: 3114549809159739005}
   - component: {fileID: 4749170634903322981}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Pillar_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84167,7 +84167,7 @@ GameObject:
   - component: {fileID: 2502759730415627195}
   - component: {fileID: 382537453203534553}
   - component: {fileID: 975755164087416991}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: FireDark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98683,7 +98683,7 @@ GameObject:
   - component: {fileID: 8080180941059341240}
   - component: {fileID: 2613481633132369360}
   - component: {fileID: 3824957630869238610}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Magic fire pro orange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113775,7 +113775,7 @@ GameObject:
   - component: {fileID: 6230536511004166749}
   - component: {fileID: 2033208498483566987}
   - component: {fileID: 1049271555701121733}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143214,7 +143214,7 @@ GameObject:
   - component: {fileID: 8085222111342123523}
   - component: {fileID: 1227807040770909465}
   - component: {fileID: 5074796007928457368}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Pillar_B (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143318,7 +143318,7 @@ GameObject:
   - component: {fileID: 7961288195290759823}
   - component: {fileID: 7449650261518711279}
   - component: {fileID: 7903746471410798026}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: SubFire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148161,7 +148161,7 @@ GameObject:
   - component: {fileID: 7823463196712820697}
   - component: {fileID: 5336284953723571941}
   - component: {fileID: 480829038169796205}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Pillar_B (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153387,7 +153387,7 @@ GameObject:
   - component: {fileID: 7315469394239012678}
   - component: {fileID: 8348460517170231735}
   - component: {fileID: 8117019821610746456}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168689,7 +168689,7 @@ GameObject:
   - component: {fileID: 9112217434107833893}
   - component: {fileID: 6106925957858008852}
   - component: {fileID: 6184982501937994505}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Unlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173533,7 +173533,7 @@ GameObject:
   - component: {fileID: 6702894865636328790}
   - component: {fileID: 8223921363404402261}
   - component: {fileID: 1206404334161401005}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}

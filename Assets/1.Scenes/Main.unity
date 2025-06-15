@@ -32262,6 +32262,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6996c6a6c942c7d4d9f2fb5ab5163fda, type: 3}
   FolllowOffset: {x: 0.2, y: 1.8, z: -1.5}
   FollowOffset_Z: {x: 0.1, y: 1.6, z: 0.1}
+  MoveObstacleMask:
+    serializedVersion: 2
+    m_Bits: 4288
   CurWeaponInd: 0
   RedDot: {fileID: 1958397374}
   GroundMask:
