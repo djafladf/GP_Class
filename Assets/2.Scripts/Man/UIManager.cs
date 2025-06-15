@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -383,11 +384,22 @@ public class UIManager : MonoBehaviour
         StartCoroutine(EndAct());
     }
 
+    [SerializeField] GameObject Clear;
+    public void GameClear()
+    {
+        Clear.SetActive(true);
+        Invoke("NextScene",2);
+    }
+    
+    void NextScene()
+    {
+        SceneManager.LoadScene("Main");
+    }
     IEnumerator EndAct()
     {
         yield return new WaitForSeconds(2);
         
-        GameManager.instance.Audio.StopBGM();
+        //GameManager.instance.Audio.StopBGM();
         gameObject.AddComponent<AudioSource>().PlayOneShot(OverSound,2);
         var cnt = GameOver.GetComponent<RectTransform>();
         var tmp = GameOver.transform.parent.GetComponent<RectTransform>();
@@ -402,6 +414,8 @@ public class UIManager : MonoBehaviour
             ttmp.color = new Color(0, 0, 0, i * 0.002f);
             yield return wwfs;
         }
+        yield return new WaitForSeconds(2);
+        NextScene();
     }
     #endregion
 }

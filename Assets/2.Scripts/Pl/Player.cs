@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
         Tuto.transform.SetParent(GameManager.instance.transform);
 
-        Invoke("StartBug", 0.5f);
+        Invoke("StartBug", 0.1f);
         //BuffOn(3, 60, 0.3f);
 
         //DroneAdd(); DroneAdd(); DroneAdd();
@@ -67,6 +67,7 @@ public class Player : MonoBehaviour
     void StartBug()
     {
         MoveAble = true;
+        //Win();
         //GetDamage(100);
     }
 
@@ -508,7 +509,12 @@ public class Player : MonoBehaviour
 
     public void Win()
     {
-        anim.SetTrigger("Win");
+        anim.Rebind(); anim.Update(0); anim.SetTrigger("Win");
+        var cnt = new GameObject(); cnt.transform.parent = transform; cnt.transform.localPosition = new Vector3(0, 1.5f, 0);
+        GameManager.instance.CV.Follow = transform;
+        GameManager.instance.CV.LookAt = cnt.transform;
+        GameManager.instance.CVtr.m_FollowOffset = new Vector3(0,1.5f,1.5f);
+        GameManager.instance.UI.GameClear(); GameManager.instance.Audio.StopBGM(); GameManager.instance.Audio.PlayClip(1, 1, audioclips[7]);
         Destroy(this);
     }
 }

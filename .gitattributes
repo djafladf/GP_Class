@@ -1,3 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+Assets/Extra/Serrage_CGArt/Resource/WEAPON/AR/SCAR_L/Materials/Texture/WeaponUpdAtlas_Albedo.psd filter=lfs diff=lfs merge=lfs -text
 *.psd filter=lfs diff=lfs merge=lfs -text

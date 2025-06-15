@@ -13,7 +13,7 @@ public class Maze : MonoBehaviour
     MapController MyMap;
     private void Start()
     {
-        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>(); Size = 3 + MyMap.Difficulty * 2; l = Size * 2 - 1;
+        MyMap = transform.parent.parent.GetChild(0).GetComponent<MapController>(); Size = 4 + MyMap.Difficulty * 2; l = Size * 2 - 1;
         col = GetComponent<BoxCollider>();
         MyMaze = new MazeMap();
         MyMaze.MazeMaking(Size,Size);
