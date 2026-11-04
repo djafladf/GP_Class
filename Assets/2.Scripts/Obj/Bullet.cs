@@ -56,7 +56,7 @@ public class Bullet : MonoBehaviour
             Particle.gameObject.SetActive(true);
         }
 
-        rigid.isKinematic = false; mesh.enabled = false; rigid.velocity = Vector3.zero; coll.enabled = false;
+        rigid.isKinematic = false; mesh.enabled = false; rigid.linearVelocity = Vector3.zero; coll.enabled = false;
         Invoke("NaturalTrail", 0.5f) ;
     }
 
@@ -75,7 +75,7 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    // Trail ºÎÀÚ¿¬½º·´°Ô »ç¶óÁö´Â°Å ¹æÁö
+    // Trail ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½
     void NaturalTrail()
     {
         gameObject.SetActive(false);
@@ -83,7 +83,7 @@ public class Bullet : MonoBehaviour
 
     private void OnDisable()
     {
-        rigid.velocity = Vector3.zero;
+        rigid.linearVelocity = Vector3.zero;
         rigid.isKinematic = false;
         mesh.enabled = true;
         coll.enabled = true;

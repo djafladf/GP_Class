@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c01b173f3d82d2d44bb61f2bc90767dd
+timeCreated: 1473846625
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 127325
+  packageName: Particle Pack
+  packageVersion: 3.1
+  assetPath: Assets/Extra/UnityTechnologies/Blood/Materials/GoopStreamParticle.mat
+  uploadId: 896138

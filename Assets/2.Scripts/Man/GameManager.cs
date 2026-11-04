@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
     {
         TimeVar += Time.deltaTime * Trig;
         if (TimeVar >= 1 || TimeVar <= 0.5) Trig *= -1;
-        Volume_Day.weight = TimeVar; Volume_Night.weight = 1 - TimeVar;
+        //Volume_Day.weight = TimeVar; Volume_Night.weight = 1 - TimeVar;
     }
 
 

@@ -10,7 +10,7 @@ public class RangeMonster : Monster
 
     protected override void FixedUpdate()
     {
-        if (!rigid.isKinematic) rigid.velocity = Vector3.zero;
+        if (!rigid.isKinematic) rigid.linearVelocity = Vector3.zero;
         Vector3 dir = (GameManager.instance.Player.position - ShootPos.position).normalized;
         transform.rotation = Quaternion.LookRotation(dir);
     }

@@ -46,7 +46,7 @@ public class Monster : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if(!rigid.isKinematic) rigid.velocity = Vector3.zero;
+        if(!rigid.isKinematic) rigid.linearVelocity = Vector3.zero;
         Vector3 dir = (GameManager.instance.Player.position - transform.position).normalized; dir.y = 0;
         transform.rotation = Quaternion.LookRotation(dir);
     }
@@ -144,7 +144,7 @@ public class Monster : MonoBehaviour
                 BloodEffects[LastBlood].transform.position = pos; BloodEffects[LastBlood].transform.rotation = rot;
                 BloodEffects[LastBlood].Play(); LastBlood = (LastBlood + 1) % BloodEffects.Count;
             }
-            rigid.velocity = Vector3.zero;
+            rigid.linearVelocity = Vector3.zero;
             foreach (var j in AttackCol) j.enabled = false;
             if (HP <= 0) { StopAllCoroutines(); rigid.isKinematic = true; col.enabled = false; anim.SetTrigger("Die"); }
             else 

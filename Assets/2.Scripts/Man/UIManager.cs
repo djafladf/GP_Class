@@ -28,6 +28,7 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         GameManager.instance.UI = this;
+        return;
         //WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
         captured = new RenderTexture(Screen.width, Screen.height, 0);
         GameManager.instance.MapMaking();
@@ -74,8 +75,8 @@ public class UIManager : MonoBehaviour
     public void AddWeaponImage(Sprite sp)
     {
         WeaponIm.Add(sp); if (WeaponIm.Count == 1) WeaponIms[CurOrder[2]].sprite = WeaponIm[0];
-        WeaponIms[CurOrder[1]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd - 1 + WeaponIm.Count) % WeaponIm.Count];
-        WeaponIms[CurOrder[3]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd + 1) % WeaponIm.Count];
+        //WeaponIms[CurOrder[1]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd - 1 + WeaponIm.Count) % WeaponIm.Count];
+        //WeaponIms[CurOrder[3]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd + 1) % WeaponIm.Count];
     }
     public void SlideWeapon(bool IsUp)
     {
@@ -92,7 +93,7 @@ public class UIManager : MonoBehaviour
         {
             if (IsRightNow)
             {
-                WeaponIms[CurOrder[0]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd - 2 + WeaponIm.Count*2) % WeaponIm.Count];
+                //WeaponIms[CurOrder[0]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd - 2 + WeaponIm.Count*2) % WeaponIm.Count];
                 cnt = CurOrder[4]; CurOrder.RemoveAt(4);
                 for (int i = 0; i < 20; i++)
                 {
@@ -107,7 +108,7 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                WeaponIms[CurOrder[4]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd + 2) % WeaponIm.Count];
+                //WeaponIms[CurOrder[4]].sprite = WeaponIm[(GameManager.instance.PlayerScript.CurWeaponInd + 2) % WeaponIm.Count];
                 cnt = CurOrder[0]; CurOrder.RemoveAt(0);
                 for (int i = 0; i < 20; i++)
                 {

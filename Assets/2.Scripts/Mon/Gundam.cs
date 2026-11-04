@@ -87,7 +87,7 @@ public class Gundam : MonoBehaviour
 
     public void WeakPoint()
     {
-        HP -= 2 * GameManager.instance.PlayerScript.BuffAmount[0]; rigid.velocity = Vector3.zero;
+        HP -= 2 * GameManager.instance.PlayerScript.BuffAmount[0]; rigid.linearVelocity = Vector3.zero;
         CantMove = true;
         GameManager.instance.UI.BossHpChange(Mathf.Max(0, HP / MaxHP));
         if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); GameManager.instance.PlayerScript.Win(); }
@@ -106,7 +106,7 @@ public class Gundam : MonoBehaviour
         {
             HP-= GameManager.instance.PlayerScript.BuffAmount[0];
             GameManager.instance.UI.BossHpChange(Mathf.Max(0,HP / MaxHP));
-            rigid.velocity = Vector3.zero;
+            rigid.linearVelocity = Vector3.zero;
             if (HP <= 0) { StopAllCoroutines(); anim.SetTrigger("Die"); GameManager.instance.PlayerScript.Win(); }
             else
             {

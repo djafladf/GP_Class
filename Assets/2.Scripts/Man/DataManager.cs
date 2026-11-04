@@ -14,9 +14,6 @@ public class DataManager : MonoBehaviour
     [SerializeField] float[] Prob;
     public Color[] RarityColor;
 
-
-    public GameObject Drone;
-
     [Header("Gun")]
     public List<WeaponInfo> Weapon;
 
@@ -33,7 +30,7 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        RemoveItem(0, 0); RemoveItem(0, 1); GameManager.instance.PlayerScript.DroneAdd(); //RemoveItem(3, 0); RemoveItem(3, 1);
+        //RemoveItem(0, 0); RemoveItem(0, 1); //GameManager.instance.PlayerScript.DroneAdd(); //RemoveItem(3, 0); RemoveItem(3, 1);
     }
 
     public void ResetPool()
@@ -104,7 +101,7 @@ public class DataManager : MonoBehaviour
                 case 0:
                     var tmp = Instantiate(InventItem, InventTrans); tmp.transform.localPosition = new Vector2(-457.5f + 130 * (InventNum % 8), (1 - Mathf.FloorToInt(InventNum / 8)) * 130f);
                     tmp.GetComponent<ItemView>().Init(Rarity, cnt, true, Weapon[cnt].Im); InventNum++;
-                    GameManager.instance.PlayerScript.WeaponAdd(cnt);
+                    //GameManager.instance.PlayerScript.WeaponAdd(cnt);
                     break;
                 case 1:
                     Weapon[cnt].MaxMag *= 2; break;
@@ -122,10 +119,6 @@ public class DataManager : MonoBehaviour
 
             }
             Weapon[cnt].LV++;
-        }
-        else
-        {
-            GameManager.instance.PlayerScript.DroneAdd();
         }
     }
 }
