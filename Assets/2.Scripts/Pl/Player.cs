@@ -85,15 +85,15 @@ public class Player : MonoBehaviour
 
     // Spine 회전
 
-    //Transform Spine;
-    //float Spineangle, Subangle;
-    //private void LateUpdate()
-    //{
-    //    if (Spine == null) return;
-    //    Spineangle = Mathf.Atan2(Aim.localPosition.y - 1.2f, 1) * Mathf.Rad2Deg;
-    //    Subangle = Mathf.Atan2(Aim.localPosition.x, Aim.localPosition.z) * Mathf.Rad2Deg;
-    //    Spine.localRotation = Quaternion.Euler(-Subangle, 0, Spineangle);
-    //}
+    Transform Spine;
+    float Spineangle, Subangle;
+    private void LateUpdate()
+    {
+        if (Spine == null) return;
+        Spineangle = Mathf.Atan2(Aim.localPosition.y - 1.2f, 1) * Mathf.Rad2Deg;
+        Subangle = Mathf.Atan2(Aim.localPosition.x, Aim.localPosition.z) * Mathf.Rad2Deg;
+        Spine.localRotation = Quaternion.Euler(-Subangle, 0, Spineangle);
+    }
 
     /*
         #region Gun
@@ -279,7 +279,7 @@ public class Player : MonoBehaviour
         MouseDir = value.Get<Vector2>();
         float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * MouseSpeed.y, 0f, 2.4f);
         Aim.localPosition = new Vector3(Aim.localPosition.x, Ny, Aim.localPosition.z);
-        //transform.Rotate(Vector3.up * MouseSpeed.x * Time.deltaTime * MouseDir.x);
+        transform.Rotate(Vector3.up * MouseSpeed.x * Time.deltaTime * MouseDir.x);  // 나중에 빼야됨
     }
 
 
