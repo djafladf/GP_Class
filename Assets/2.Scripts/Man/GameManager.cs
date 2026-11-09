@@ -1,9 +1,9 @@
-using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.AI.Navigation;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
@@ -28,8 +28,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Transform ParticleSet;
     [HideInInspector] public FloatMessage FloatM;
 
-    public CinemachineVirtualCamera CV;
-    public CinemachineTransposer CVtr;
+    public CinemachineCamera CV;
     public Action<int> PlayerHealFunc;
 
     [HideInInspector] public int CurDepth = 0;
@@ -56,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null) { instance = this; CVtr = CV.GetCinemachineComponent<CinemachineTransposer>(); }
+        if (instance == null) { instance = this; }
         else Destroy(gameObject);
     }
 
