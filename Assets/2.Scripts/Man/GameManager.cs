@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Transform ParticleSet;
     [HideInInspector] public FloatMessage FloatM;
 
-    public CinemachineCamera CV;
+    public List<CinemachineCamera> FC; // Normal, Lock
     public Action<int> PlayerHealFunc;
 
     [HideInInspector] public int CurDepth = 0;

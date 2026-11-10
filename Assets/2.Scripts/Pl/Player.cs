@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AppUI.Core;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
@@ -23,6 +24,7 @@ public enum CurveState
     none,
     roll,
     jump,
+    attack,
     teleport
 }
 
@@ -64,11 +66,11 @@ public class Player : MonoBehaviour
     void StartBug()
     {
         MoveAble = true;
-        CanControll = true;
+        OnCurve = false;
     }
 
     float MoveSpeed = 2f;
-    [SerializeField] bool CanControll = true;
+    [SerializeField] bool OnCurve = true;
     [SerializeField] bool MoveAble = false;
     [SerializeField] bool Grounded = false;
     [SerializeField] LayerMask MoveObstacleMask;
@@ -76,7 +78,15 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Grounded = Physics.CheckSphere(mTrans.position, 0.1f, GroundMask);
-        if (Grounded && rigid.linearVelocity.y < -0.01f) Jumping = false;
+        anim.SetBool("Grounded",Grounded);
+        if (Grounded && rigid.linearVelocity.y < -0.01f) 
+        { 
+            if(Jumping && animCurve != null)
+            {
+                StopCoroutine(animCurve); animCurve = null; OnCurve = false;
+            }
+            Jumping = false; anim.SetBool("OnMove", !Dir.Equals(Vector2.zero));
+        }
     }
 
 
@@ -84,21 +94,34 @@ public class Player : MonoBehaviour
     Vector3 camF = default, camR = default;
     private void FixedUpdate()
     {
-        if (!MoveAble || !CanControll) return;
+        if (!MoveAble || OnCurve) return;
         if (!Dir.Equals(Vector2.zero))
         {
             camF = Camera.main.transform.forward; camF.y = 0; camR = Camera.main.transform.right; camR.y = 0;
-            NextDir = (camF * Dir.y + camR * Dir.x); Dir.Normalize();
-
-            if(NextDir.sqrMagnitude > 0.01f)
-            {
-                Quaternion rot = Quaternion.LookRotation(NextDir);
-                mTrans.rotation = Quaternion.RotateTowards(mTrans.rotation,rot,540f * Time.deltaTime);
-            }
+            NextDir = (camF * Dir.y + camR * Dir.x); NextDir.Normalize();
+            if (onLock && (!OnRunning||IsDodge)) LockRot();
+            else MoveRot();
             float moveDist = Time.fixedDeltaTime * MoveSpeed * BuffAmount[2] * (OnRunning ? 2.5f : 1);
             var ray = Physics.Raycast(origin: mTrans.position + Vector3.up, direction: NextDir, maxDistance: moveDist + 0.3f, layerMask: MoveObstacleMask, queryTriggerInteraction: QueryTriggerInteraction.Ignore);
             if (!ray) rigid.MovePosition(rigid.position + NextDir * moveDist);
         }
+    }
+
+    Quaternion rot;
+    void LockRot()
+    {
+        if (CurLock == null) return;
+        if (drLock.sqrMagnitude > 0.001f) rigid.MoveRotation(Quaternion.LookRotation(drLock));
+    }
+    void MoveRot()
+    {
+        if (NextDir.sqrMagnitude < 0.01f) return;
+        rot = Quaternion.LookRotation(NextDir);
+        rigid.MoveRotation(Quaternion.RotateTowards(
+            rigid.rotation,
+            rot,
+            540f * Time.fixedDeltaTime
+        ));
     }
 
     [SerializeField] List<AnimCurve> curves;
@@ -116,17 +139,22 @@ public class Player : MonoBehaviour
     }
     IEnumerator CurveCor(CurveState state)
     {
-        CanControll = false;
+        OnCurve = true;
         var cur = curves[(int)state - 1];
 
         anim.SetTrigger(cur.trigger);
         float t = cur.clip.length / cur.speed, ctime = 0;
         float rt = 1f / t;
         Vector3 _nd, _f,_r;
-        if (onFocus)
+        if (onLock)
         {
+            mTrans.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
             if (Dir == Vector3.zero) _nd = mTrans.forward * cur.dist;
-            else { _f = mTrans.forward; _f.y = 0; _r = mTrans.right; _r.y = 0; _nd = (_f * Dir.y + _r * Dir.x).normalized * cur.dist; }
+            else 
+            {
+                _f = Camera.main.transform.forward; _f.y = 0; _r = Camera.main.transform.right; _r.y = 0; _nd = (_f * Dir.y + _r * Dir.x).normalized;
+                _nd *= cur.dist; 
+            }
         }
         else
         {
@@ -138,7 +166,7 @@ public class Player : MonoBehaviour
             _nd = mTrans.forward * cur.dist;
         }
 
-        float c, l = 0, de = 0;
+        float c,l = cur.ac.Evaluate(0f), de = 0;
         while(ctime < t)
         {
             yield return new WaitForFixedUpdate();
@@ -148,15 +176,93 @@ public class Player : MonoBehaviour
             l = c;
         }
         yield return GameManager.DotOne;
-        CanControll = true;
+
+        anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
+        OnCurve = false;
         animCurve = null;
 
         if (PInp != CurveState.none) { SetAnimCurve(PInp); PInp = CurveState.none; }
     }
-    bool onFocus = false;
-    void OnFocus(InputValue val)
-    {
 
+    PriorityQueue<Transform, float> LockPQ = new((a, b) => a.Item2 < b.Item2);
+    HashSet<Transform> OnUse = new();
+    [SerializeField] Transform CurLock = null;
+    [SerializeField] bool onLock = false;
+    Collider[] Target = new Collider[32];
+    int EMask = 1 << 7, OMask = (1 << 6) | (1 << 12);
+    void OnLock(InputValue val)
+    {
+        var OriginPos = transform.position + Vector3.up;
+        int res = Physics.OverlapSphereNonAlloc(OriginPos,15f,Target,EMask);
+
+        Transform tcnt;
+        Vector3 pcnt;
+        float dist;
+        float w = 2; // Max Dist
+
+        LockPQ.Clear(); // Lock On을 한 시점 Dist는 달라질 수 있기에 매번 갱신이 필요하지 않나.
+        for(int i = 0; i < res; i++)
+        {
+            tcnt = Target[i].transform;
+            pcnt = Camera.main.WorldToViewportPoint(Target[i].bounds.center);
+            if (pcnt.z <= 0 || pcnt.x < 0 || pcnt.x > 1 || pcnt.y < 0 || pcnt.y > 1)
+            {
+                OnUse.Remove(tcnt);
+                continue;
+            }
+            if (Physics.Linecast(OriginPos, Target[i].bounds.center, OMask)) continue;
+
+            pcnt.x -= 0.5f; pcnt.y -= 0.5f; pcnt.z = 0;
+            dist = pcnt.sqrMagnitude;
+            if (OnUse.Contains(Target[i].transform)) dist += w;
+
+            LockPQ.push((tcnt,dist));
+        }
+
+        if (LockPQ.Count == 0) LockFunc(false);
+        else
+        {
+            var to = LockPQ.pop();
+            if (to.Item2 >= 2) LockFunc(false);
+            else { CurLock = to.Item1; LockFunc(); }
+        }
+    }
+
+    // 나중에 CamManager나 GameManager로 분리하셈.
+
+    [SerializeField] List<Transform> LockOrbs;  // Mid, Aim
+    Coroutine LockCor = null;
+    Vector3 drLock;
+    IEnumerator LockUpdater()
+    {
+        var orb = GameManager.instance.FC[1].GetComponent<CinemachineOrbitalFollow>();
+        while (true)
+        {
+            drLock = CurLock.position - LockOrbs[0].position; drLock.y = 0;
+            if (drLock.sqrMagnitude >= 1f) orb.HorizontalAxis.Value = Mathf.Atan2(drLock.x, drLock.z) * Mathf.Rad2Deg;
+            LockOrbs[1].position = Vector3.Lerp(LockOrbs[0].position,CurLock.position,0.4f);
+            yield return null;
+        }
+    }
+
+    void LockFunc(bool Lock = true,Transform To = null)
+    {
+        if (To != null) CurLock = To;
+        if (Lock)
+        {
+            if(LockCor == null) LockCor = StartCoroutine(LockUpdater());
+            anim.SetBool("OnLock",true);
+            onLock = true; OnUse.Add(CurLock);
+            GameManager.instance.FC[1].Priority = 20;
+        }
+        else
+        {
+            if (LockCor != null) { StopCoroutine(LockCor); LockCor = null; }
+            GameManager.instance.FC[1].Priority = 0;
+            anim.SetBool("OnLock", false);
+            GameManager.instance.FC[0].transform.position = GameManager.instance.FC[1].transform.position;
+            onLock = false; CurLock = null; OnUse.Clear();
+        }
     }
 
     // Moving
@@ -164,9 +270,8 @@ public class Player : MonoBehaviour
     {
         Dir = value.Get<Vector2>();
         anim.SetBool("OnMove", !Dir.Equals(Vector2.zero) && Grounded);
-        //Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
-        //anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
-        //if (!Dir.Equals(Vector2.zero) && WalkSoundCor == null) WalkSoundCor = StartCoroutine(WalkSound());
+        if (!OnCurve) { anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y); }
+
     }
     Coroutine DJudge = null;
     bool OnRunning = false;
@@ -190,12 +295,14 @@ public class Player : MonoBehaviour
         if (value.isPressed)
         {
             OnRunning = true;
+            anim.SetBool("OnRun", true);
             if (DJudge != null) StopCoroutine(DJudge);
             DJudge = StartCoroutine(DodgeJudge());
         }
         else
         {
             if (IsDodge) Dodge();
+            anim.SetBool("OnRun", false);
             OnRunning = false;
         }
     }
@@ -209,19 +316,15 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask GroundMask;
     void OnJump(InputValue value)
     {
-        if (!MoveAble || !Grounded || Jumping) return;
+        if (!MoveAble || !Grounded || OnCurve) return;
         Vector3 leftRayOrigin = mTrans.position + new Vector3(-0.05f, 0.05f, 0);
         Vector3 rightRayOrigin = mTrans.position + new Vector3(0.05f, 0.05f, 0);
         if (Physics.Raycast(rightRayOrigin, Vector3.down, 0.15f, GroundMask) || Physics.Raycast(leftRayOrigin, Vector3.down, 0.1f, GroundMask))
         {
-            JumpDir = Dir; anim.SetTrigger("Jump"); CanControll = false; Jumping = true;
+            Jumping = true;
+            rigid.AddForce(Vector3.up*4f + mTrans.forward * MoveSpeed * BuffAmount[2] * (OnRunning ? 2.5f : 1), ForceMode.Impulse);
+            SetAnimCurve(CurveState.jump);
         }
-    }
-
-    void Jump()
-    {
-        GameManager.instance.Audio.PlayClip(2, 1f, audioclips[5]); MoveAble = true;
-        rigid.AddForce((Vector3.up + NextDir * 0.5f) * (5 + BuffAmount[2]), ForceMode.Impulse);
     }
     void OnMenu(InputValue value)
     {
@@ -238,15 +341,7 @@ public class Player : MonoBehaviour
     #region Mouse
     [SerializeField] Transform Aim;
     Vector3 MouseSpeed = new Vector3(25, 0.4f, 0);
-    Vector2 MouseDir;
     Vector3 DampingVar = new Vector3(0, 0, 0);
-    void OnLook(InputValue value)
-    {
-        MouseDir = value.Get<Vector2>();
-        float Ny = Mathf.Clamp(Aim.localPosition.y + MouseDir.y * Time.deltaTime * MouseSpeed.y, 0f, 2.4f);
-        Aim.localPosition = new Vector3(Aim.localPosition.x, Ny, Aim.localPosition.z);
-        //transform.Rotate(Vector3.up * MouseSpeed.x * Time.deltaTime * MouseDir.x);  // 나중에 빼야됨
-    }
     WeaponInfo CurWeaponInfo;
     bool CatchScroll = true;
     bool CurRight = true;
@@ -286,6 +381,8 @@ public class Player : MonoBehaviour
     #endregion
     #endregion
 
+
+    // 이 밑 부분은 추후 상위 Class로 뺄 예정. 현재 Test에는 사용하지 않음
     bool HitAble = true;
     float MaxHP = 100;
     float CurHP = 100;
@@ -321,6 +418,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    
     [SerializeField] List<GameObject> BuffObjects;
     public float[] BuffAmount = { 1, 1, 1, 1, 1, 1 };  // 공, 체, 속, 범위, 재장속, 돈 + 경치
     public void HealFunction(int Count)

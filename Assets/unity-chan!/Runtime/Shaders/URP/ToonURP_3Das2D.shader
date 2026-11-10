@@ -27,7 +27,7 @@ Shader "Toon/Toon 3D as 2D (URP)"{
         [HideInInspector] _White("Tint", Color) = (1,1,1,1) // Added to break SRP batching. Work around for issue with SRP Batching
         
         //Directional Light
-        _DirectionalLight_Use ("Use Directional Light", Integer) = 0
+        _DirectionalLight_Use ("Use Directional Light", Integer) = 1
         _DirectionalLight_Direction ("Directional Light Direction", Vector) = (0,-1,0,0)
         _DirectionalLight_Color("Directional Light Color", Color) = (1,1,1,1)
         _DirectionalLight_Intensity ("Directional Light Intensity", float) = 0.5
@@ -89,7 +89,7 @@ Shader "Toon/Toon 3D as 2D (URP)"{
             Tags{
                 "LightMode" = "Universal2D"
             }
-
+            
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/Core2D.hlsl"
 
@@ -317,7 +317,7 @@ Shader "Toon/Toon 3D as 2D (URP)"{
 
             ENDHLSL
         }
-
+        UsePass "Universal Render Pipeline/Lit/ShadowCaster"
 //----------------------------------------------------------------------------------------------------------------------
         Pass {
             Name "Outline"
