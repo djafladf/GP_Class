@@ -24,10 +24,11 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public UIManager UI;
     [HideInInspector] public DataManager Data;
     [HideInInspector] public AudioManager Audio;
+    [HideInInspector] public CameraManager Camera;
     [HideInInspector] public Transform ParticleSet;
     [HideInInspector] public FloatMessage FloatM;
 
-    public List<CinemachineCamera> FC; // Normal, Lock
+    
     public Action<int> PlayerHealFunc;
 
     [HideInInspector] public int CurDepth = 0;

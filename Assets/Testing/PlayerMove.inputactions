@@ -67,6 +67,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "Double",
+                    "type": "Button",
+                    "id": "78e2f9b4-5287-4843-a6a7-b76a4c4003de",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
                     "name": "Reload",
                     "type": "Button",
                     "id": "56deb80f-eb6d-48bd-9650-851673ae748f",
@@ -325,6 +335,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Lock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4646cb0a-ae6a-4a6c-9e76-30e43ae587e2",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Double",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

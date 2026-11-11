@@ -56,12 +56,11 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
         //rigid = GetComponent<Rigidbody>();
         //nim = GetComponent<Animator>();
-        //GameManager.instance.CV.Follow = transform;
-        //GameManager.instance.CV.LookAt = Aim;
-
         GameManager.instance.Player = mTrans;
         GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
+        MoveAble = true;
+        OnCurve = false;
     }
 
     private void Start()
@@ -69,12 +68,6 @@ public class Player : MonoBehaviour
         //CurWeaponInfo = GameManager.instance.Data.Weapon[CurWeaponInd];
         //transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
         Invoke("StartBug", 0.1f);
-    }
-
-    void StartBug()
-    {
-        MoveAble = true;
-        OnCurve = false;
     }
 
     float MoveSpeed = 2f;
@@ -107,7 +100,7 @@ public class Player : MonoBehaviour
         {
             camF = Camera.main.transform.forward; camF.y = 0; camR = Camera.main.transform.right; camR.y = 0;
             NextDir = (camF * Dir.y + camR * Dir.x); NextDir.Normalize();
-            if (onLock && (!OnRunning)) LockRot();
+            if (GameManager.instance.Camera.LockCheck && (!OnRunning)) LockRot();
             else MoveRot();
             float moveDist = Time.fixedDeltaTime * MoveSpeed * BuffAmount[2] * (OnRunning ? 2.5f : 1);
             var ray = Physics.Raycast(origin: mTrans.position + Vector3.up, direction: NextDir, maxDistance: moveDist + 0.3f, layerMask: MoveObstacleMask, queryTriggerInteraction: QueryTriggerInteraction.Ignore);
@@ -118,8 +111,7 @@ public class Player : MonoBehaviour
     Quaternion rot;
     void LockRot()
     {
-        if (CurLock == null) return;
-        if (drLock.sqrMagnitude > 0.001f) rigid.MoveRotation(Quaternion.LookRotation(drLock));
+        GameManager.instance.Camera.LookRot(rigid);
     }
     void MoveRot()
     {
@@ -171,14 +163,14 @@ public class Player : MonoBehaviour
         anim.SetTrigger(cur.trigger);
         float t = cur.clip.length / cur.speed, ctime = 0;
         float rt = 1f / t;
-        Vector3 _nd, _f,_r;
-        if (onLock)
+        Vector3 _nd = default;
+        if (GameManager.instance.Camera.LockCheck)
         {
             mTrans.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
             if (Dir == Vector3.zero) _nd = mTrans.forward * cur.dist;
             else 
             {
-                _f = Camera.main.transform.forward; _f.y = 0; _r = Camera.main.transform.right; _r.y = 0; _nd = (_f * Dir.y + _r * Dir.x).normalized;
+                GameManager.instance.Camera.CamFront(ref Dir, ref _nd);
                 _nd *= cur.dist; 
             }
         }
@@ -186,7 +178,7 @@ public class Player : MonoBehaviour
         {
             if (Dir != Vector3.zero)
             {
-                _f = Camera.main.transform.forward; _f.y = 0; _r = Camera.main.transform.right; _r.y = 0; _nd = (_f * Dir.y + _r * Dir.x); _nd.Normalize();  
+                GameManager.instance.Camera.CamFront(ref Dir, ref _nd);
                 mTrans.rotation = Quaternion.LookRotation(_nd);
             }
             _nd = mTrans.forward * cur.dist;
@@ -210,86 +202,10 @@ public class Player : MonoBehaviour
         if (PInp != CurveState.none) { SetAnimCurve(PInp); PInp = CurveState.none; }
         else curCurv = CurveState.none;
     }
-
-    PriorityQueue<Transform, float> LockPQ = new((a, b) => a.Item2 < b.Item2);
-    HashSet<Transform> OnUse = new();
-    [SerializeField] Transform CurLock = null;
-    [SerializeField] bool onLock = false;
-    Collider[] Target = new Collider[32];
-    int EMask = 1 << 7, OMask = (1 << 6) | (1 << 12);
     void OnLock(InputValue val)
     {
-        var OriginPos = transform.position + Vector3.up;
-        int res = Physics.OverlapSphereNonAlloc(OriginPos,15f,Target,EMask);
-
-        Transform tcnt;
-        Vector3 pcnt;
-        float dist;
-        float w = 2; // Max Dist
-
-        LockPQ.Clear(); // Lock On을 한 시점 Dist는 달라질 수 있기에 매번 갱신이 필요하지 않나.
-        for(int i = 0; i < res; i++)
-        {
-            tcnt = Target[i].transform;
-            pcnt = Camera.main.WorldToViewportPoint(Target[i].bounds.center);
-            if (pcnt.z <= 0 || pcnt.x < 0 || pcnt.x > 1 || pcnt.y < 0 || pcnt.y > 1)
-            {
-                OnUse.Remove(tcnt);
-                continue;
-            }
-            if (Physics.Linecast(OriginPos, Target[i].bounds.center, OMask)) continue;
-
-            pcnt.x -= 0.5f; pcnt.y -= 0.5f; pcnt.z = 0;
-            dist = pcnt.sqrMagnitude;
-            if (OnUse.Contains(Target[i].transform)) dist += w;
-
-            LockPQ.push((tcnt,dist));
-        }
-
-        if (LockPQ.Count == 0) LockFunc(false);
-        else
-        {
-            var to = LockPQ.pop();
-            if (to.Item2 >= 2) LockFunc(false);
-            else { CurLock = to.Item1; LockFunc(); }
-        }
-    }
-
-    // 나중에 CamManager나 GameManager로 분리하셈.
-
-    [SerializeField] List<Transform> LockOrbs;  // Mid, Aim
-    Coroutine LockCor = null;
-    Vector3 drLock;
-    IEnumerator LockUpdater()
-    {
-        var orb = GameManager.instance.FC[1].GetComponent<CinemachineOrbitalFollow>();
-        while (true)
-        {
-            drLock = CurLock.position - LockOrbs[0].position; drLock.y = 0;
-            if (drLock.sqrMagnitude >= 1f) orb.HorizontalAxis.Value = Mathf.Atan2(drLock.x, drLock.z) * Mathf.Rad2Deg;
-            LockOrbs[1].position = Vector3.Lerp(LockOrbs[0].position,CurLock.position,0.4f);
-            yield return null;
-        }
-    }
-
-    void LockFunc(bool Lock = true,Transform To = null)
-    {
-        if (To != null) CurLock = To;
-        if (Lock)
-        {
-            if(LockCor == null) LockCor = StartCoroutine(LockUpdater());
-            anim.SetBool("OnLock",true);
-            onLock = true; OnUse.Add(CurLock);
-            GameManager.instance.FC[1].Priority = 20;
-        }
-        else
-        {
-            if (LockCor != null) { StopCoroutine(LockCor); LockCor = null; }
-            GameManager.instance.FC[1].Priority = 0;
-            anim.SetBool("OnLock", false);
-            GameManager.instance.FC[0].transform.position = GameManager.instance.FC[1].transform.position;
-            onLock = false; CurLock = null; OnUse.Clear();
-        }
+        GameManager.instance.Camera.OnLock();
+        anim.SetBool("OnLock",GameManager.instance.Camera.LockCheck);
     }
 
     // Moving
@@ -349,6 +265,11 @@ public class Player : MonoBehaviour
     void JumpForce()
     {
         rigid.AddForce(Vector3.up * 4f + mTrans.forward * MoveSpeed * BuffAmount[2] * (OnRunning ? 2.5f : 1), ForceMode.Impulse);
+    }
+
+    void OnDouble(InputValue value)
+    {
+
     }
 
     void OnMenu(InputValue value)
