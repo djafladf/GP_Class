@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
     public static WaitForSeconds DotFive = new WaitForSeconds(0.5f);
     [HideInInspector] public Transform Player;
     [HideInInspector] public Player PlayerScript;
-    [HideInInspector] public MonsterManager Enemy;
     [HideInInspector] public BulletManager bullet;
     [HideInInspector] public UIManager UI;
     [HideInInspector] public DataManager Data;

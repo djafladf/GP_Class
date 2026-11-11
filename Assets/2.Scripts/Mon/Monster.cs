@@ -38,11 +38,6 @@ public class Monster : MonoBehaviour
         }
     }
 
-    protected virtual void Start()
-    {
-        GameManager.instance.Enemy.GameEnd.Add(OnGameEnd);
-        GameManager.instance.Enemy.DeadAct.Add(ExtraDead);
-    }
 
     protected virtual void FixedUpdate()
     {
@@ -114,11 +109,7 @@ public class Monster : MonoBehaviour
     void Dead()
     {
         gameObject.SetActive(false);
-        if (!IsExtraDead) 
-        { 
-            GameManager.instance.UI.ScoreUp();
-            if (Random.Range(0f, 1f) < 0.6f) { var Obj = Instantiate(GameManager.instance.Data.Exp[0], GameManager.instance.Enemy.transform); Obj.transform.position = new Vector3(transform.position.x,1, transform.position.z); }
-        }
+
     }
 
     bool IsExtraDead;

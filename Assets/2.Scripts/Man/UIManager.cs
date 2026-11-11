@@ -30,7 +30,6 @@ public class UIManager : MonoBehaviour
         GameManager.instance.UI = this;
         return;
         //WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
-        captured = new RenderTexture(Screen.width, Screen.height, 0);
         GameManager.instance.MapMaking();
         int l = GameManager.instance.Map.MapSize;
         PinSprites = new Image[l, l]; Fogs = new GameObject[l, l];

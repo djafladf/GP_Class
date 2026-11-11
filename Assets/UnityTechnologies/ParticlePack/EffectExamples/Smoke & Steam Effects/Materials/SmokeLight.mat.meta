@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3aab918c2f264114985ac29b646b2092
+guid: 5027747e2995ee7479f6031514cb0784
 timeCreated: 1472824610
 licenseType: Store
 NativeFormatImporter:
@@ -9,7 +9,7 @@ NativeFormatImporter:
 AssetOrigin:
   serializedVersion: 1
   productId: 127325
-  packageName: Particle Pack
-  packageVersion: 3.1
+  packageName: Particle Pack | Starter Assets
+  packageVersion: 3.3
   assetPath: Assets/UnityTechnologies/ParticlePack/EffectExamples/Smoke & Steam Effects/Materials/SmokeLight.mat
-  uploadId: 896138
+  uploadId: 1015842
