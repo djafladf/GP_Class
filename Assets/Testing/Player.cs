@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AppUI.Core;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
@@ -17,14 +18,15 @@ public class AnimCurve
     public AnimationClip clip;
     public float speed;
     public float dist;
+    public float StUsement;
 }
 
 [System.Serializable]
-public struct AttackClips
+public class AttackClips
 {
+    public List<float> StUsement;
     public List<int> DamageRatio; // 추후 스탯별 분리 예정
     public List<AnimationClip> Clips;
-    public AttackClips( List<int> dm, List<AnimationClip> cls) { DamageRatio = dm; Clips = cls; }
 }
 
 public enum CurveState
@@ -36,10 +38,11 @@ public enum CurveState
     teleport
 }
 
+
 public class Player : MonoBehaviour
 {
     Transform mTrans;
-    [SerializeField] Transform WeaponHolder;
+    [SerializeField] Transform[] WeaponHolder; // R, H, Back
     [SerializeField] Transform FirePos;
     [SerializeField] AudioClip[] audioclips;
 
@@ -61,6 +64,7 @@ public class Player : MonoBehaviour
         GameManager.instance.PlayerHealFunc = HealFunction;
         MoveAble = true;
         OnCurve = false;
+        RPos = RWeapon.localPosition; RSRot = RWeapon.localRotation;
     }
 
     private void Start()
@@ -102,6 +106,12 @@ public class Player : MonoBehaviour
             NextDir = (camF * Dir.y + camR * Dir.x); NextDir.Normalize();
             if (GameManager.instance.Camera.LockCheck && (!OnRunning)) LockRot();
             else MoveRot();
+
+            if(OnRunning) 
+            {
+                if (CurST <= 0) { OnRunning = false; anim.SetBool("OnRun", false); IsDodge = false; }
+                else { GameManager.instance.UI.CharPoint(1, Time.deltaTime * 0.2f); CurST -= Time.deltaTime * 0.2f; }
+            }
             float moveDist = Time.fixedDeltaTime * MoveSpeed * BuffAmount[2] * (OnRunning ? 2.5f : 1);
             var ray = Physics.Raycast(origin: mTrans.position + Vector3.up, direction: NextDir, maxDistance: moveDist + 0.3f, layerMask: MoveObstacleMask, queryTriggerInteraction: QueryTriggerInteraction.Ignore);
             if (!ray) rigid.MovePosition(rigid.position + NextDir * moveDist);
@@ -155,46 +165,50 @@ public class Player : MonoBehaviour
         if(state == CurveState.attack)
         {
             curves[2].clip = CurAttack.Clips[CurAttackLevel];
+            curves[2].StUsement = CurAttack.StUsement[CurAttackLevel];
             anim.SetInteger("AttackLevel", CurAttackLevel);
         }
-
-        var cur = curves[(int)state - 1];
-
-        anim.SetTrigger(cur.trigger);
-        float t = cur.clip.length / cur.speed, ctime = 0;
-        float rt = 1f / t;
-        Vector3 _nd = default;
-        if (GameManager.instance.Camera.LockCheck)
+        if (CurST >= curves[(int)state - 1].StUsement)
         {
-            mTrans.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-            if (Dir == Vector3.zero) _nd = mTrans.forward * cur.dist;
-            else 
+            CurST -= curves[(int)state - 1].StUsement;
+            GameManager.instance.UI.CharPoint(1, curves[(int)state - 1].StUsement);
+            var cur = curves[(int)state - 1];
+            float t = cur.clip.length / cur.speed, ctime = 0;
+            float rt = 1f / t;
+            Vector3 _nd = default;
+            if (GameManager.instance.Camera.LockCheck)
             {
-                GameManager.instance.Camera.CamFront(ref Dir, ref _nd);
-                _nd *= cur.dist; 
+                if (Dir == Vector3.zero) _nd = mTrans.forward * cur.dist;
+                else
+                {
+                    GameManager.instance.Camera.CamFront(ref Dir, ref _nd);
+                    _nd *= cur.dist;
+                }
+                mTrans.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
             }
-        }
-        else
-        {
-            if (Dir != Vector3.zero)
+            else
             {
-                GameManager.instance.Camera.CamFront(ref Dir, ref _nd);
-                mTrans.rotation = Quaternion.LookRotation(_nd);
+                if (Dir != Vector3.zero)
+                {
+                    GameManager.instance.Camera.CamFront(ref Dir, ref _nd);
+                    mTrans.rotation = Quaternion.LookRotation(_nd);
+                }
+                _nd = mTrans.forward * cur.dist;
             }
-            _nd = mTrans.forward * cur.dist;
-        }
 
-        float c,l = cur.ac.Evaluate(0f), de = 0;
-        while(ctime < t)
-        {
-            yield return new WaitForFixedUpdate();
-            ctime += Time.fixedDeltaTime; if (ctime > t) ctime = t;
-            c = cur.ac.Evaluate(ctime * rt); de = c - l;
-            rigid.MovePosition(rigid.position + de * _nd);
-            l = c;
-        }
-        yield return GameManager.DotOne;
+            anim.SetTrigger(cur.trigger);
 
+            float c, l = cur.ac.Evaluate(0f), de = 0;
+            while (ctime < t)
+            {
+                yield return new WaitForFixedUpdate();
+                ctime += Time.fixedDeltaTime; if (ctime > t) ctime = t;
+                c = cur.ac.Evaluate(ctime * rt); de = c - l;
+                rigid.MovePosition(rigid.position + de * _nd);
+                l = c;
+            }
+            yield return GameManager.DotOne;
+        }
         anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
         OnCurve = false;
         animCurve = null;
@@ -216,18 +230,15 @@ public class Player : MonoBehaviour
         if (!OnCurve) { anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y); }
 
     }
-    void Dodge()
-    {
-        SetBeatable(1);
-        SetAnimCurve(CurveState.roll);
-    }
 
     float LastDodge = 0;
     float DodgeGap = 0.3f;
     bool IsDodge = false;
     bool OnRunning = false;
+    // Dodge + Run
     void OnDodge(InputValue value)
     {
+        if (CurST < Time.deltaTime) return;
         if (value.isPressed)
         {
             if (IsDodge) return;
@@ -240,7 +251,7 @@ public class Player : MonoBehaviour
         {
             if (!IsDodge) return;
             IsDodge = false;
-            if (Time.unscaledTime - LastDodge < DodgeGap) Dodge();
+            if (Time.unscaledTime - LastDodge < DodgeGap) SetAnimCurve(CurveState.roll);
             anim.SetBool("OnRun", false);
             OnRunning = false;
         }
@@ -267,9 +278,36 @@ public class Player : MonoBehaviour
         rigid.AddForce(Vector3.up * 4f + mTrans.forward * MoveSpeed * BuffAmount[2] * (OnRunning ? 2.5f : 1), ForceMode.Impulse);
     }
 
+    Vector3 RPos, LPos;
+    Quaternion RSRot, LSRot;
+    [SerializeField] Transform RWeapon, LWeapon;
+
+
+    bool onDouble = false;
     void OnDouble(InputValue value)
     {
-
+        if (!value.isPressed) return;
+        if (curCurv != CurveState.none) return;
+        onDouble = onDouble == false;
+        anim.SetInteger("SwapMod",onDouble ? 1 : 0);
+    }
+    void SwapNature()
+    {
+        WeaponHolder[2].transform.position = WeaponHolder[0].transform.position;
+    }
+    void SwapEnd()
+    {
+        if (!onDouble)
+        {
+            RWeapon.SetParent(WeaponHolder[0]);
+            RWeapon.localPosition = RPos; RWeapon.localRotation = RSRot;
+        }
+        else
+        {
+            RWeapon.SetParent(WeaponHolder[2]);
+            RWeapon.localPosition = Vector3.zero; RWeapon.localRotation = default;
+        }
+        anim.SetInteger("SwapMod", -1);
     }
 
     void OnMenu(InputValue value)
@@ -292,7 +330,6 @@ public class Player : MonoBehaviour
     bool CatchScroll = true;
     bool CurRight = true;
     bool _OnChangeWeapon = false;
-
     
     [SerializeField] AttackClips CurAttack;
     [SerializeField] int CurAttackLevel = 0;
@@ -354,8 +391,8 @@ public class Player : MonoBehaviour
 
     // 이 밑 부분은 추후 상위 Class로 뺄 예정. 현재 Test에는 사용하지 않음
     bool HitAble = true;
-    float MaxHP = 100;
-    float CurHP = 100;
+    float MaxHP = 10, CurHP = 10;
+    [SerializeField]float MaxST = 1, CurST = 1;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -372,19 +409,17 @@ public class Player : MonoBehaviour
         Beatable = type == 1;
     }
 
+    public void HealSta(float amount)
+    {
+        CurST = Mathf.Min(MaxST, CurST + amount);
+    }
+
     public void GetDamage(int amount)
     {
         if (Beatable) return;
         HitAble = false; Invoke("HitGap", 0.5f);
         CurHP -= amount;
-        GameManager.instance.UI.HPChange(CurHP / MaxHP);
-        if (CurHP <= 0)
-        {
-            anim.SetTrigger("Lose"); StopAllCoroutines();
-            GameManager.instance.UI.EndGame();
-            Destroy(this);
-
-        }
+        //GameManager.instance.UI.HPChange(CurHP / MaxHP);
     }
 
     
@@ -394,14 +429,14 @@ public class Player : MonoBehaviour
     {
         BuffObjects[0].SetActive(true); GameManager.instance.Audio.PlayClip(2, 1, audioclips[4]);
         CurHP = Mathf.Min(MaxHP, CurHP + Count);
-        GameManager.instance.UI.HPChange(CurHP / MaxHP);
+        //GameManager.instance.UI.HPChange(CurHP / MaxHP);
     }
 
     [SerializeField] Transform GainArea;
     public void SetBuffer(int type)
     {
         BuffAmount[type] += type == 2 ? 0.05f : 0.1f;
-        if (type == 1) { MaxHP += 10; CurHP += 10; GameManager.instance.UI.HPChange(CurHP / MaxHP); }
+        if (type == 1) { MaxHP += 10; CurHP += 10; }
         else if (type == 3) { GainArea.localScale = new Vector3(BuffAmount[3] * 1.25f, BuffAmount[3] * 1.25f, BuffAmount[3] * 1.25f); BuffObjects[4].SetActive(true); }
         else if (type == 4) anim.SetFloat("ReloadTime", BuffAmount[4]);
         GameManager.instance.UI.ApplyOnUI(type, BuffAmount[type] - 1);

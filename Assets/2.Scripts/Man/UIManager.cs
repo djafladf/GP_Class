@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,9 +19,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] TMP_Text Ascending;
     [SerializeField] Blurring AscendingOption;
 
-    [SerializeField] Image EXPBar;
-    [SerializeField] Image HPBar;
-
     [SerializeField] GameObject PlayUI;
     [SerializeField] RawImage PauseUI;
 
@@ -29,28 +27,6 @@ public class UIManager : MonoBehaviour
     {
         GameManager.instance.UI = this;
         return;
-        //WeaponIms[2].sprite = WeaponIm[0]; WeaponIms[3].sprite = WeaponIm[1 % WeaponIm.Count];WeaponIms[1].sprite = WeaponIm[(WeaponIm.Count + WeaponIm.Count - 1)%WeaponIm.Count];
-        GameManager.instance.MapMaking();
-        int l = GameManager.instance.Map.MapSize;
-        PinSprites = new Image[l, l]; Fogs = new GameObject[l, l];
-        for (int y = 0; y < l; y++) for (int x = 0; x < l; x++)
-            {
-                Fogs[x, y] = Instantiate(FogPin, Pins.GetChild(2));
-                Fogs[x, y].transform.localPosition = new Vector2(75 * x, 75 * y);
-                if (GameManager.instance.Map.MapType[x, y] == 0) continue;
-                GameObject tnt = Instantiate(MapPin, Pins.GetChild(1));
-                tnt.transform.localPosition = new Vector2(75 * x, 75 * y);
-
-                PinSprites[x, y] = tnt.GetComponent<Image>();
-                if (GameManager.instance.Map.GoAble[x, y][2] == 1)
-                {
-                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x + 37.5f, 75 * y); ppin.transform.Rotate(0, 0, 90);
-                }
-                if (GameManager.instance.Map.GoAble[x, y][0] == 1)
-                {
-                    GameObject ppin = Instantiate(PassPin, Pins.GetChild(0)); ppin.transform.localPosition = new Vector2(75 * x, 75 * y + 37.5f);
-                }
-            }
     }
 
     private void Start()
@@ -167,34 +143,59 @@ public class UIManager : MonoBehaviour
             Interact.Invoke();
         }
     }
-    public void ScoreUp(int amount = 10)
-    {
-        CurScore += Mathf.FloorToInt(amount * GameManager.instance.PlayerScript.BuffAmount[5]);
-        Score.text = $"{CurScore}".PadLeft(5, '0');
-    }
 
-    [SerializeField] Image HitEffect;
-    public void HPChange(float rf)
-    {
-        HPBar.fillAmount = rf;
-        var col = HitEffect.color; col.a = (1 - rf) * 0.75f; HitEffect.color = col;
-    }
 
-    float ExpSub = 10;
-    float CurExpVar = 0;
-    float ExpVarForBar = 0.1f;
-    int CurLevel = 1;
-    public void ExpChange(float amount)
+    // 일단은 Stat 자체 증감은 없다고 가정함.
+    [SerializeField] List<Image> Bars; // 0,1 : HP.  2,3 : Sta. 4,5 : Mana
+    Coroutine[] BarCols = { null,null,null };
+    float[] BarRefresh = { 0, 0, 0 };
+    IEnumerator BarSet(int type)
     {
-        CurExpVar += amount * GameManager.instance.PlayerScript.BuffAmount[5];
-        if (CurExpVar >= ExpSub)
+        while (BarRefresh[type] > 0)
         {
-            CurExpVar -= ExpSub;
-            Level.text = $"LV.{++CurLevel}";
-            ExpSub *= 1.08f; ExpVarForBar *= 0.92f;
-            LevelUp();
+            BarRefresh[type] -= 0.1f; yield return GameManager.DotOne;
         }
-        EXPBar.fillAmount = Mathf.Min(CurExpVar * ExpVarForBar, 1);
+        BarRefresh[type] = 0;
+
+        int i = type * 2, ii = type * 2 + 1;
+        while (Bars[i].fillAmount < Bars[ii].fillAmount)
+        {
+            Bars[ii].fillAmount -= Time.deltaTime;
+            yield return null;
+        }
+        Bars[ii].fillAmount = Bars[i].fillAmount;
+        BarCols[type] = null;
+        if(type == 1)
+        {
+            if(StaFill != null) StopCoroutine(StaFill);
+            StaFill = StartCoroutine(StaminaFill());
+        }
+    }
+    Coroutine StaFill = null;
+    IEnumerator StaminaFill()
+    {
+        float cf = 0;
+        yield return GameManager.OneSec;
+        while (Bars[2].fillAmount < 1)
+        {
+            yield return null;
+            cf = Time.fixedDeltaTime * 0.5f;
+            Bars[2].fillAmount += cf;
+            Bars[3].fillAmount += cf;
+            GameManager.instance.PlayerScript.HealSta(cf);
+        }
+        Bars[2].fillAmount = Bars[3].fillAmount = 1;
+        GameManager.instance.PlayerScript.HealSta(1);
+        StaFill = null;
+    }
+
+
+    public void CharPoint(int type, float amount)
+    {
+        Bars[type * 2].fillAmount -= amount;
+        BarRefresh[type] = 2;
+        if (BarCols[type] == null) BarCols[type] = StartCoroutine(BarSet(type));
+        if (type == 1 && StaFill != null) { StopCoroutine(StaFill); StaFill = null; }
     }
 
     [SerializeField] Image BossHP;
@@ -220,41 +221,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] RectTransform Pins;
     [SerializeField] GameObject MapPin, PassPin,FogPin;
     GameObject[,] Fogs;
-    int Lastx = 0, Lasty = 0;
-    bool IsInit = true;
-    int[,] Mapdp = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
-    public void MapSetting(int x, int y,bool IsUnknown = false)
-    {
-        if (IsUnknown)
-        {
-            PinSprites[x, y].sprite = PinType[GameManager.instance.Map.MapType[x, y]];
-            Fogs[x, y].SetActive(false);
-            if (GameManager.instance.Map.MapType[x, y] >= 4) GameManager.instance.OpenNearRoom(x, y);
-        }
-        Pins.anchoredPosition += new Vector2((Lastx - x) * 75, (Lasty - y) * 75);
-
-        if (!IsInit)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                if (GameManager.instance.Map.GoAble[Lastx, Lasty][i] != 1) continue;
-                int nx = Lastx + Mapdp[i, 0], ny = Lasty + Mapdp[i, 1];
-                if ((nx == x && ny == y) || (nx == Lastx && ny == Lasty)) continue;
-                GameManager.instance.Map.RoomPrefs[nx, ny].SetActive(false);
-            }
-        }
-        else IsInit = false;
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (GameManager.instance.Map.GoAble[x, y][i] != 1) continue;
-            int nx = x + Mapdp[i, 0], ny = y + Mapdp[i, 1];
-            GameManager.instance.Map.RoomPrefs[nx, ny].SetActive(true);
-        }
-
-
-        Lastx = x; Lasty = y;
-    }
     #endregion
 #region Buff
     [Header("Buff")]
@@ -287,30 +253,6 @@ public class UIManager : MonoBehaviour
 
 
     #endregion
-#region Level Up
-    [Header("LevelUp Setting")]
-    [SerializeField] GameObject LevelUpObj;
-    [SerializeField] Image[] UpImage;
-    [SerializeField] Sprite[] LevelUpSpr;
-    [SerializeField] TMP_Text[] LevelUpText;
-    [SerializeField] string[] UpSubText;
-    int[] Uparray = { 0, 1, 2, 3, 4, 5};
-    public void LevelUp()
-    {
-        GameManager.instance.PlayerHealFunc(20);
-        Uparray = Uparray.OrderBy(x => Guid.NewGuid()).ToArray();
-        for(int i = 0; i < 3; i++)
-        {
-            UpImage[i].sprite = LevelUpSpr[Uparray[i]]; LevelUpText[i].text = UpSubText[Uparray[i]];
-        }
-        SetStop(1);
-        LevelUpObj.SetActive(true);
-    }
-    public void ApplyLevelUp(int val)
-    {
-        GameManager.instance.PlayerScript.SetBuffer(Uparray[val]);
-        if (CurExpVar >= 1) ExpChange(0);
-    }
 
     [SerializeField] TMP_Text[] MenuTexts;
 
@@ -318,7 +260,6 @@ public class UIManager : MonoBehaviour
     {
         MenuTexts[ind].text = $"{Mathf.FloorToInt(val * 100)}%";
     }
-    #endregion
 
 #region Menu
     RenderTexture captured;
@@ -329,27 +270,27 @@ public class UIManager : MonoBehaviour
     public void ShowMenu()
     {
         OnMenu = OnMenu == false;
-        if (OnMenu)
-        {
-            MenuObj.SetActive(true);
-            MapObj.transform.SetParent(MenuObj.transform.GetChild(2));
-            MapObj.localPosition = new Vector2(125, 0);
-            MapObj.sizeDelta = new Vector2(850, 850);
-            MaskerObj.sizeDelta = new Vector2(800, 800);
-            Pins.localPosition = Vector2.zero;
-            PlayerPin.localPosition = new Vector2(Lastx * 75f, Lasty * 75f);
-        }
-        else
-        {
-            MenuObj.SetActive(false);
-            MapObj.transform.SetParent(PlayUI.transform);
-            MapObj.localPosition = new Vector2(750, 400);
-            MapObj.sizeDelta = new Vector2(220, 220);
-            MaskerObj.sizeDelta = new Vector2(200, 200);
-            Pins.localPosition = new Vector2(-Lastx * 75f, -Lasty * 75f);
-            PlayerPin.localPosition = Vector2.zero;
-        }
-        SetStop(OnMenu ? 1 : -1);
+        //if (OnMenu)
+        //{
+        //    MenuObj.SetActive(true);
+        //    MapObj.transform.SetParent(MenuObj.transform.GetChild(2));
+        //    MapObj.localPosition = new Vector2(125, 0);
+        //    MapObj.sizeDelta = new Vector2(850, 850);
+        //    MaskerObj.sizeDelta = new Vector2(800, 800);
+        //    Pins.localPosition = Vector2.zero;
+        //    PlayerPin.localPosition = new Vector2(Lastx * 75f, Lasty * 75f);
+        //}
+        //else
+        //{
+        //    MenuObj.SetActive(false);
+        //    MapObj.transform.SetParent(PlayUI.transform);
+        //    MapObj.localPosition = new Vector2(750, 400);
+        //    MapObj.sizeDelta = new Vector2(220, 220);
+        //    MaskerObj.sizeDelta = new Vector2(200, 200);
+        //    Pins.localPosition = new Vector2(-Lastx * 75f, -Lasty * 75f);
+        //    PlayerPin.localPosition = Vector2.zero;
+        //}
+        //SetStop(OnMenu ? 1 : -1);
     }
 
     /// <summary>
@@ -374,48 +315,6 @@ public class UIManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false;
             GameManager.instance.SetTime(0, true);
         }
-    }
-
-    [SerializeField] Image GameOver;
-    [SerializeField] AudioClip OverSound;
-    public void EndGame()
-    {
-        StopAllCoroutines();
-        StartCoroutine(EndAct());
-    }
-
-    [SerializeField] GameObject Clear;
-    public void GameClear()
-    {
-        Clear.SetActive(true);
-        Invoke("NextScene",2);
-    }
-    
-    void NextScene()
-    {
-        SceneManager.LoadScene("Main");
-    }
-    IEnumerator EndAct()
-    {
-        yield return new WaitForSeconds(2);
-        
-        //GameManager.instance.Audio.StopBGM();
-        gameObject.AddComponent<AudioSource>().PlayOneShot(OverSound,2);
-        var cnt = GameOver.GetComponent<RectTransform>();
-        var tmp = GameOver.transform.parent.GetComponent<RectTransform>();
-        var ttmp = tmp.GetComponent<Image>();
-        var wwfs = new WaitForSeconds(0.01f);
-        tmp.gameObject.SetActive(true);
-        for (int i = 0; i < 500; i++)
-        {
-            cnt.sizeDelta = new Vector2(4 * i, 0.8f * i);
-            GameOver.color = new Color(1, 1, 1, i * 0.002f);
-            tmp.sizeDelta = new Vector2(2000, 0.8f * i);
-            ttmp.color = new Color(0, 0, 0, i * 0.002f);
-            yield return wwfs;
-        }
-        yield return new WaitForSeconds(2);
-        NextScene();
     }
     #endregion
 }

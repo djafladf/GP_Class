@@ -28,12 +28,12 @@
                 },
                 {
                     "name": "LAttack",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "a8383590-f83c-4b49-9e14-e3d78f4f0c35",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true,
+                    "initialStateCheck": false,
                     "priority": 0
                 },
                 {

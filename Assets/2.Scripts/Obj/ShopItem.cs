@@ -4,51 +4,50 @@ using UnityEngine;
 
 public class ShopItem : MonoBehaviour
 {
-    [SerializeField] int ind;
-    Shop shopM;
-    Animator Anim;
+    //[SerializeField] int ind;
 
-    private void Awake()
-    {
-        Anim = GetComponent<Animator>();
-        shopM = transform.parent.GetComponent<Shop>();
-    }
+    //Animator Anim;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            GameManager.instance.UI.ToggleInteract
-                (
-                Purchase,
-                true,
-                string.Concat("Press<sprite name=\"e\"> To Buy\n",
-                $"<size=60><sprite name=\"Coin\"><color=#FEA040>{shopM.ItemCost[ind]}</color></size>"
-                )
-                );
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            GameManager.instance.UI.ToggleInteract
-                (
-                null,
-                false,
-                null
-                );
-        }
-    }
+    //private void Awake()
+    //{
+    //    Anim = GetComponent<Animator>();
+    //}
 
-    public void Purchase()
-    {
-        if (shopM.ItemCost[ind] <= GameManager.instance.UI.CurScore) { Anim.SetTrigger("Close"); GameManager.instance.UI.ToggleInteract(null, false, null); shopM.Purchase(ind); }
-        else { GameManager.instance.UI.ShowAscending("No Enough <sprite name=\"Coin\">!",1); }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        GameManager.instance.UI.ToggleInteract
+    //            (
+    //            Purchase,
+    //            true,
+    //            string.Concat("Press<sprite name=\"e\"> To Buy\n",
+    //            $"<size=60><sprite name=\"Coin\"><color=#FEA040>{shopM.ItemCost[ind]}</color></size>"
+    //            )
+    //            );
+    //    }
+    //}
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        GameManager.instance.UI.ToggleInteract
+    //            (
+    //            null,
+    //            false,
+    //            null
+    //            );
+    //    }
+    //}
 
-    void Close()
-    {
-        GetComponent<BoxCollider>().enabled = false; Destroy(this);
-    }
+    //public void Purchase()
+    //{
+    //    if (shopM.ItemCost[ind] <= GameManager.instance.UI.CurScore) { Anim.SetTrigger("Close"); GameManager.instance.UI.ToggleInteract(null, false, null); shopM.Purchase(ind); }
+    //    else { GameManager.instance.UI.ShowAscending("No Enough <sprite name=\"Coin\">!",1); }
+    //}
+
+    //void Close()
+    //{
+    //    GetComponent<BoxCollider>().enabled = false; Destroy(this);
+    //}
 }

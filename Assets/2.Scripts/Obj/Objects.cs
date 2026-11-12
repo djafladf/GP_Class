@@ -22,7 +22,7 @@ public class Objects : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            gameObject.SetActive(false); GameManager.instance.UI.ExpChange(1);
+            gameObject.SetActive(false);
         }
         else if (other.CompareTag("GainArea"))
         {

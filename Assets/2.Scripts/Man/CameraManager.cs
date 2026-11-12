@@ -14,7 +14,6 @@ public class CameraManager : MonoBehaviour
         GameManager.instance.Camera = this;
         MainCam = GetComponent<Camera>();
     }
-
     Vector3 drLock;
     // Lock Update;
     private void LateUpdate()
@@ -91,8 +90,6 @@ public class CameraManager : MonoBehaviour
 
             LockPQ.push((tcnt, dist));
         }
-        print(OnUse.Count);
-        print(LockPQ.Count);
         if (LockPQ.Count == 0) UnLock();
         else
         {

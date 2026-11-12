@@ -1,6 +1,6 @@
 ﻿<Solution>
   <Project Path="Unity.Toonshader.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="UnityTechnologies.ParticlePack.Editor.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="UnityTechnologies.ParticlePack.Editor.csproj" />
 </Solution>
