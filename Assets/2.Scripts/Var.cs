@@ -8,35 +8,43 @@ using UnityEngine.UI;
 [System.Serializable]
 public class Event : UnityEvent<BaseEventData> { }
 
+public enum DamageType
+{
+    Slash,
+    Strike,
+    Pierece
+}
+public enum Elemental 
+{ 
+    None,
+    Fire,
+    Originum
+}
+
+
+[System.Serializable]
+public class AttackClip
+{
+    public float StUsement;
+    public DamageType DamageType;
+    public Elemental Elemental;
+    public float DamageRatio;
+    public AnimationClip Clip;
+}
+
 [System.Serializable]
 public class WeaponInfo
 {
     public string name;
     public int Rarity;
-    public float power;
-    public float bound;
-    public float rpm;
-    public float spread;
-    public int bnum;
-    public float MaxMag;
-    public float CurMag;
+    public List<AttackClip> One;
+    public List<AttackClip> Two;
+
+    public int returnCount(bool IsTwo){ return IsTwo ? Two.Count: One.Count; } 
+
     public int LV;
     public GameObject Obj;
     public Sprite Im;
-
-    public string DescribeSelf()
-    {
-        string cnt = "";
-
-        cnt = $@"<color=black><size=150%>{name}</size></color> <color=red><size=75%>Lv.{LV}</size></color>
-Åº¼Ó : {power * 25}
-¹Ýµ¿ : {bound * 0.02f}
-¿¬»ç °£°Ý : {rpm * 0.1667f}
-ÅºÆÛÁü : {spread}%
-ÅºÃ¢ : {MaxMag}
-1È¸ ¹ß»ç ¼ö : {bnum}";
-        return cnt;
-    }
 }
 
 [System.Serializable]

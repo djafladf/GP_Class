@@ -2,22 +2,65 @@ using System.Collections.Generic;
 using Unity.AppUI.Core;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class CameraManager : MonoBehaviour
 {
     [SerializeField] List<CinemachineCamera> FC; // Normal, Lock
     [SerializeField] List<CinemachineOrbitalFollow> orbs;
     [SerializeField] List<Transform> LockOrbs; // Mid, Aim;
+
+    
     Camera MainCam;
     private void Awake()
     {
         GameManager.instance.Camera = this;
         MainCam = GetComponent<Camera>();
+        aDeg = 0;
     }
     Vector3 drLock;
     // Lock Update;
+
+    [SerializeField] Transform Nav;
+    [SerializeField] List<GameObject> Pins; // E N W S , Boss;
+    [SerializeField] List<GameObject> EPins;
+    int[] ddp = { 0, 90, 180, 270 };
+    [SerializeField] Transform BossObj;
+    List<Transform> DetectObjs = new();
+    float aDeg;
+    private void FixedUpdate()
+    {
+        aDeg = Mathf.Repeat(90f - MainCam.transform.eulerAngles.y, 360f);
+        float delta;
+        for (int i = 0; i < 4; i++)
+        {
+            delta = Mathf.DeltaAngle(aDeg, ddp[i]);
+            if (Mathf.Abs(delta) <= 100) { Pins[i].SetActive(true); Pins[i].transform.localPosition = new Vector3((delta + 50) * 10, 0, 0); }
+            else Pins[i].SetActive(false);
+        }
+        int l = 0;
+        Vector3 pPos = LockOrbs[0].position;
+        Vector3 cnt = BossObj.position - pPos;
+        float deg = Mathf.Atan2(cnt.z, cnt.x) * Mathf.Rad2Deg;
+        delta = Mathf.DeltaAngle(aDeg, deg);
+        if (Mathf.Abs(delta) <= 100) { Pins[4].SetActive(true); Pins[4].transform.localPosition = new Vector3((delta + 50) * 10, 0, 0); }
+        else Pins[4].SetActive(false);
+
+        foreach (var j in DetectObjs)
+        {
+            cnt = j.position - pPos;
+            deg = Mathf.Atan2(cnt.z, cnt.x) * Mathf.Rad2Deg;
+            delta = Mathf.DeltaAngle(aDeg, deg);
+            if (Mathf.Abs(delta) <= 100) { EPins[l].SetActive(true); EPins[l].transform.localPosition = new Vector3((delta + 50) * 10, 0, 0); }
+            l++;
+            // 일단 l이 Pool 개수 넘어가는건 가정하지 않음
+        }
+        for (int i = l; i < EPins.Count; i++) EPins[i].SetActive(false);
+    }
     private void LateUpdate()
     {
+        
+
         if (!LockCheck) return;
         drLock = CurLock.position - LockOrbs[0].position; drLock.y = 0;
         if (drLock.sqrMagnitude >= 1f) orbs[1].HorizontalAxis.Value = Mathf.Atan2(drLock.x, drLock.z) * Mathf.Rad2Deg;

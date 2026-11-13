@@ -193,7 +193,7 @@ public class UIManager : MonoBehaviour
     public void CharPoint(int type, float amount)
     {
         Bars[type * 2].fillAmount -= amount;
-        BarRefresh[type] = 2;
+        BarRefresh[type] = 1.5f;
         if (BarCols[type] == null) BarCols[type] = StartCoroutine(BarSet(type));
         if (type == 1 && StaFill != null) { StopCoroutine(StaFill); StaFill = null; }
     }

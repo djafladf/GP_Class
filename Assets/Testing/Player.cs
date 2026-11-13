@@ -21,14 +21,6 @@ public class AnimCurve
     public float StUsement;
 }
 
-[System.Serializable]
-public class AttackClips
-{
-    public List<float> StUsement;
-    public List<int> DamageRatio; // 추후 스탯별 분리 예정
-    public List<AnimationClip> Clips;
-}
-
 public enum CurveState
 {
     none,
@@ -57,20 +49,19 @@ public class Player : MonoBehaviour
         mTrans = transform.parent;
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
-        //rigid = GetComponent<Rigidbody>();
-        //nim = GetComponent<Animator>();
         GameManager.instance.Player = mTrans;
         GameManager.instance.PlayerScript = this;
         GameManager.instance.PlayerHealFunc = HealFunction;
         MoveAble = true;
         OnCurve = false;
         RPos = RWeapon.localPosition; RSRot = RWeapon.localRotation;
+        aoc = new AnimatorOverrideController(anim.runtimeAnimatorController);
+        anim.runtimeAnimatorController = aoc;
     }
 
     private void Start()
     {
-        //CurWeaponInfo = GameManager.instance.Data.Weapon[CurWeaponInd];
-        //transform.position = new Vector3(GameManager.instance.bx * 80, 0, GameManager.instance.by * 80);
+        CurWeapon = GameManager.instance.Data.Weapon[0];
         Invoke("StartBug", 0.1f);
     }
 
@@ -164,8 +155,9 @@ public class Player : MonoBehaviour
         yield return null;
         if(state == CurveState.attack)
         {
-            curves[2].clip = CurAttack.Clips[CurAttackLevel];
-            curves[2].StUsement = CurAttack.StUsement[CurAttackLevel];
+            CurAttack = onDouble ? CurAttack = CurWeapon.Two[CurAttackLevel] : CurWeapon.One[CurAttackLevel];
+            curves[2].clip = CurAttack.Clip;
+            curves[2].StUsement = CurAttack.StUsement;
             anim.SetInteger("AttackLevel", CurAttackLevel);
         }
         if (CurST >= curves[(int)state - 1].StUsement)
@@ -288,6 +280,7 @@ public class Player : MonoBehaviour
     {
         if (!value.isPressed) return;
         if (curCurv != CurveState.none) return;
+        CurAttackLevel = 0; LastAttackTime = -1000;
         onDouble = onDouble == false;
         anim.SetInteger("SwapMod",onDouble ? 1 : 0);
     }
@@ -299,15 +292,37 @@ public class Player : MonoBehaviour
     {
         if (!onDouble)
         {
-            RWeapon.SetParent(WeaponHolder[0]);
+            for(int i = 0; i < CurWeapon.One.Count; i++) aoc[$"One{i+1}"] = CurWeapon.One[i].Clip;
+            RWeapon.SetParent(WeaponHolder[0], false);
             RWeapon.localPosition = RPos; RWeapon.localRotation = RSRot;
         }
         else
         {
-            RWeapon.SetParent(WeaponHolder[2]);
+            for (int i = 0; i < CurWeapon.Two.Count; i++) aoc[$"One{i + 1}"] = CurWeapon.Two[i].Clip;
+            RWeapon.SetParent(WeaponHolder[2], false);
             RWeapon.localPosition = Vector3.zero; RWeapon.localRotation = default;
         }
         anim.SetInteger("SwapMod", -1);
+    }
+
+    bool onCons = false;
+    void OnDoubleCheck()
+    {
+        if (onDouble)
+        {
+            anim.SetTrigger("THCons");
+            if (onCons)
+            {
+                RWeapon.SetParent(WeaponHolder[2],false);
+                RWeapon.localPosition = Vector3.zero; RWeapon.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                RWeapon.SetParent(WeaponHolder[0],false);
+                RWeapon.localPosition = RPos; RWeapon.localRotation = RSRot;
+            }
+            onCons = onCons == false;
+        }
     }
 
     void OnMenu(InputValue value)
@@ -323,17 +338,15 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Mouse
-    [SerializeField] Transform Aim;
-    Vector3 MouseSpeed = new Vector3(25, 0.4f, 0);
-    Vector3 DampingVar = new Vector3(0, 0, 0);
-    WeaponInfo CurWeaponInfo;
     bool CatchScroll = true;
     bool CurRight = true;
     bool _OnChangeWeapon = false;
+
+    WeaponInfo CurWeapon;
+    AttackClip CurAttack;
     
-    [SerializeField] AttackClips CurAttack;
     [SerializeField] int CurAttackLevel = 0;
-    float LastAttackTime = 0;
+    float LastAttackTime = -1000;
     float AttackLeftTime = 2f;
 
     void AttackExceed()
@@ -348,10 +361,15 @@ public class Player : MonoBehaviour
             var suc = SetAnimCurve(CurveState.attack);
             if(suc != 0)    // 예약 성공 or 즉시 발동
             {
-                if (Time.time - LastAttackTime >= AttackLeftTime) CurAttackLevel = CurAttack.Clips.Count - 1;
-                CurAttackLevel = (CurAttackLevel + 1) % CurAttack.Clips.Count;
+                if (Time.time - LastAttackTime >= AttackLeftTime) CurAttackLevel = CurWeapon.returnCount(onDouble) - 1;
+                CurAttackLevel = (CurAttackLevel + 1) % CurWeapon.returnCount(onDouble);
             }
         }
+    }
+    AnimatorOverrideController aoc;
+    void clipChange()
+    {
+
     }
 
     public void ChangeWeapon(int dr)
@@ -389,7 +407,7 @@ public class Player : MonoBehaviour
     #endregion
 
 
-    // 이 밑 부분은 추후 상위 Class로 뺄 예정. 현재 Test에는 사용하지 않음
+    // 이 밑 부분은 추후 상위 Class(Organic)로 뺄 예정. 현재 Test에는 사용하지 않음
     bool HitAble = true;
     float MaxHP = 10, CurHP = 10;
     [SerializeField]float MaxST = 1, CurST = 1;
@@ -458,37 +476,4 @@ public class Player : MonoBehaviour
         BuffAmount[type - 1] -= LastBuffAmount[type - 1]; LastBuffAmount[type - 1] = 0;
         BuffObjects[type].SetActive(false); GameManager.instance.UI.ApplyOnUI(type - 1, BuffAmount[type - 1] - 1);
     }
-
-    void HitGap()
-    {
-        HitAble = true;
-    }
-
-    // Setting -> 추후 다른 Script로 이관 예정
-    public void SettingCameraFollowOffset(Vector3 offset)
-    {
-        if (offset.x != 0) FolllowOffset.x = (offset.x - 3) * 0.1f;
-        if (offset.y != 0) FolllowOffset.y = offset.y * 0.1f;
-        if (offset.z != 0) FolllowOffset.z = (offset.z - 20) * 0.1f;
-    }
-    public void SettingCameraFollowOffsetZoom(Vector3 offset)
-    {
-        if (offset.x != 0) FollowOffset_Z.x = (offset.x - 4) * 0.1f;
-        if (offset.y != 0) FollowOffset_Z.y = offset.y * 0.1f;
-        if (offset.z != 0) FollowOffset_Z.z = (offset.z - 4) * 0.1f;
-    }
-
-    public void SettingCameraSpeed(Vector3 offset)
-    {
-        if (offset.x != 0) MouseSpeed.x = offset.x * 5;
-        if (offset.y != 0) MouseSpeed.y = offset.y * 0.1f;
-    }
-
-    //public void SettingCameraDamping(Vector3 offset)
-    //{
-    //    DampingVar = offset;
-    //    GameManager.instance.Cv.m_XDamping = DampingVar.x;
-    //    GameManager.instance.CVtr.m_YDamping = DampingVar.y;
-    //    GameManager.instance.CVtr.m_ZDamping = DampingVar.z;
-    //}
 }

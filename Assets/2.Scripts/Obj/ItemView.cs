@@ -21,7 +21,7 @@ public class ItemView : MonoBehaviour
 
     public void PointerEnter()
     {
-        GameManager.instance.FloatM.Init(GameManager.instance.Data.Weapon[ind].DescribeSelf(), GameManager.instance.Data.RarityColor[Rarity],MyFloatInd,25);
+        //GameManager.instance.FloatM.Init(GameManager.instance.Data.Weapon[ind].DescribeSelf(), GameManager.instance.Data.RarityColor[Rarity],MyFloatInd,25);
     }
 
     public void PointerOut()

@@ -13,7 +13,7 @@ public class DropItem : MonoBehaviour
     public void InterAct()
     {
         GameManager.instance.UI.ToggleInteract(null, false, null);
-        GameManager.instance.Data.RemoveItem(rarity, ind);
+        //GameManager.instance.Data.RemoveItem(rarity, ind);
         Destroy(gameObject);
     }
 
