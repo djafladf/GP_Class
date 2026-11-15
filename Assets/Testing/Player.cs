@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
+using UnityEngine.VFX;
 
 
 [System.Serializable]
@@ -35,11 +36,7 @@ public class Player : MonoBehaviour
 {
     Transform mTrans;
     [SerializeField] Transform[] WeaponHolder; // R, H, Back
-    [SerializeField] Transform FirePos;
     [SerializeField] AudioClip[] audioclips;
-
-    [SerializeField] Vector3 FolllowOffset;
-    [SerializeField] Vector3 FollowOffset_Z;
 
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
@@ -162,6 +159,10 @@ public class Player : MonoBehaviour
         }
         if (CurST >= curves[(int)state - 1].StUsement)
         {
+            if (state == CurveState.attack)
+            {
+                trail.On(); VF.Play();
+            }
             CurST -= curves[(int)state - 1].StUsement;
             GameManager.instance.UI.CharPoint(1, curves[(int)state - 1].StUsement);
             var cur = curves[(int)state - 1];
@@ -200,6 +201,8 @@ public class Player : MonoBehaviour
                 l = c;
             }
             yield return GameManager.DotOne;
+
+            if (state == CurveState.attack) { trail.Off(); VF.Stop(); }
         }
         anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
         OnCurve = false;
@@ -344,7 +347,9 @@ public class Player : MonoBehaviour
 
     WeaponInfo CurWeapon;
     AttackClip CurAttack;
-    
+
+    [SerializeField] TrailContainer trail;
+    [SerializeField] VisualEffect VF;
     [SerializeField] int CurAttackLevel = 0;
     float LastAttackTime = -1000;
     float AttackLeftTime = 2f;

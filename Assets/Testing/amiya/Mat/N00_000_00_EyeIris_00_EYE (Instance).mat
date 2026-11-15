@@ -247,7 +247,7 @@ Material:
     m_Ints:
     - _DirectionalLight_HighlightMode: 0
     - _DirectionalLight_Use: 0
-    - _OutlineMode: 0
+    - _OutlineMode: 1
     - _Outline_UseNormalMap: 0
     - _StencilComp: 8
     - _StencilOpFail: 0
@@ -416,7 +416,7 @@ Material:
     - _OutlineOffsetZ: 0.75
     - _OutlineOverridden: 0
     - _OutlineVisible: 1
-    - _OutlineWidth: 0
+    - _OutlineWidth: 8
     - _Outline_BaseColorBlend: 0.5
     - _Outline_LightColorBlend: 0.5
     - _Outline_Width: 0
