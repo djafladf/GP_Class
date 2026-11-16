@@ -75,7 +75,7 @@ Shader "Toon/Toon 3D as 2D (URP)"{
         }
 
         Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
-        Cull Back
+        Cull Off
         ZWrite On
 
         Stencil{
@@ -327,7 +327,7 @@ Shader "Toon/Toon 3D as 2D (URP)"{
 //            Cull [_SRPDefaultUnlitColMode]
 //            ColorMask [_SPRDefaultUnlitColorMask]
             Blend SrcAlpha OneMinusSrcAlpha
-            
+            Cull Off
             HLSLPROGRAM
             #pragma target 3.0
             #pragma vertex OutlineVertex
