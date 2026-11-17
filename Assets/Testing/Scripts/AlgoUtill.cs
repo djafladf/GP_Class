@@ -1,6 +1,107 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.Animations.Rigging;
+using UnityEngine;
+
+#region Vars
+[System.Serializable]
+public class AnimCurve
+{
+    public string name;
+    public AnimationCurve ac;
+    public string trigger;
+    public AnimationClip clip;
+    public float speed;
+    public float dist;
+    public float StUsement;
+    public bool allowTH;
+}
+
+public enum CurveState
+{
+    none,
+    roll,
+    jump,
+    attack,
+    Lit,
+    teleport
+}
+#endregion
+
+/// <summary>
+/// Reserve System
+/// </summary>
+/// <typeparam name="T"> </typeparam>
+public class ReserveSystem<T>
+{
+    Dictionary<int, T> Content = new();
+    Queue<int> ITicket = new();
+    LinkedList<int> Reserve = new();
+    Dictionary<int, LinkedListNode<int>> Nodes = new();
+
+    public ReserveSystem()
+    {
+        ITicket.Enqueue(0);
+    }
+
+    public int Count => Content.Count;
+
+    public bool First(out T value)
+    {
+        if(Reserve.First == null) { value = default; return false; }
+        value = Content[Reserve.First.Value];
+        return true;
+    }
+
+    public int Register(T Object)
+    {
+        int NextT;
+        if (!ITicket.TryDequeue(out NextT)) NextT = Content.Count;
+        Content[NextT] = Object;
+        Nodes.Add(NextT, Reserve.AddLast(NextT));
+        return NextT;
+    }
+    public bool CancleInteract(int _ticket)
+    {
+        if (!Content.Remove(_ticket)) return false;
+        if (Nodes.Remove(_ticket, out var node)) Reserve.Remove(node);
+        ITicket.Enqueue(_ticket);
+        return true;
+    }
+
+    /// <param name="Reuse"> 0 : Remove , 1 : Reuse(First), 2 : Reuse(Last)</param>
+    /// <returns>Reserved Object</returns>
+    public T Use(int Reuse = 0)
+    {
+        if (Reserve.First == null) return default(T);
+        int curTicket = Reserve.First.Value;
+        var some = Content[curTicket];
+        switch (Reuse)
+        {
+            case 0: CancleInteract(curTicket); break;
+            case 1: break;
+            case 2: var node = Reserve.First; Reserve.RemoveFirst(); Reserve.AddLast(node); break;
+        }
+        return some;
+    }
+
+    /// <summary>
+    /// Use For Default != null;
+    /// </summary>
+    /// <param name="Reuse"> 0 : Remove , 1 : Reuse(First), 2 : Reuse(Last)</param>
+    public bool TryUse(out T some, int Reuse = 0)
+    {
+        if (Reserve.First == null) { some = default; return false; }
+        int curTicket = Reserve.First.Value;
+        some = Content[curTicket];
+        switch (Reuse)
+        {
+            case 0: CancleInteract(curTicket); break;
+            case 1: break;
+            case 2: var node = Reserve.First; Reserve.RemoveFirst(); Reserve.AddLast(node); break;
+        }
+        return true;
+    }
+}
 
 public class PriorityQueue<T>
 {

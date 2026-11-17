@@ -126,7 +126,7 @@ public class Monster : MonoBehaviour
     {
         if (collision.gameObject.layer == 8 && HP > 0) 
         {
-            HP-= GameManager.instance.PlayerScript.BuffAmount[0];
+            //HP-= GameManager.instance.PlayerScript.BuffAmount[0];
             MoveAble = false; agent.isStopped = true;
             Vector3 pos = collision.GetContact(0).point;
             Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);

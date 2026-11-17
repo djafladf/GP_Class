@@ -2,19 +2,23 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class FireLit : MonoBehaviour
+public class FireLit : InteractThing
 {
+    [SerializeField] Transform RPlace;
     [SerializeField] Material mat;
     [SerializeField] VisualEffect vfx;
-    public float lifeTime = 0f;
+    [SerializeField] GameObject HitObj;
+    float lifeTime = 0f;
 
     float deg1 = Mathf.PI / 3f;
     float deg2 = Mathf.PI * 2 / 3f;
     Transform pattern;
     Vector2 sub = default;
+    bool OnFire = false;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         mat = new Material(mat); pattern = transform.GetChild(0);
         pattern.GetComponent<MeshRenderer>().sharedMaterial = mat;
     }
@@ -25,7 +29,7 @@ public class FireLit : MonoBehaviour
 
         vfx.SetFloat("Rad", 3 - lifeTime);
         mat.SetFloat("_LifeTime", lifeTime);
-        vfx.Play();
+        vfx.Play(); HitObj.SetActive(true);
         while (lifeTime <= 3)
         {
             yield return null;
@@ -35,24 +39,28 @@ public class FireLit : MonoBehaviour
             mat.SetFloat("_LifeTime", lifeTime);
         }
         vfx.Stop();
-        Destroy(mat);
+        
         yield return GameManager.OneSec;
         Destroy(pattern.gameObject);
+        Destroy(mat);
+        transform.GetChild(1).gameObject.SetActive(true);
+        OnFire = true;
     }
 
-    void Interact()
+    
+    public void LitEnd()
     {
         StartCoroutine(tt());
     }
 
-    private void OnTriggerEnter(Collider other)
+    // 나중에 MapManager같은거 나오면 거따가 넣어야될거같은디?
+    public override void IFunc(System.Object var)
     {
-        if (other.CompareTag("Player")) GameManager.instance.UI.ToggleInteract(Interact,true,"Lit");
-    }
+        if(!OnFire) GameManager.instance.PlayerScript.LitStart(this,RPlace);
+        else // SetRest
+        {
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player")) GameManager.instance.UI.ToggleInteract(null, false, "");
+        }
     }
 
     private void OnDestroy()

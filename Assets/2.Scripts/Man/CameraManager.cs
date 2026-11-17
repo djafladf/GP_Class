@@ -59,8 +59,6 @@ public class CameraManager : MonoBehaviour
     }
     private void LateUpdate()
     {
-        
-
         if (!LockCheck) return;
         drLock = CurLock.position - LockOrbs[0].position; drLock.y = 0;
         if (drLock.sqrMagnitude >= 1f) orbs[1].HorizontalAxis.Value = Mathf.Atan2(drLock.x, drLock.z) * Mathf.Rad2Deg;
@@ -89,7 +87,8 @@ public class CameraManager : MonoBehaviour
         orbs[0].VerticalAxis.Value = orbs[1].VerticalAxis.Value;
         orbs[0].RadialAxis.Value = orbs[1].RadialAxis.Value;
         FC[1].Priority = 0;
-        CurLock = null; LockCheck = false; OnUse.Clear();
+        CurLock = null; LockCheck = false; 
+        OnUse.Clear(); LockPQ.Clear();
     }
 
     Vector3 fixedDir = default;

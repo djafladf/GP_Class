@@ -1,13 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour
 {
@@ -26,7 +22,6 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         GameManager.instance.UI = this;
-        return;
     }
 
     private void Start()
@@ -104,12 +99,39 @@ public class UIManager : MonoBehaviour
         SliderCor = null;
     }
     #endregion
-#region External Interact
-    Action Interact = null;
-    public void ToggleInteract(Action InteractAct,bool On,string Text)
+    #region External Interact
+
+    ReserveSystem<(Action<System.Object>, String)> Interact = new();
+
+    public int RegisterInteract(Action<System.Object> InteractAct,string Text = null)
     {
-        InteractText.gameObject.SetActive(On); if(Text != null) InteractText.text = Text;
-        Interact = InteractAct;
+        int t = Interact.Register((InteractAct, Text));
+        UpdateInteractText();
+        return t;
+    }
+    public bool CancleInteract(int _ticket)
+    {
+        if(!Interact.CancleInteract(_ticket)) return false;
+        UpdateInteractText();
+        return true;
+    }
+
+    public void InteractFunc(System.Object T = null, int RemoveType = 0)
+    {
+        if (!Interact.TryUse(out var act,RemoveType)) return;
+        UpdateInteractText();
+        act.Item1?.Invoke(T);
+    }
+    void UpdateInteractText()
+    {
+        if (!Interact.First(out var data) || data.Item2 == null)
+        {
+            InteractText.gameObject.SetActive(false);
+            return;
+        }
+
+        InteractText.gameObject.SetActive(true);
+        InteractText.text = data.Item2;
     }
 
     public void ShowAscending(string text, float time, Action act = null)
@@ -134,14 +156,6 @@ public class UIManager : MonoBehaviour
         }
         if (act != null) act.Invoke();
         Timer.gameObject.SetActive(false);
-    }
-
-    public void InteractSomething()
-    {
-        if (Interact != null)
-        {
-            Interact.Invoke();
-        }
     }
 
 
@@ -239,16 +253,17 @@ public class UIManager : MonoBehaviour
 
     IEnumerator BuffTimer()
     {
-        while (LeftTime[0] > 0 || LeftTime[1] > 0 || LeftTime[2] > 0)
-        {
-            for (int i = 0; i < 3; i++) if (LeftTime[i] > 0) 
-                {
-                    LeftTime[i]--; BuffImages[i].fillAmount = LeftTime[i] * MaxTime[i];
-                    if (LeftTime[i] == 0) { BuffImages[i].gameObject.SetActive(false); GameManager.instance.PlayerScript.BuffOff(i+1); }
-                }
-            yield return GameManager.OneSec;
-        }
-        BuffCor = null;
+        yield return null;
+        //while (LeftTime[0] > 0 || LeftTime[1] > 0 || LeftTime[2] > 0)
+        //{
+        //    for (int i = 0; i < 3; i++) if (LeftTime[i] > 0) 
+        //        {
+        //            LeftTime[i]--; BuffImages[i].fillAmount = LeftTime[i] * MaxTime[i];
+        //            if (LeftTime[i] == 0) { BuffImages[i].gameObject.SetActive(false); GameManager.instance.PlayerScript.BuffOff(i+1); }
+        //        }
+        //    yield return GameManager.OneSec;
+        //}
+        //BuffCor = null;
     }
 
 
