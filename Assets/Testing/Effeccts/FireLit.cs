@@ -7,7 +7,7 @@ public class FireLit : InteractThing
     [SerializeField] Transform RPlace;
     [SerializeField] Material mat;
     [SerializeField] VisualEffect vfx;
-    [SerializeField] GameObject HitObj;
+    [SerializeField] Transform Light;
     float lifeTime = 0f;
 
     float deg1 = Mathf.PI / 3f;
@@ -29,7 +29,7 @@ public class FireLit : InteractThing
 
         vfx.SetFloat("Rad", 3 - lifeTime);
         mat.SetFloat("_LifeTime", lifeTime);
-        vfx.Play(); HitObj.SetActive(true);
+        vfx.Play();
         while (lifeTime <= 3)
         {
             yield return null;
@@ -37,6 +37,7 @@ public class FireLit : InteractThing
 
             vfx.SetFloat("Rad", 3 - lifeTime);
             mat.SetFloat("_LifeTime", lifeTime);
+            Light.transform.localScale = Vector3.one * (3 - lifeTime) * 5;
         }
         vfx.Stop();
         

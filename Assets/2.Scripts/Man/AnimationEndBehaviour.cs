@@ -9,12 +9,12 @@ public class AnimationEndBehaviour : StateMachineBehaviour
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(StartfunctionName != "") animator.gameObject.SendMessage(StartfunctionName, SendMessageOptions.DontRequireReceiver);
+        if(!string.IsNullOrEmpty(StartfunctionName)) animator.gameObject.SendMessage(StartfunctionName, SendMessageOptions.DontRequireReceiver);
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (EndfunctionName != "") animator.gameObject.SendMessage(EndfunctionName, SendMessageOptions.DontRequireReceiver);
+        if (!string.IsNullOrEmpty(EndfunctionName)) animator.gameObject.SendMessage(EndfunctionName, SendMessageOptions.DontRequireReceiver);
     }
 
 }

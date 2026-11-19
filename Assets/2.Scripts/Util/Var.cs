@@ -8,6 +8,24 @@ using UnityEngine.UI;
 [System.Serializable]
 public class Event : UnityEvent<BaseEventData> { }
 
+[System.Serializable]
+public class AnimCurve
+{
+    public string name;
+    public string trigger;
+    public float StUsement;
+}
+
+public enum CurveState
+{
+    none,
+    roll,
+    jump,
+    attack,
+    Lit,
+    teleport
+}
+
 public enum DamageType
 {
     Slash,

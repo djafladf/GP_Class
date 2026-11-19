@@ -16,6 +16,7 @@ public class DataManager : MonoBehaviour
 
     public Color[] RarityColor;
     public List<WeaponInfo> Weapon;
+    public List<AnimCurve> curves;
 
     List<int> norm, rare, epic,legd;
 
