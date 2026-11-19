@@ -19,14 +19,8 @@ public class Player : MonoBehaviour
 
     void OnAnimatorMove()
     {
-        Vector3 velocity = anim.deltaPosition / Time.fixedDeltaTime;
-
-        // 기존 중력, 점프 속도 유지
-        velocity.y = rigid.linearVelocity.y;
-
-        rigid.linearVelocity = velocity;
         Vector3 delta = anim.deltaPosition;
-        delta.y = 0f;
+        delta.y = 0;
 
         rigid.MovePosition(rigid.position + delta);
 
@@ -53,14 +47,14 @@ public class Player : MonoBehaviour
     }
 
     float MoveSpeed = 2f;
-    bool OnCurve = true, Grounded = false, MoveAble = false;
+    [SerializeField] bool OnCurve = true, Grounded = false, MoveAble = false;
     [SerializeField] LayerMask MoveObstacleMask;
     Vector3 NextDir = Vector3.zero;
     Vector3 camF = default, camR = default;
     private void FixedUpdate()
     {
         UpdateGrounded();
-        if (!MoveAble || OnCurve) return;
+        if (!MoveAble || (OnCurve)) return;
         if (!Dir.Equals(Vector2.zero))
         {
             camF = Camera.main.transform.forward; camF.y = 0; camR = Camera.main.transform.right; camR.y = 0;
@@ -99,6 +93,7 @@ public class Player : MonoBehaviour
     // Attack, Dodge
     [SerializeField] CurveState curCurv = CurveState.none;
     [SerializeField] CurveState PInp = CurveState.none;
+    AnimCurve curStateInfo = null;
 
     #region InputSystems
     #region Keyboard
@@ -111,7 +106,6 @@ public class Player : MonoBehaviour
     int SetAnimCurve(CurveState state)
     {
         if (!MoveAble) return 0;
-        int succ = 0;
         if (OnCurve)
         {
             if (PInp != CurveState.none) return 0;
@@ -121,20 +115,16 @@ public class Player : MonoBehaviour
         return StartCurve(state);
     }
 
-    int StartCurve(CurveState state)
+    int StartCurve(CurveState state,bool IsCombo = false)
     {
-        if (state == CurveState.attack)
-        {
-            CurAttack = onDouble ? CurWeapon.Two[CurAttackLevel] : CurWeapon.One[CurAttackLevel]; GameManager.instance.Data.curves[2].StUsement = CurAttack.StUsement;
-        }
-        var cur = GameManager.instance.Data.curves[(int)state - 1];
-
-        if (CurST < cur.StUsement) return 0;
+        if (state == CurveState.rattack) if (CurAttackLevel >= CurWeapon.One.Count) return 0;
+        if (!CanPayCurve(state)) return 0;
+        curStateInfo = GameManager.instance.Data.curves[(int)state - 1];
         OnCurve = true; curCurv = state;
-        if (state == CurveState.attack) { trail.On(); VF.Play(); anim.SetFloat("AttackLevel", CurAttackLevel); }
-        if (state == CurveState.jump) { Jumping = true; LeftGround = false; }
-        GameManager.instance.UI.CharPoint(1, cur.StUsement);
-        CurST -= cur.StUsement;
+        if (state == CurveState.rattack || state == CurveState.lattack) { trail.On(); VF.Play(); anim.SetFloat("AttackLevel", CurAttackLevel); }
+        if (state == CurveState.jump) { JumpForce();Jumping = true; LeftGround = false; }
+        GameManager.instance.UI.CharPoint(1, curStateInfo.StUsement);
+        CurST -= curStateInfo.StUsement;
 
         Vector3 _nd = default;
         if (GameManager.instance.Camera.LockCheck)
@@ -153,51 +143,106 @@ public class Player : MonoBehaviour
             }
         }
 
-        anim.SetTrigger(cur.trigger);
+        AnimatorStateInfo before = anim.GetCurrentAnimatorStateInfo(0);
+
+        String nextTrigger;
+        if (state == CurveState.lattack || state == CurveState.rattack) nextTrigger = IsCombo ? "Combo" : curStateInfo.trigger;
+        else nextTrigger = curStateInfo.trigger;
+        anim.SetTrigger(nextTrigger);
+        if (CheckCurState == null && state != CurveState.jump) CheckCurState = StartCoroutine(CheckEndCurve(before.fullPathHash,before.normalizedTime));
         return 1;
     }
 
-    void EndCurve()
+    bool CanPayCurve(CurveState state)
     {
-        if (ExternCurveQuit) { ExternCurveQuit = false; return; }
-        if (curCurv == CurveState.none) return;
-        if (curCurv == CurveState.attack) { trail.Off(); VF.Stop(); }
-        FinishCurve(curCurv);
+        if (state == CurveState.rattack || state == CurveState.lattack)
+        {
+            var attack = onDouble ? (OnRunning ?CurWeapon.TwoDash :CurWeapon.Two[CurAttackLevel]) : (OnRunning ? CurWeapon.OneDash : CurWeapon.One[CurAttackLevel]);
+            GameManager.instance.Data.curves[(int)state - 1].StUsement = attack.StUsement;
+        }
+
+        var data = GameManager.instance.Data.curves[(int)state - 1];
+        return CurST >= data.StUsement;
     }
 
-    void FinishCurve(CurveState state)
+    Coroutine CheckCurState = null;
+    IEnumerator CheckEndCurve(int oldH, float oldT)
+    {
+        const int layer = 0;
+        AnimatorStateInfo stt = default;
+        // 새 실행 확인
+        while (true)
+        {
+            yield return null;
+            if (anim.IsInTransition(layer)) continue;
+            stt = anim.GetCurrentAnimatorStateInfo(layer);
+
+            if (!stt.IsTag("Curve")) continue;
+
+            // 이전 State와 다르거나, 같은 State를 처음부터 재생한 경우
+            if (stt.fullPathHash != oldH ||stt.normalizedTime + 0.05f < oldT) break;
+        }
+
+        float t = 0,st,ed;
+        // 행동 중 감시
+        while (true)
+        {
+            yield return null;
+            stt = anim.GetCurrentAnimatorStateInfo(layer);
+            if (!stt.IsTag("Curve")) break;
+            if (anim.IsInTransition(layer))
+            {
+                stt = anim.GetNextAnimatorStateInfo(layer);
+                if (!stt.IsTag("Curve"))
+                {
+                    while (anim.IsInTransition(layer)) yield return null;
+
+                    break;
+                }
+            }
+            else  // 연계 가능 시간 화긴
+            {
+                t = stt.normalizedTime;
+                if (!(PInp != CurveState.none && curStateInfo.ComboAble.Contains(PInp))) continue;
+                st = curStateInfo.ComboTime.List[0]; ed = curStateInfo.ComboTime.List[1];
+                if (st > t || t > ed) continue;
+                if (CanPayCurve(PInp))
+                {
+                    var nt = PInp;
+                    PInp = CurveState.none;
+                    CheckCurState = null;
+                    EndCurve(false);
+                    if(StartCurve(nt,true) == 0) yield break;
+                    // Equal return;
+                }
+                PInp = CurveState.none;
+            }
+            
+        }
+
+
+        CheckCurState = null;
+        EndCurve();
+    }
+
+    void EndCurve(bool startPending = true)
+    {
+        if (curCurv == CurveState.none) return;
+        if (curCurv == CurveState.rattack){ trail.Off();VF.Stop(); }
+
+        FinishCurve(curCurv, startPending);
+    }
+
+
+    void FinishCurve(CurveState state, bool startPending = true)
     {
         anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y);
-        if (state == CurveState.attack) LastAttackTime = Time.time;
         OnCurve = false; curCurv = CurveState.none; 
-        if (PInp != CurveState.none)
+        if (startPending && PInp != CurveState.none)
         {
             CurveState next = PInp;
             PInp = CurveState.none;
-
-            StartCoroutine(StartPendingCurve(next));
-        }
-    }
-
-    IEnumerator StartPendingCurve(CurveState state)
-    {
-        // 이전 공격의 종료 콜백이 처리될 시간을 확보
-        yield return null;
-
-        if (!OnCurve && curCurv == CurveState.none)
-            SetAnimCurve(state);
-    }
-
-    bool ExternCurveQuit = false;
-
-    void ContinueAttack()
-    {
-        if(PInp == CurveState.attack)
-        {
-            ExternCurveQuit = true;
-            var t = StartCurve(PInp);
-            if (t == 0) { ExternCurveQuit = false; return; }
-            PInp = CurveState.none;
+            SetAnimCurve(next);
         }
     }
 
@@ -244,7 +289,7 @@ public class Player : MonoBehaviour
     Vector3 Dir;
 
     // Space
-    bool Jumping = false, LeftGround = false;
+    [SerializeField] bool Jumping = false, LeftGround = false;
     float GroundRadius = 0.1f;
     [SerializeField] LayerMask GroundMask;
     [SerializeField] Transform GroundCheck;
@@ -255,7 +300,6 @@ public class Player : MonoBehaviour
         if (Jumping)
         {
             if (!touchingGround) LeftGround = true;
-
             if (LeftGround && touchingGround &&rigid.linearVelocity.y <= 0.05f)
             {
                 Jumping = false;LeftGround = false;
@@ -264,25 +308,25 @@ public class Player : MonoBehaviour
             }
         }
 
-        Grounded = touchingGround && !Jumping;
+        Grounded = touchingGround;
         anim.SetBool("Grounded", Grounded);
     }
     void OnJump(InputValue value)
     {
-        return;
         if (!value.isPressed ||!MoveAble ||!Grounded ||OnCurve ||Jumping) return;
-        Vector3 leftRayOrigin =
-        mTrans.position + new Vector3(-0.05f, 0.05f, 0);
+        Vector3 leftRayOrigin  = mTrans.position + new Vector3(-0.05f, 0.05f, 0),
+                rightRayOrigin = mTrans.position + new Vector3(0.05f, 0.05f, 0);
 
-        Vector3 rightRayOrigin =
-            mTrans.position + new Vector3(0.05f, 0.05f, 0);
-
-        if (Physics.Raycast(rightRayOrigin, Vector3.down, 0.15f, GroundMask) ||
-            Physics.Raycast(leftRayOrigin, Vector3.down, 0.1f, GroundMask))
+        if (Physics.Raycast(rightRayOrigin, Vector3.down, 0.15f, GroundMask) ||Physics.Raycast(leftRayOrigin, Vector3.down, 0.1f, GroundMask))
         {
             Jumping = true;
             SetAnimCurve(CurveState.jump);
         }
+    }
+
+    void JumpForce()
+    {
+        rigid.AddForce(Vector2.up * 5,ForceMode.Impulse);
     }
 
     Vector3 RPos, LPos;
@@ -332,11 +376,13 @@ public class Player : MonoBehaviour
     {
         if (value.isPressed)
         {
-            var suc = SetAnimCurve(CurveState.attack);
-            if(suc != 0)    // 예약 성공 or 즉시 발동
+            var suc = SetAnimCurve(CurveState.rattack);
+            if(suc != 0 && OnRunning)    // 예약 성공 or 즉시 발동
             {
-                if (Time.time - LastAttackTime >= AttackLeftTime && curCurv != CurveState.attack) CurAttackLevel = CurWeapon.returnCount(onDouble) - 1;
+                if(curCurv != CurveState.rattack) CurAttackLevel = CurWeapon.returnCount(onDouble) - 1;
                 CurAttackLevel = (CurAttackLevel + 1) % CurWeapon.returnCount(onDouble);
+                //if (Time.time - LastAttackTime >= AttackLeftTime && curCurv != CurveState.attack) CurAttackLevel = CurWeapon.returnCount(onDouble) - 1;
+                //CurAttackLevel = (CurAttackLevel + 1) % CurWeapon.returnCount(onDouble);
             }
         }
     }

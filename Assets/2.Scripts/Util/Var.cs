@@ -9,11 +9,20 @@ using UnityEngine.UI;
 public class Event : UnityEvent<BaseEventData> { }
 
 [System.Serializable]
-public class AnimCurve
+public class AnimCurve : ISerializationCallbackReceiver
 {
     public string name;
     public string trigger;
     public float StUsement;
+    [System.NonSerialized] public HashSet<CurveState> ComboAble;
+    public ForTestFloat ComboTime;
+    public List<CurveState> ComboAbleInspec;
+
+    public void OnBeforeSerialize() { }
+    public void OnAfterDeserialize()
+    {
+        ComboAble = new HashSet<CurveState>(ComboAbleInspec);
+    }
 }
 
 public enum CurveState
@@ -21,8 +30,8 @@ public enum CurveState
     none,
     roll,
     jump,
-    attack,
-    Lit,
+    rattack,
+    lattack,
     teleport
 }
 
@@ -57,6 +66,8 @@ public class WeaponInfo
     public int Rarity;
     public List<AttackClip> One;
     public List<AttackClip> Two;
+    public AttackClip OneDash;
+    public AttackClip TwoDash;
 
     public int returnCount(bool IsTwo){ return IsTwo ? Two.Count: One.Count; } 
 
@@ -91,6 +102,12 @@ public class ForTestInt
 {
     public List<int> List; 
 }
+[System.Serializable]
+public class ForTestFloat
+{
+    public List<float> List;
+}
+
 
 [System.Serializable]
 public class ForTestImage
