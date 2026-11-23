@@ -7,7 +7,8 @@ using UnityEngine.Rendering.PostProcessing;
 public class CameraManager : MonoBehaviour
 {
     [SerializeField] List<CinemachineCamera> FC; // Normal, Lock
-    [SerializeField] List<CinemachineOrbitalFollow> orbs;
+    List<CinemachineOrbitalFollow> orbs = new();
+    List<CinemachineInputAxisController> inps = new();
     [SerializeField] List<Transform> LockOrbs; // Mid, Aim;
 
     
@@ -17,6 +18,12 @@ public class CameraManager : MonoBehaviour
         GameManager.instance.Camera = this;
         MainCam = GetComponent<Camera>();
         aDeg = 0;
+
+        foreach (var j in FC)
+        {
+            orbs.Add(j.GetComponent<CinemachineOrbitalFollow>());
+            inps.Add(j.GetComponent<CinemachineInputAxisController>());
+        }
     }
     Vector3 drLock;
     // Lock Update;
@@ -94,10 +101,19 @@ public class CameraManager : MonoBehaviour
         OnUse.Clear(); LockPQ.Clear();
     }
 
-    public void SetFollower(int cami, Transform Track, Transform Look)
+    public void SetFollower(int cami = 0, float fov = 60, Transform Track = null, Transform Look = null,bool AllowFollow = true)
     {
         FC[cami].Follow = Track;
         FC[cami].LookAt = Look;
+        FC[cami].Lens.FieldOfView = fov;
+        inps[cami].enabled = AllowFollow;
+    }
+    public void ForceCameraMove(Vector3 dir,int cami = 0)
+    {
+        float yaw = Mathf.Atan2(-dir.x, -dir.z) * Mathf.Rad2Deg;
+        float pit = Mathf.Atan2(dir.y,new Vector2(dir.x,dir.z).magnitude) * Mathf.Rad2Deg;
+        orbs[cami].HorizontalAxis.Value = yaw;
+        orbs[cami].VerticalAxis.Value = pit;
     }
 
     Vector3 fixedDir = default;

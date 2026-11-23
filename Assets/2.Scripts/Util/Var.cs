@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -75,6 +76,129 @@ public class WeaponInfo
     public GameObject Obj;
     public Sprite Im;
 }
+
+public class Surface
+{
+    public Renderer renderer;
+    public Mesh mesh;
+    public readonly List<Vector3> vertices = new();
+    public int[] triangles;
+
+    Vector3[] bindVertices;
+    Vector3[] cachedVertices;
+    int[] cachedFrames;
+    int[] weightStarts;
+
+    BoneWeight1[] weights;
+    Transform[] bones;
+    Matrix4x4[] bindposes;
+    Matrix4x4[] boneMatrices;
+
+    int frame;
+    bool manualSkinning;
+
+    public void Bake()
+    {
+        if (renderer is SkinnedMeshRenderer sk)
+            sk.BakeMesh(mesh, true);
+
+        mesh.GetVertices(vertices);
+    }
+
+    public void SetupSkinning()
+    {
+        if (renderer is not SkinnedMeshRenderer sk)
+            return;
+
+        Mesh source = sk.sharedMesh;
+
+        if (!source || source.blendShapeCount > 0 ||
+            sk.GetComponent<Cloth>() != null)
+            return;
+
+        Transform[] skBones = sk.bones;
+        Matrix4x4[] poses = source.bindposes;
+
+        if (skBones.Length == 0 || skBones.Length != poses.Length)
+            return;
+
+        foreach (var bone in skBones)
+            if (!bone) return;
+
+        var perVertex = source.GetBonesPerVertex();
+        var allWeights = source.GetAllBoneWeights();
+
+        if (perVertex.Length != source.vertexCount ||
+            allWeights.Length == 0)
+            return;
+
+        bindVertices = source.vertices;
+        bones = skBones;
+        bindposes = poses;
+        weights = allWeights.ToArray();
+
+        weightStarts = new int[source.vertexCount + 1];
+
+        for (int i = 0; i < source.vertexCount; i++)
+            weightStarts[i + 1] = weightStarts[i] + perVertex[i];
+
+        boneMatrices = new Matrix4x4[bones.Length];
+        cachedVertices = new Vector3[source.vertexCount];
+        cachedFrames = new int[source.vertexCount];
+
+        manualSkinning = true;
+    }
+
+    public void UpdatePose()
+    {
+        if (!manualSkinning)
+        {
+            if (renderer is SkinnedMeshRenderer)
+                Bake();
+
+            return;
+        }
+
+        for (int i = 0; i < bones.Length; i++)
+            boneMatrices[i] =
+                bones[i].localToWorldMatrix * bindposes[i];
+
+        if (frame == int.MaxValue)
+        {
+            Array.Clear(cachedFrames, 0, cachedFrames.Length);
+            frame = 0;
+        }
+
+        frame++;
+    }
+
+    public Vector3 GetWorldVertex(int index)
+    {
+        if (!manualSkinning)
+            return renderer.transform.TransformPoint(vertices[index]);
+
+        if (cachedFrames[index] == frame)
+            return cachedVertices[index];
+
+        Vector3 p = bindVertices[index];
+        Vector3 result = Vector3.zero;
+
+        for (int i = weightStarts[index];
+             i < weightStarts[index + 1]; i++)
+        {
+            BoneWeight1 w = weights[i];
+
+            result += boneMatrices[w.boneIndex]
+                .MultiplyPoint3x4(p) * w.weight;
+        }
+
+        cachedFrames[index] = frame;
+        cachedVertices[index] = result;
+
+        return result;
+    }
+}
+
 
 [System.Serializable]
 public struct SpawnType

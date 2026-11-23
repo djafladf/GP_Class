@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
 
 public class FireLit : InteractThing
 {
-    [SerializeField] Transform RPlace;
+    // Player, NPC, Camera
+    [SerializeField] List<Transform> Places;
     [SerializeField] Material mat;
     [SerializeField] VisualEffect vfx;
     [SerializeField] Transform Light;
@@ -57,10 +59,20 @@ public class FireLit : InteractThing
     {
         StartCoroutine(tt());
     }
+
+    public void RestSetting()
+    {
+        GameManager.instance.Camera.SetFollower(0, 75,transform, transform, false);
+        GameManager.instance.Player.position = Places[0].position;
+        GameManager.instance.Camera.ForceCameraMove(Places[2].position - transform.position);
+        GameManager.instance.UI.FadeInOut(1, 1);
+        GameManager.instance.UI.ToggleInUI(false);
+    }
+
     // 나중에 MapManager같은거 나오면 거따가 넣어야될거같은디?
     public override void IFunc(System.Object var)
     {
-        if (!OnFire) GameManager.instance.PlayerScript.LitStart(this, RPlace);
+        if (!OnFire) GameManager.instance.PlayerScript.LitStart(this);
         else GameManager.instance.PlayerScript.OnRest(transform);
     }
 

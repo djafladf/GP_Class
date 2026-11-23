@@ -356,15 +356,16 @@ public class Player : MonoBehaviour
         if (OnCurve || !MoveAble) return;
         GameManager.instance.UI.InteractFunc();
     }
+
     public void OnRest(Transform trans)
     {
-        GameManager.instance.Camera.SetFollower(0,trans,trans);
+        GameManager.instance.Camera.SetFollower(AllowFollow: false);
         anim.SetLayerWeight(1, 0); anim.SetLayerWeight(2, 0);
         MoveAble = false;
         GameManager.instance.UI.FadeInOut(t:3);
         anim.SetTrigger("Rest");
     }
-    public void RestFader() { GameManager.instance.UI.FadeOut();  }
+    public void RestFader() { cFire.RestSetting(); }
 
     #endregion
 
@@ -438,7 +439,7 @@ public class Player : MonoBehaviour
     #region External
 
     FireLit cFire = null;
-    public void LitStart(FireLit f,Transform T)
+    public void LitStart(FireLit f)
     {
         MoveAble = false; Beatable = true;
         cFire = f;
@@ -448,7 +449,7 @@ public class Player : MonoBehaviour
 
     public void MidLit()
     {
-        cFire.LitEnd(); cFire = null;
+        cFire.LitEnd();
     }
 
     void StopCut()

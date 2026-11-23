@@ -108,9 +108,19 @@ public class UIManager : MonoBehaviour
         FaderMat.SetFloat("_Start",Time.time);
         FaderMat.SetFloat("_In",isin);
         FaderMat.SetFloat("_To",t);
-        Fader.gameObject.SetActive(true);
+        if (isin == 0) Fader.gameObject.SetActive(true);
+        else Invoke("OffFader", t);
     }
-    public void FadeOut() => Fader.gameObject.SetActive(false);
+
+    void OffFader()
+    {
+        Fader.gameObject.SetActive(false);
+    }
+
+    public void ToggleInUI(bool OnOff)
+    {
+        PlayUI.SetActive(OnOff);
+    }
 
 
     [SerializeField] List<Texture2D> BlackTexs;

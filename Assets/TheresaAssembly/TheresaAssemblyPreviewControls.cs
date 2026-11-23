@@ -13,7 +13,6 @@ public sealed class TheresaAssemblyPreviewControls : MonoBehaviour {
  void OnGUI(){
    GUILayout.BeginArea(new Rect(16,16,230,180),GUI.skin.box);
    GUILayout.Label("THERESA / FRAGMENT ASSEMBLY");
-   effect.rightToLeft=GUILayout.Toggle(effect.rightToLeft,effect.assemblyMode==TheresaFragmentAssembly.AssemblyMode.Direction3D?"Reverse 3D direction":"Right to left");
    if(GUILayout.Button("Assemble"))effect.Assemble();
    if(GUILayout.Button("Disassemble"))effect.Disassemble();
    GUILayout.Label("Progress: "+effect.Progress.ToString("0.00"));
