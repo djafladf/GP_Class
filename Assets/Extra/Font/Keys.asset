@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
   m_Name: Keys
   m_EditorClassIdentifier: 
-  hashCode: -265185848
-  material: {fileID: 3347282957497419579}
-  materialHashCode: 0
   m_Version: 1.1.0
   m_FaceInfo:
     m_FaceIndex: 0
@@ -38,6 +35,7 @@ MonoBehaviour:
     m_StrikethroughOffset: 0
     m_StrikethroughThickness: 0
     m_TabWidth: 0
+  m_Material: {fileID: 3347282957497419579}
   spriteSheet: {fileID: 2800000, guid: bb4d720189597794fa5f988b58091539, type: 3}
   m_SpriteCharacterTable:
   - m_ElementType: 2
@@ -45,770 +43,642 @@ MonoBehaviour:
     m_GlyphIndex: 0
     m_Scale: 1
     m_Name: fe
-    m_HashCode: 3395
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 1
     m_Scale: 1
     m_Name: ml
-    m_HashCode: 3681
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 2
     m_Scale: 1
     m_Name: mm
-    m_HashCode: 3680
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 3
     m_Scale: 1
     m_Name: mr
-    m_HashCode: 3711
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 4
     m_Scale: 1
     m_Name: star
-    m_HashCode: 4088020
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 5
     m_Scale: 1
     m_Name: dd
-    m_HashCode: 3200
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 6
     m_Scale: 1
     m_Name: dpad
-    m_HashCode: 3509873
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 7
     m_Scale: 1
     m_Name: dl
-    m_HashCode: 3208
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 8
     m_Scale: 1
     m_Name: dr
-    m_HashCode: 3222
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 9
     m_Scale: 1
     m_Name: du
-    m_HashCode: 3217
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 10
     m_Scale: 1
     m_Name: check
-    m_HashCode: 116652422
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 11
     m_Scale: 1
     m_Name: enter
-    m_HashCode: 123433544
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 12
     m_Scale: 1
     m_Name: lt
-    m_HashCode: 3480
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 13
     m_Scale: 1
     m_Name: rt
-    m_HashCode: 3782
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 14
     m_Scale: 1
     m_Name: pshare
-    m_HashCode: -44337315
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 15
     m_Scale: 1
     m_Name: jl
-    m_HashCode: 3526
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 16
     m_Scale: 1
     m_Name: jlclick
-    m_HashCode: 668790024
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 17
     m_Scale: 1
     m_Name: jr
-    m_HashCode: 3544
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 18
     m_Scale: 1
     m_Name: jrclick
-    m_HashCode: 1225763414
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 19
     m_Scale: 1
     m_Name: pmenu
-    m_HashCode: 129868547
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 20
     m_Scale: 1
     m_Name: nhome
-    m_HashCode: 131424513
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 21
     m_Scale: 1
     m_Name: mouse
-    m_HashCode: 132378145
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 22
     m_Scale: 1
     m_Name: fn
-    m_HashCode: 3400
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 23
     m_Scale: 1
     m_Name: fs
-    m_HashCode: 3413
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 24
     m_Scale: 1
     m_Name: fw
-    m_HashCode: 3409
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 25
     m_Scale: 1
     m_Name: po
-    m_HashCode: 3615
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 26
     m_Scale: 1
     m_Name: px
-    m_HashCode: 3592
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 27
     m_Scale: 1
     m_Name: ps
-    m_HashCode: 3587
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 28
     m_Scale: 1
     m_Name: pt
-    m_HashCode: 3588
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 29
     m_Scale: 1
     m_Name: na
-    m_HashCode: 3663
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 30
     m_Scale: 1
     m_Name: nb
-    m_HashCode: 3660
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 31
     m_Scale: 1
     m_Name: nx
-    m_HashCode: 3670
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 32
     m_Scale: 1
     m_Name: ny
-    m_HashCode: 3671
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 33
     m_Scale: 1
     m_Name: xa
-    m_HashCode: 3865
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 34
     m_Scale: 1
     m_Name: xb
-    m_HashCode: 3866
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 35
     m_Scale: 1
     m_Name: xx
-    m_HashCode: 3840
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 36
     m_Scale: 1
     m_Name: xy
-    m_HashCode: 3841
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 37
     m_Scale: 1
     m_Name: 0
-    m_HashCode: 48
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 38
     m_Scale: 1
     m_Name: 1
-    m_HashCode: 49
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 39
     m_Scale: 1
     m_Name: 2
-    m_HashCode: 50
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 40
     m_Scale: 1
     m_Name: 3
-    m_HashCode: 51
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 41
     m_Scale: 1
     m_Name: 4
-    m_HashCode: 52
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 42
     m_Scale: 1
     m_Name: 5
-    m_HashCode: 53
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 43
     m_Scale: 1
     m_Name: 6
-    m_HashCode: 54
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 44
     m_Scale: 1
     m_Name: 7
-    m_HashCode: 55
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 45
     m_Scale: 1
     m_Name: 8
-    m_HashCode: 56
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 46
     m_Scale: 1
     m_Name: n+
-    m_HashCode: 3589
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 47
     m_Scale: 1
     m_Name: xmenu
-    m_HashCode: 138781451
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 48
     m_Scale: 1
     m_Name: xwin
-    m_HashCode: 4194600
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 49
     m_Scale: 1
     m_Name: ns
-    m_HashCode: 3677
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 50
     m_Scale: 1
     m_Name: 9
-    m_HashCode: 57
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 51
     m_Scale: 1
     m_Name: a
-    m_HashCode: 97
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 52
     m_Scale: 1
     m_Name: kd
-    m_HashCode: 3503
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 53
     m_Scale: 1
     m_Name: kl
-    m_HashCode: 3495
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 54
     m_Scale: 1
     m_Name: kr
-    m_HashCode: 3513
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 55
     m_Scale: 1
     m_Name: ku
-    m_HashCode: 3518
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 56
     m_Scale: 1
     m_Name: asterisk
-    m_HashCode: -1265219776
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 57
     m_Scale: 1
     m_Name: b
-    m_HashCode: 98
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 58
     m_Scale: 1
     m_Name: '['
-    m_HashCode: 91
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 59
     m_Scale: 1
     m_Name: ']'
-    m_HashCode: 93
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 60
     m_Scale: 1
     m_Name: c
-    m_HashCode: 99
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 61
     m_Scale: 1
     m_Name: mac
-    m_HashCode: 121743
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 62
     m_Scale: 1
     m_Name: d
-    m_HashCode: 100
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 63
     m_Scale: 1
     m_Name: del
-    m_HashCode: 105677
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 64
     m_Scale: 1
     m_Name: e
-    m_HashCode: 101
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 65
     m_Scale: 1
     m_Name: end
-    m_HashCode: 113327
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 66
     m_Scale: 1
     m_Name: esc
-    m_HashCode: 113749
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 67
     m_Scale: 1
     m_Name: f1
-    m_HashCode: 3351
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 68
     m_Scale: 1
     m_Name: f2
-    m_HashCode: 3348
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 69
     m_Scale: 1
     m_Name: f3
-    m_HashCode: 3349
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 70
     m_Scale: 1
     m_Name: f4
-    m_HashCode: 3346
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 71
     m_Scale: 1
     m_Name: f5
-    m_HashCode: 3347
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 72
     m_Scale: 1
     m_Name: f6
-    m_HashCode: 3344
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 73
     m_Scale: 1
     m_Name: f7
-    m_HashCode: 3345
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 74
     m_Scale: 1
     m_Name: f8
-    m_HashCode: 3358
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 75
     m_Scale: 1
     m_Name: f9
-    m_HashCode: 3359
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 76
     m_Scale: 1
     m_Name: f10
-    m_HashCode: 110535
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 77
     m_Scale: 1
     m_Name: f11
-    m_HashCode: 110534
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 78
     m_Scale: 1
     m_Name: f12
-    m_HashCode: 110533
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 79
     m_Scale: 1
     m_Name: g
-    m_HashCode: 103
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 80
     m_Scale: 1
     m_Name: h
-    m_HashCode: 104
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 81
     m_Scale: 1
     m_Name: home
-    m_HashCode: 3628719
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 82
     m_Scale: 1
     m_Name: i
-    m_HashCode: 105
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 83
     m_Scale: 1
     m_Name: ins
-    m_HashCode: 117428
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 84
     m_Scale: 1
     m_Name: j
-    m_HashCode: 106
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 85
     m_Scale: 1
     m_Name: k
-    m_HashCode: 107
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 86
     m_Scale: 1
     m_Name: l
-    m_HashCode: 108
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 87
     m_Scale: 1
     m_Name: m
-    m_HashCode: 109
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 88
     m_Scale: 1
     m_Name: f
-    m_HashCode: 102
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 89
     m_Scale: 1
     m_Name: less
-    m_HashCode: 3775081
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 90
     m_Scale: 1
     m_Name: more
-    m_HashCode: 4011189
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 91
     m_Scale: 1
     m_Name: '-'
-    m_HashCode: 45
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 92
     m_Scale: 1
     m_Name: n
-    m_HashCode: 110
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 93
     m_Scale: 1
     m_Name: numlock
-    m_HashCode: 2124288317
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 94
     m_Scale: 1
     m_Name: o
-    m_HashCode: 111
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 95
     m_Scale: 1
     m_Name: p
-    m_HashCode: 112
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 96
     m_Scale: 1
     m_Name: pagedown
-    m_HashCode: 683970817
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 97
     m_Scale: 1
     m_Name: pageup
-    m_HashCode: -23036394
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 98
     m_Scale: 1
     m_Name: +
-    m_HashCode: 43
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 99
     m_Scale: 1
     m_Name: prtscrn
-    m_HashCode: -1412653926
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 100
     m_Scale: 1
     m_Name: q
-    m_HashCode: 113
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 101
     m_Scale: 1
     m_Name: help
-    m_HashCode: 3638929
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 102
     m_Scale: 1
     m_Name: quote
-    m_HashCode: 136892314
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 103
     m_Scale: 1
     m_Name: r
-    m_HashCode: 114
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 104
     m_Scale: 1
     m_Name: s
-    m_HashCode: 115
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 105
     m_Scale: 1
     m_Name: ;
-    m_HashCode: 59
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 106
     m_Scale: 1
     m_Name: slash
-    m_HashCode: 135766021
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 107
     m_Scale: 1
     m_Name: t
-    m_HashCode: 116
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 108
     m_Scale: 1
     m_Name: ~
-    m_HashCode: 126
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 109
     m_Scale: 1
     m_Name: u
-    m_HashCode: 117
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 110
     m_Scale: 1
     m_Name: v
-    m_HashCode: 118
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 111
     m_Scale: 1
     m_Name: w
-    m_HashCode: 119
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 112
     m_Scale: 1
     m_Name: win
-    m_HashCode: 128656
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 113
     m_Scale: 1
     m_Name: x
-    m_HashCode: 120
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 114
     m_Scale: 1
     m_Name: y
-    m_HashCode: 121
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 115
     m_Scale: 1
     m_Name: space
-    m_HashCode: 134760324
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 116
     m_Scale: 1
     m_Name: share
-    m_HashCode: 135622317
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 117
     m_Scale: 1
     m_Name: alt
-    m_HashCode: 109305
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 118
     m_Scale: 1
     m_Name: backspace
-    m_HashCode: -1695224369
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 119
     m_Scale: 1
     m_Name: capslock
-    m_HashCode: -1290510262
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 120
     m_Scale: 1
     m_Name: ctrl
-    m_HashCode: 3547369
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 121
     m_Scale: 1
     m_Name: shift
-    m_HashCode: 135614240
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 122
     m_Scale: 1
     m_Name: tab
-    m_HashCode: 123223
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 123
     m_Scale: 1
     m_Name: lb
-    m_HashCode: 3470
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 124
     m_Scale: 1
     m_Name: rb
-    m_HashCode: 3792
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 125
     m_Scale: 1
     m_Name: z
-    m_HashCode: 122
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 126
     m_Scale: 1
     m_Name: Coin
-    m_HashCode: 2451115
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 127
     m_Scale: 1
     m_Name: n-
-    m_HashCode: 3587
-  m_SpriteGlyphTable:
+  m_GlyphTable:
   - m_Index: 0
     m_Metrics:
       m_Width: 91
@@ -2900,3 +2770,4 @@ Material:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

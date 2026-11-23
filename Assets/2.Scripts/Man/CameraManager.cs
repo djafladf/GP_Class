@@ -83,12 +83,21 @@ public class CameraManager : MonoBehaviour
     }
     public void UnLock()
     {
-        orbs[0].HorizontalAxis.Value = orbs[1].HorizontalAxis.Value;
-        orbs[0].VerticalAxis.Value = orbs[1].VerticalAxis.Value;
-        orbs[0].RadialAxis.Value = orbs[1].RadialAxis.Value;
+        if (LockCheck)
+        {
+            orbs[0].HorizontalAxis.Value = orbs[1].HorizontalAxis.Value;
+            orbs[0].VerticalAxis.Value = orbs[1].VerticalAxis.Value;
+            orbs[0].RadialAxis.Value = orbs[1].RadialAxis.Value;
+        }
         FC[1].Priority = 0;
         CurLock = null; LockCheck = false; 
         OnUse.Clear(); LockPQ.Clear();
+    }
+
+    public void SetFollower(int cami, Transform Track, Transform Look)
+    {
+        FC[cami].Follow = Track;
+        FC[cami].LookAt = Look;
     }
 
     Vector3 fixedDir = default;

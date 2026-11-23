@@ -99,7 +99,34 @@ public class UIManager : MonoBehaviour
         SliderCor = null;
     }
     #endregion
-    #region External Interact
+    #region ETC
+    [Header("ETC")]
+    [SerializeField] GameObject Fader;
+    [SerializeField] Material FaderMat;
+    public void FadeInOut(int isin = 0,int t = 2)
+    {
+        FaderMat.SetFloat("_Start",Time.time);
+        FaderMat.SetFloat("_In",isin);
+        FaderMat.SetFloat("_To",t);
+        Fader.gameObject.SetActive(true);
+    }
+    public void FadeOut() => Fader.gameObject.SetActive(false);
+
+
+    [SerializeField] List<Texture2D> BlackTexs;
+    [SerializeField] Material BlackMat;
+    [SerializeField] GameObject BlackImage;
+    public void ShowBlackImage(int i,float AutoEnd = 7)
+    {
+        BlackImage.gameObject.SetActive(true);
+        BlackMat.SetFloat("_Start", Time.time);
+        BlackMat.SetFloat("_Fadeout", AutoEnd);
+        BlackMat.SetTexture("_Tex", BlackTexs[i]);
+    }
+    public void OffBlackImage()
+    {
+        BlackImage.gameObject.SetActive(false);
+    }
 
     ReserveSystem<(Action<System.Object>, String)> Interact = new();
 

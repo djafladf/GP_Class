@@ -23,13 +23,15 @@ public class FireLit : InteractThing
         pattern.GetComponent<MeshRenderer>().sharedMaterial = mat;
     }
 
+    WaitForSeconds wfs = new WaitForSeconds(7);
     IEnumerator tt()
     {
         lifeTime = 0;
-
+        TriggerOff();
         vfx.SetFloat("Rad", 3 - lifeTime);
         mat.SetFloat("_LifeTime", lifeTime);
         vfx.Play();
+        OnFire = true;
         while (lifeTime <= 3)
         {
             yield return null;
@@ -45,7 +47,9 @@ public class FireLit : InteractThing
         Destroy(pattern.gameObject);
         Destroy(mat);
         transform.GetChild(1).gameObject.SetActive(true);
-        OnFire = true;
+        GameManager.instance.UI.ShowBlackImage(0,7);
+        yield return wfs;
+        GameManager.instance.UI.OffBlackImage(); TriggerOn();
     }
 
     
@@ -53,15 +57,11 @@ public class FireLit : InteractThing
     {
         StartCoroutine(tt());
     }
-
     // 나중에 MapManager같은거 나오면 거따가 넣어야될거같은디?
     public override void IFunc(System.Object var)
     {
-        if(!OnFire) GameManager.instance.PlayerScript.LitStart(this,RPlace);
-        else // SetRest
-        {
-
-        }
+        if (!OnFire) GameManager.instance.PlayerScript.LitStart(this, RPlace);
+        else GameManager.instance.PlayerScript.OnRest(transform);
     }
 
     private void OnDestroy()

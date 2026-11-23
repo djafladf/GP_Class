@@ -248,6 +248,7 @@ public class Player : MonoBehaviour
 
     void OnLock(InputValue val)
     {
+        if (!MoveAble) return;
         GameManager.instance.Camera.OnLock();
         anim.SetFloat("OnLock",GameManager.instance.Camera.LockCheck ? 1 : 0);
     }
@@ -258,7 +259,6 @@ public class Player : MonoBehaviour
         Dir = value.Get<Vector2>();
         anim.SetBool("OnMove", !Dir.Equals(Vector2.zero) && Grounded);
         if (!OnCurve) { anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y); }
-
     }
 
     float LastDodge = 0;
@@ -268,6 +268,7 @@ public class Player : MonoBehaviour
     // Dodge + Run
     void OnDodge(InputValue value)
     {
+        if (!MoveAble) return;
         if (value.isPressed)
         {
             if (IsDodge || CurST < Time.deltaTime) return;
@@ -355,6 +356,15 @@ public class Player : MonoBehaviour
         if (OnCurve || !MoveAble) return;
         GameManager.instance.UI.InteractFunc();
     }
+    public void OnRest(Transform trans)
+    {
+        GameManager.instance.Camera.SetFollower(0,trans,trans);
+        anim.SetLayerWeight(1, 0); anim.SetLayerWeight(2, 0);
+        MoveAble = false;
+        GameManager.instance.UI.FadeInOut(t:3);
+        anim.SetTrigger("Rest");
+    }
+    public void RestFader() { GameManager.instance.UI.FadeOut();  }
 
     #endregion
 
