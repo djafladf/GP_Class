@@ -12,7 +12,7 @@ public class DataManager : MonoBehaviour
     [SerializeField] List<GameObject> Epic;
     [SerializeField] List<GameObject> Legend;
     [SerializeField] float[] Prob;
-
+    [SerializeField] public Theresia Theresia;
 
     public Color[] RarityColor;
     public List<WeaponInfo> Weapon;

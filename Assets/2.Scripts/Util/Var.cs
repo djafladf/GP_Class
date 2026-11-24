@@ -81,6 +81,7 @@ public class Surface
 {
     public Renderer renderer;
     public Mesh mesh;
+    public Texture2D tex;
     public readonly List<Vector3> vertices = new();
     public int[] triangles;
 

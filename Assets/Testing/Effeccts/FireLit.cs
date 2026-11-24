@@ -11,18 +11,21 @@ public class FireLit : InteractThing
     [SerializeField] VisualEffect vfx;
     [SerializeField] Transform Light;
     float lifeTime = 0f;
-
-    float deg1 = Mathf.PI / 3f;
-    float deg2 = Mathf.PI * 2 / 3f;
     Transform pattern;
-    Vector2 sub = default;
     bool OnFire = false;
 
+    Vector3 TheLook = default;
     protected override void Awake()
     {
         base.Awake();
         mat = new Material(mat); pattern = transform.GetChild(0);
         pattern.GetComponent<MeshRenderer>().sharedMaterial = mat;
+        TheLook = transform.position - Places[1].position; TheLook.y = 0;  TheLook.Normalize();
+    }
+
+    private void Start()
+    {
+        GameManager.instance.Data.Theresia.Appear(Places[1], TheLook);
     }
 
     WaitForSeconds wfs = new WaitForSeconds(7);
@@ -62,16 +65,19 @@ public class FireLit : InteractThing
 
     public void RestSetting()
     {
-        GameManager.instance.Camera.SetFollower(0, 75,transform, transform, false);
+        GameManager.instance.Camera.CamSetting(0, 75,transform, transform, false);
         GameManager.instance.Player.position = Places[0].position;
         GameManager.instance.Camera.ForceCameraMove(Places[2].position - transform.position);
         GameManager.instance.UI.FadeInOut(1, 1);
         GameManager.instance.UI.ToggleInUI(false);
+        GameManager.instance.Data.Theresia.Appear(Places[1],TheLook);
     }
 
     // 나중에 MapManager같은거 나오면 거따가 넣어야될거같은디?
     public override void IFunc(System.Object var)
     {
+        GameManager.instance.PlayerScript.OnRest(transform,this);
+        return;
         if (!OnFire) GameManager.instance.PlayerScript.LitStart(this);
         else GameManager.instance.PlayerScript.OnRest(transform);
     }

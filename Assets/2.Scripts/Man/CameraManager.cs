@@ -101,13 +101,20 @@ public class CameraManager : MonoBehaviour
         OnUse.Clear(); LockPQ.Clear();
     }
 
-    public void SetFollower(int cami = 0, float fov = 60, Transform Track = null, Transform Look = null,bool AllowFollow = true)
+    public void CamSetting(int cami = 0, float fov = 60, Transform Track = null, Transform Look = null,bool AllowFollow = true)
     {
         FC[cami].Follow = Track;
         FC[cami].LookAt = Look;
         FC[cami].Lens.FieldOfView = fov;
         inps[cami].enabled = AllowFollow;
     }
+
+    public void ResetSetting()
+    {
+        CamSetting(0, 60, LockOrbs[0], LockOrbs[0], true);
+        CamSetting(1, 40, LockOrbs[0],LockOrbs[1], false);
+    }
+
     public void ForceCameraMove(Vector3 dir,int cami = 0)
     {
         float yaw = Mathf.Atan2(-dir.x, -dir.z) * Mathf.Rad2Deg;

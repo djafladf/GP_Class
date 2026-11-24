@@ -8,10 +8,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [Header("Normal Setting")]
-    [SerializeField] TMP_Text Score;
     [SerializeField] TMP_Text InteractText;
-    [SerializeField] TMP_Text Level;
-    [SerializeField] TMP_Text Timer;
     [SerializeField] TMP_Text Ascending;
     [SerializeField] Blurring AscendingOption;
 
@@ -177,24 +174,6 @@ public class UIManager : MonoBehaviour
         Ascending.gameObject.SetActive(true);
     }
 
-    public void SetTimer(float Time, Action act = null)
-    {
-        Timer.gameObject.SetActive(true);
-        StartCoroutine(TimerWork(Time,act));
-    }
-
-    IEnumerator TimerWork(float Time, Action act)
-    {
-        while(Time > 0)
-        {
-            Timer.text = Time.ToString("F1");
-            yield return GameManager.DotOne;
-            Time -= 0.1f;
-        }
-        if (act != null) act.Invoke();
-        Timer.gameObject.SetActive(false);
-    }
-
 
     // 일단은 Stat 자체 증감은 없다고 가정함.
     [SerializeField] List<Image> Bars; // 0,1 : HP.  2,3 : Sta. 4,5 : Mana
@@ -313,60 +292,33 @@ public class UIManager : MonoBehaviour
         MenuTexts[ind].text = $"{Mathf.FloorToInt(val * 100)}%";
     }
 
-#region Menu
-    RenderTexture captured;
-    int CurStopCall = 0;
-    bool OnMenu = false;
-    [Header("Menu Setting")]
-    [SerializeField] GameObject MenuObj;
-    public void ShowMenu()
+    #region Something Windows
+    [SerializeField] GameObject MinMenu;
+    Stack<GameObject> WindowStack = new();
+    
+    
+    public void TogleWindow()
     {
-        OnMenu = OnMenu == false;
-        //if (OnMenu)
-        //{
-        //    MenuObj.SetActive(true);
-        //    MapObj.transform.SetParent(MenuObj.transform.GetChild(2));
-        //    MapObj.localPosition = new Vector2(125, 0);
-        //    MapObj.sizeDelta = new Vector2(850, 850);
-        //    MaskerObj.sizeDelta = new Vector2(800, 800);
-        //    Pins.localPosition = Vector2.zero;
-        //    PlayerPin.localPosition = new Vector2(Lastx * 75f, Lasty * 75f);
-        //}
-        //else
-        //{
-        //    MenuObj.SetActive(false);
-        //    MapObj.transform.SetParent(PlayUI.transform);
-        //    MapObj.localPosition = new Vector2(750, 400);
-        //    MapObj.sizeDelta = new Vector2(220, 220);
-        //    MaskerObj.sizeDelta = new Vector2(200, 200);
-        //    Pins.localPosition = new Vector2(-Lastx * 75f, -Lasty * 75f);
-        //    PlayerPin.localPosition = Vector2.zero;
-        //}
-        //SetStop(OnMenu ? 1 : -1);
+
+        // On Menu
+        if (WindowStack.TryPop(out var topW))
+        {
+            topW.SetActive(false);
+            if (WindowStack.TryPeek(out topW)) topW.gameObject.SetActive(true);
+            else { Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false; GameManager.instance.Camera.CamSetting(AllowFollow: true); }
+        }
+        else AddWindow(MinMenu);
     }
 
-    /// <summary>
-    /// On/Off Stop
-    /// </summary>
-    /// <param name="var">1 : On, -1 : Off</param>
-    public void SetStop(int var)
+    public void AddWindow(GameObject window)
     {
-        if(var == 1 && CurStopCall == 0)
+        if (!WindowStack.TryPeek(out var topW))
         {
-            Camera.main.targetTexture = captured; Camera.main.Render(); Camera.main.targetTexture = null;
-            PauseUI.texture = captured;  GameManager.instance.SetTime(0);
+            GameManager.instance.Camera.CamSetting(AllowFollow:false);
             Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
-            PlayUI.SetActive(false); PauseUI.gameObject.SetActive(true);
         }
-
-        CurStopCall += var;
-
-        if (CurStopCall == 0)
-        {
-            PauseUI.gameObject.SetActive(false); PlayUI.SetActive(true);
-            Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false;
-            GameManager.instance.SetTime(0, true);
-        }
+        else topW.SetActive(false);
+        WindowStack.Push(window); window.gameObject.SetActive(true);
     }
     #endregion
 }

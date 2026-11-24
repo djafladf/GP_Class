@@ -87,7 +87,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Menu",
+                    "name": "Cancle",
                     "type": "Button",
                     "id": "a2043597-62fc-47da-861d-e9b3ac8d3dab",
                     "expectedControlType": "",
@@ -100,7 +100,7 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "2ae600d8-f08c-42ed-8c88-905b04ab1c10",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false,
@@ -363,11 +363,22 @@
                 {
                     "name": "",
                     "id": "301aafe4-a883-4a5d-a912-594e07fb3b6f",
-                    "path": "<Keyboard>/m",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Menu",
+                    "action": "Cancle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7d62fc35-d656-4556-93c5-6f3af52d56a8",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cancle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

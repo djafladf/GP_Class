@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 
@@ -29,11 +26,8 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         mTrans = transform.parent;
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = false;
         GameManager.instance.Player = mTrans;
         GameManager.instance.PlayerScript = this;
-        //GameManager.instance.PlayerHealFunc = HealFunction;
         MoveAble = true;
         OnCurve = false;
         RPos = RWeapon.localPosition; RSRot = RWeapon.localRotation;
@@ -97,7 +91,7 @@ public class Player : MonoBehaviour
 
     #region InputSystems
     #region Keyboard
-
+    #region Curve
     /// <summary>
     /// 0 : Fail, 1 : Success, 2 : Reserve
     /// </summary>
@@ -121,7 +115,7 @@ public class Player : MonoBehaviour
         if (!CanPayCurve(state)) return 0;
         curStateInfo = GameManager.instance.Data.curves[(int)state - 1];
         OnCurve = true; curCurv = state;
-        if (state == CurveState.rattack || state == CurveState.lattack) { trail.On(); VF.Play(); anim.SetFloat("AttackLevel", CurAttackLevel); }
+        if (state == CurveState.rattack || state == CurveState.lattack) { trail.On(); VF.Play(); anim.SetInteger("AttackLevel", CurAttackLevel); }
         if (state == CurveState.jump) { JumpForce();Jumping = true; LeftGround = false; }
         GameManager.instance.UI.CharPoint(1, curStateInfo.StUsement);
         CurST -= curStateInfo.StUsement;
@@ -245,6 +239,7 @@ public class Player : MonoBehaviour
             SetAnimCurve(next);
         }
     }
+    #endregion
 
     void OnLock(InputValue val)
     {
@@ -346,10 +341,6 @@ public class Player : MonoBehaviour
 
         onDouble = onDouble == false;
     }
-    void OnMenu(InputValue value)
-    {
-        GameManager.instance.UI.ShowMenu();
-    }
 
     void OnInteract(InputValue value)
     {
@@ -357,15 +348,21 @@ public class Player : MonoBehaviour
         GameManager.instance.UI.InteractFunc();
     }
 
-    public void OnRest(Transform trans)
+    public void OnRest(Transform trans,FireLit f = null)
     {
-        GameManager.instance.Camera.SetFollower(AllowFollow: false);
+        if (cFire == null) cFire = f;
+        GameManager.instance.Camera.CamSetting(AllowFollow: false);
         anim.SetLayerWeight(1, 0); anim.SetLayerWeight(2, 0);
         MoveAble = false;
         GameManager.instance.UI.FadeInOut(t:3);
         anim.SetTrigger("Rest");
     }
     public void RestFader() { cFire.RestSetting(); }
+
+    public void OnCancle(InputValue value)
+    {
+        GameManager.instance.UI.TogleWindow();
+    }
 
     #endregion
 

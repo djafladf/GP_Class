@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     public Action<int> PlayerHealFunc;
 
     public static System.Random rng = new System.Random();
-    int randomseed = 173;
+    public static int rdseed = 173;
 
     public static void SetSeed(int seed) => rng = new System.Random(seed);
     public static void ResetSeed() => rng = new System.Random();
