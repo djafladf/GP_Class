@@ -10,6 +10,60 @@ using UnityEngine.UI;
 public class Event : UnityEvent<BaseEventData> { }
 
 [System.Serializable]
+public class GameStatus
+{
+    // KeySetting
+    public string[] MoveKey;
+    public string PauseKey;
+
+    // GameSetting
+    public float[] Sounds;      // Game, Unit, Effect
+    public bool IsShowDamage;
+    public float AttackAlpha;
+
+    // GameVar
+    public int LastVersion;
+    public int[] Objects;
+    public int[] Stat;
+    public int[] Enem;
+    public int[] Exceed;
+    public List<int> LastBatch;
+    public List<bool> Unlock_Char;
+    public List<bool> Unlock_Item;
+
+    public GameStatus()
+    {
+        MoveKey = new string[4] { "<Keyboard>/w", "<Keyboard>/s", "<Keyboard>/a", "<Keyboard>/d" };
+        PauseKey = "<Keyboard>/escape";
+        Sounds = new float[3] { 1, 1, 1 };
+        IsShowDamage = true; AttackAlpha = 1;
+
+        Objects = new int[3] { 0, 0, 0 };
+        Stat = new int[10] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+        Enem = new int[6] { 0, 0, 0, 0, 0, 0 };
+        Exceed = new int[17];
+        LastBatch = new List<int>() { };
+    }
+
+    public void ResetVars(bool IsResetGameVar = false)
+    {
+        MoveKey = new string[4] { "<Keyboard>/w", "<Keyboard>/s", "<Keyboard>/a", "<Keyboard>/d" };
+        PauseKey = "<Keyboard>/escape";
+        Sounds = new float[3] { 1, 1, 1 };
+        IsShowDamage = true; AttackAlpha = 1;
+
+        if (IsResetGameVar)
+        {
+            Objects = new int[3] { 0, 0, 0 };
+            Stat = new int[10] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+            Enem = new int[6] { 0, 0, 0, 0, 0, 0 };
+            LastBatch = new List<int>() { 0 };
+        }
+    }
+}
+
+
+[System.Serializable]
 public class AnimCurve : ISerializationCallbackReceiver
 {
     public string name;

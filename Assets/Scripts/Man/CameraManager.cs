@@ -101,6 +101,7 @@ public class CameraManager : MonoBehaviour
         OnUse.Clear(); LockPQ.Clear();
     }
 
+    
     public void CamSetting(int cami = 0, float fov = 60, Transform Track = null, Transform Look = null,bool AllowFollow = true)
     {
         FC[cami].Follow = Track;
@@ -111,7 +112,7 @@ public class CameraManager : MonoBehaviour
 
     public void ResetSetting()
     {
-        CamSetting(0, 60, LockOrbs[0], LockOrbs[0], true);
+        CamSetting(0, 60, LockOrbs[0],LockOrbs[0], true);
         CamSetting(1, 40, LockOrbs[0],LockOrbs[1], false);
     }
 
