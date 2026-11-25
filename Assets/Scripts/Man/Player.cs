@@ -1,18 +1,23 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
-    Transform mTrans;
     [SerializeField] Transform[] WeaponHolder; // R, H, Back
     [SerializeField] AudioClip[] audioclips;
 
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
-    [SerializeField] PlayerInput Input;
+    [SerializeField] InputActionAsset Input;
+
+    Transform mTrans;
+    // Player, UI
+    InputActionMap IMap,UMap;
+    AnimatorOverrideController aoc;
 
     void OnAnimatorMove()
     {
@@ -33,6 +38,9 @@ public class Player : MonoBehaviour
         RPos = RWeapon.localPosition; RSRot = RWeapon.localRotation;
         aoc = new AnimatorOverrideController(anim.runtimeAnimatorController);
         anim.runtimeAnimatorController = aoc;
+
+        IMap = Input.FindActionMap("Player");
+        UMap = Input.FindActionMap("UI"); UMap.Enable();
     }
 
     private void Start()
@@ -95,8 +103,6 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 0 : Fail, 1 : Success, 2 : Reserve
     /// </summary>
-    /// <param name="state"></param>
-    /// <returns></returns>
     int SetAnimCurve(CurveState state)
     {
         if (!MoveAble) return 0;
@@ -334,7 +340,7 @@ public class Player : MonoBehaviour
     {
         if (!value.isPressed || !MoveAble || !Grounded || OnCurve || Jumping) return;
 
-        CurAttackLevel = 0; LastAttackTime = -1000;
+        CurAttackLevel = 0;
 
         anim.SetLayerWeight(1,onDouble ? 1 : 0);
         anim.SetLayerWeight(2,onDouble ? 0 : 1);
@@ -348,6 +354,11 @@ public class Player : MonoBehaviour
         GameManager.instance.UI.InteractFunc();
     }
 
+    public void OnCancel(InputValue value)
+    {
+        if (value.isPressed) GameManager.instance.Setting.TogleWindow();
+    }
+
     public void OnRest(Transform trans,FireLit f = null)
     {
         if (cFire == null) cFire = f;
@@ -359,17 +370,12 @@ public class Player : MonoBehaviour
     }
     public void RestFader() { cFire.RestSetting(); }
 
-    public void OnCancle(InputValue value)
-    {
-        GameManager.instance.UI.TogleWindow();
-    }
-
     #endregion
 
     #region Mouse
-    bool CatchScroll = true;
-    bool CurRight = true;
-    bool _OnChangeWeapon = false;
+    //bool CatchScroll = true;
+    //bool CurRight = true;
+    //bool _OnChangeWeapon = false;
 
     WeaponInfo CurWeapon;
     AttackClip CurAttack;
@@ -377,8 +383,6 @@ public class Player : MonoBehaviour
     [SerializeField] TrailContainer trail;
     [SerializeField] VisualEffect VF;
     int CurAttackLevel = 0;
-    float LastAttackTime = -1000;
-    float AttackLeftTime = 3f;
 
     void OnLAttack(InputValue value)
     {
@@ -389,12 +393,10 @@ public class Player : MonoBehaviour
             {
                 if(curCurv != CurveState.rattack) CurAttackLevel = CurWeapon.returnCount(onDouble) - 1;
                 CurAttackLevel = (CurAttackLevel + 1) % CurWeapon.returnCount(onDouble);
-                //if (Time.time - LastAttackTime >= AttackLeftTime && curCurv != CurveState.attack) CurAttackLevel = CurWeapon.returnCount(onDouble) - 1;
-                //CurAttackLevel = (CurAttackLevel + 1) % CurWeapon.returnCount(onDouble);
             }
         }
     }
-    AnimatorOverrideController aoc;
+    
     void clipChange()
     {
 
@@ -424,23 +426,35 @@ public class Player : MonoBehaviour
     //}
     public void ChangeWeaponEnd()
     {
-        _OnChangeWeapon = false;
+       // _OnChangeWeapon = false;
     }
 
     void ChangeScroll()
     {
-        CatchScroll = true;
+       // CatchScroll = true;
     }
     #endregion
     #endregion
     #region External
 
+    int OffCount = 0;
+    public void ToggleAction(bool off = true)
+    {
+        if (off) { IMap.Disable(); OffCount++; }
+        else
+        {
+            OffCount--; if (OffCount < 0) OffCount = 0;
+            if(OffCount == 0) IMap.Enable();
+        }
+    }
+
     FireLit cFire = null;
     public void LitStart(FireLit f)
     {
-        MoveAble = false; Beatable = true;
+        Beatable = true;
         cFire = f;
-        Input.DeactivateInput(); 
+
+        ToggleAction();
         anim.SetTrigger("OnLit");
     }
 
@@ -451,8 +465,8 @@ public class Player : MonoBehaviour
 
     void StopCut()
     {
-        MoveAble = true; Beatable = false;
-        Input.ActivateInput();
+        Beatable = false;
+        ToggleAction(false);
     }
 
     #endregion 

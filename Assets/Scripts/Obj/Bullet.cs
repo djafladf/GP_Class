@@ -28,12 +28,6 @@ public class Bullet : MonoBehaviour
         MeshSize = GetComponent<MeshFilter>().mesh.bounds.size * 0.5f;
     }
 
-    private void Start()
-    {
-        if(Particle != null) Particle.transform.SetParent(GameManager.instance.ParticleSet);
-    }
-    
-
     public void Init(Vector3 Start, Vector3 _Dir,float Power)
     {
         transform.position = Start;

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Unity.AppUI.Core;
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
 
 public class CameraManager : MonoBehaviour
 {
@@ -11,18 +9,24 @@ public class CameraManager : MonoBehaviour
     List<CinemachineInputAxisController> inps = new();
     [SerializeField] List<Transform> LockOrbs; // Mid, Aim;
 
-    
+
     Camera MainCam;
     private void Awake()
     {
         GameManager.instance.Camera = this;
         MainCam = GetComponent<Camera>();
         aDeg = 0;
-
+        int l = 0;
         foreach (var j in FC)
         {
             orbs.Add(j.GetComponent<CinemachineOrbitalFollow>());
             inps.Add(j.GetComponent<CinemachineInputAxisController>());
+            CRots[l++] = j.GetComponent<CinemachineRotationComposer>();
+        }
+        foreach (var c in inps[0].Controllers)
+        {
+            if (c.Name == "Look Orbit X") Conts[0] = c;
+            else if (c.Name == "Look Orbit Y") Conts[1] = c;
         }
     }
     Vector3 drLock;
@@ -72,7 +76,7 @@ public class CameraManager : MonoBehaviour
         LockOrbs[1].position = Vector3.Lerp(LockOrbs[0].position, CurLock.position, 0.4f);
     }
 
-    Vector3  _f, _r;
+    Vector3 _f, _r;
     public void CamFront(ref Vector3 Dir, ref Vector3 _nd)
     {
         _f = MainCam.transform.forward; _f.y = 0; _f.Normalize();
@@ -83,7 +87,7 @@ public class CameraManager : MonoBehaviour
     public bool LockCheck = false;
     public void ToLock(Transform To = null)
     {
-        if(To != null) CurLock = To;
+        if (To != null) CurLock = To;
         OnUse.Add(CurLock);
         LockCheck = true;
         FC[1].Priority = 20;
@@ -97,29 +101,36 @@ public class CameraManager : MonoBehaviour
             orbs[0].RadialAxis.Value = orbs[1].RadialAxis.Value;
         }
         FC[1].Priority = 0;
-        CurLock = null; LockCheck = false; 
+        CurLock = null; LockCheck = false;
         OnUse.Clear(); LockPQ.Clear();
     }
 
-    
-    public void CamSetting(int cami = 0, float fov = 60, Transform Track = null, Transform Look = null,bool AllowFollow = true)
+
+    public void CamSetting(int cami = 0, Transform Track = null, Transform Look = null)
     {
         FC[cami].Follow = Track;
         FC[cami].LookAt = Look;
-        FC[cami].Lens.FieldOfView = fov;
-        inps[cami].enabled = AllowFollow;
-    }
 
-    public void ResetSetting()
+    }
+    public void CamSetting(int cami = 0, float fov = 60)
     {
-        CamSetting(0, 60, LockOrbs[0],LockOrbs[0], true);
-        CamSetting(1, 40, LockOrbs[0],LockOrbs[1], false);
+        FC[cami].Lens.FieldOfView = fov;
+    }
+    public void CamSetting(bool AllowFollow)
+    {
+        inps[0].enabled = AllowFollow;
     }
 
-    public void ForceCameraMove(Vector3 dir,int cami = 0)
+    public void ResetSetting(int i = 0)
+    {
+        if (i == 0) { CamSetting(0, LockOrbs[0], LockOrbs[0]); CamSetting(0, GameManager.GStat.FOV[0]); CamSetting(true); }
+        else { CamSetting(1, LockOrbs[0], LockOrbs[1]); CamSetting(1, GameManager.GStat.FOV[1]); }
+    }
+
+    public void ForceCameraMove(Vector3 dir, int cami = 0)
     {
         float yaw = Mathf.Atan2(-dir.x, -dir.z) * Mathf.Rad2Deg;
-        float pit = Mathf.Atan2(dir.y,new Vector2(dir.x,dir.z).magnitude) * Mathf.Rad2Deg;
+        float pit = Mathf.Atan2(dir.y, new Vector2(dir.x, dir.z).magnitude) * Mathf.Rad2Deg;
         orbs[cami].HorizontalAxis.Value = yaw;
         orbs[cami].VerticalAxis.Value = pit;
     }
@@ -174,4 +185,19 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+
+    CinemachineInputAxisController.Controller[] Conts = new CinemachineInputAxisController.Controller[2];
+    CinemachineRotationComposer[] CRots = new CinemachineRotationComposer[2];
+    
+    public void FOV1(Vector3 value)   { FC[0].Lens.FieldOfView = value.x; GameManager.GStat.FOV[0] = value.x; }
+    public void FOV2(Vector3 value)   { FC[1].Lens.FieldOfView = value.x; GameManager.GStat.FOV[1] = value.x; }
+    public void SensH(Vector3 value)  { Conts[0].Input.Gain = 3 * value.x; GameManager.GStat.ScrollH = value.x; }
+    public void SensV(Vector3 value)  { Conts[1].Input.Gain = -2 * value.x; GameManager.GStat.ScrollH = value.x; }
+    public void Dist1(Vector3 value)  { orbs[0].Radius = value.x; GameManager.GStat.CamDist[0] = value.x; }
+    public void Dist2(Vector3 value)  { orbs[1].Radius = value.x; GameManager.GStat.CamDist[1] = value.x; }
+    public void DampV1(Vector3 value) { CRots[0].Damping.y = value.x; GameManager.GStat.DampV[0].y = value.x; }
+    public void DampV2(Vector3 value) { CRots[1].Damping.y = value.x; GameManager.GStat.DampV[1].y = value.x; }
+    public void DampH1(Vector3 value) { CRots[0].Damping.x = value.x; GameManager.GStat.DampH[0].x = value.x; }
+    public void DampH2(Vector3 value) { CRots[1].Damping.y = value.x; GameManager.GStat.DampH[1].x = value.x; }
+    public void Shakee(Vector3 value) { }
 }

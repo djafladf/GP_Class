@@ -12,53 +12,44 @@ public class Event : UnityEvent<BaseEventData> { }
 [System.Serializable]
 public class GameStatus
 {
+    // Volume
+    public float[] Sounds;
+
+    // Cam (0 : Normal, 1 : Lock
+    public float[] FOV;
+    public float[] CamDist;
+    public float ScrollV;
+    public float ScrollH;
+    public Vector2[] DampV;
+    public Vector2[] DampH;
+    public float Shake;
+
+    // GameSetting
+    public float LockDist;
+    public float CurveTime;
+    public int NextAble;
+    public bool SameNext;
+    public bool PIPO;
+    public float RunTime;
+    public bool RunToggle;
+    public bool AutoLockChange;
+
     // KeySetting
     public string[] MoveKey;
     public string PauseKey;
 
-    // GameSetting
-    public float[] Sounds;      // Game, Unit, Effect
-    public bool IsShowDamage;
-    public float AttackAlpha;
-
     // GameVar
-    public int LastVersion;
-    public int[] Objects;
-    public int[] Stat;
-    public int[] Enem;
-    public int[] Exceed;
-    public List<int> LastBatch;
-    public List<bool> Unlock_Char;
-    public List<bool> Unlock_Item;
 
     public GameStatus()
     {
+        Sounds = new float[6] {100,100,100,100,100,100};
+        FOV = new float[2] { 60, 40 };
+        CamDist = new float[2] { 4, 4 };
+        ScrollV = 1; ScrollH = 1; Shake = 5;
+        DampV = new Vector2[2] { Vector2.zero, Vector2.zero };
+        DampV = new Vector2[2] { Vector2.zero, Vector2.zero };
+
         MoveKey = new string[4] { "<Keyboard>/w", "<Keyboard>/s", "<Keyboard>/a", "<Keyboard>/d" };
-        PauseKey = "<Keyboard>/escape";
-        Sounds = new float[3] { 1, 1, 1 };
-        IsShowDamage = true; AttackAlpha = 1;
-
-        Objects = new int[3] { 0, 0, 0 };
-        Stat = new int[10] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-        Enem = new int[6] { 0, 0, 0, 0, 0, 0 };
-        Exceed = new int[17];
-        LastBatch = new List<int>() { };
-    }
-
-    public void ResetVars(bool IsResetGameVar = false)
-    {
-        MoveKey = new string[4] { "<Keyboard>/w", "<Keyboard>/s", "<Keyboard>/a", "<Keyboard>/d" };
-        PauseKey = "<Keyboard>/escape";
-        Sounds = new float[3] { 1, 1, 1 };
-        IsShowDamage = true; AttackAlpha = 1;
-
-        if (IsResetGameVar)
-        {
-            Objects = new int[3] { 0, 0, 0 };
-            Stat = new int[10] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-            Enem = new int[6] { 0, 0, 0, 0, 0, 0 };
-            LastBatch = new List<int>() { 0 };
-        }
     }
 }
 

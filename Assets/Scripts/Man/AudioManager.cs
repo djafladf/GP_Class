@@ -24,25 +24,46 @@ public class AudioManager : MonoBehaviour
     {
         float vol = Mathf.Log10(Mathf.Max(var.x * 0.01f, 0.0001f)) * 20f;
         mixer.SetFloat("Master", vol);
+        GameManager.GStat.Sounds[0] = var.x;
     }
     public void SetBGMVolume(Vector3 var)
     {
         float vol = Mathf.Log10(Mathf.Max(var.x * 0.01f, 0.0001f)) * 20f;
         mixer.SetFloat("BGM", vol);
+        GameManager.GStat.Sounds[1] = var.x;
     }
     public void SetSFXVolume(Vector3 var)
     {
         float vol = Mathf.Log10(Mathf.Max(var.x * 0.01f, 0.0001f)) * 20f;
         mixer.SetFloat("SFX", vol);
+        GameManager.GStat.Sounds[2] = var.x;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="type">0:?, 1:BGM, 2: SFX</param>
+    public void SetVoiceVolume(Vector3 var)
+    {
+        float vol = Mathf.Log10(Mathf.Max(var.x * 0.01f, 0.0001f)) * 20f;
+        mixer.SetFloat("Voice", vol);
+        GameManager.GStat.Sounds[3] = var.x;
+    }
+
+    public void SetAmbient(Vector3 var)
+    {
+        float vol = Mathf.Log10(Mathf.Max(var.x * 0.01f, 0.0001f)) * 20f;
+        mixer.SetFloat("Ambient", vol);
+        GameManager.GStat.Sounds[4] = var.x;
+    }
+
+    public void SetUI(Vector3 var)
+    {
+        float vol = Mathf.Log10(Mathf.Max(var.x * 0.01f, 0.0001f)) * 20f;
+        mixer.SetFloat("UI", vol);
+        GameManager.GStat.Sounds[5] = var.x;
+    }
+
+    /// <param name="type">0:?, 1:BGM, 2: SFX, 3 : Voice, 4 : Ambient, 5 : UI<, 3 : Voice/param>
     /// <param name="vol"> volume </param>
     /// <param name="clip"> clip </param>
-    public void PlayClip(int type,float vol,AudioClip clip)
+    public void PlayClip(int type,float vol,AudioClip clip, Transform Pos = null)
     {
         Sources[type].PlayOneShot(clip, vol);
     }

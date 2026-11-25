@@ -18,8 +18,8 @@ public class FloatMessage : MonoBehaviour
             GameManager.instance.FloatM = this;
             ParentRect = transform.parent.GetComponent<RectTransform>();
             InfRect = GetComponent<RectTransform>();
-            MainText = transform.GetChild(0).GetComponent<TMP_Text>();
-            Im = GetComponent<Image>();
+            MainText = transform.GetChild(1).GetComponent<TMP_Text>();
+            Im = transform.GetChild(0).GetComponent<Image>();
             gameObject.SetActive(false);
         }
         else Destroy(gameObject);
@@ -44,11 +44,11 @@ public class FloatMessage : MonoBehaviour
 
     int CurUseInd;
 
-    public void Init(string Message, Color backColor,int ind = 0,float font = 50)
+    public void Init(string Message,int ind = 0,float font = 50, Sprite spr = null)
     {
-        MainText.text = Message; MainText.fontSize = font; Im.color = backColor;
+        MainText.text = Message; MainText.fontSize = font;
+        if (spr != null) { Im.gameObject.SetActive(true); Im.sprite = spr; } else Im.gameObject.SetActive(false);
         gameObject.SetActive(true); CurUseInd = ind;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(InfRect);
         LayoutRebuilder.ForceRebuildLayoutImmediate(InfRect);
         MySize = InfRect.rect.size * 0.5f; MaxSize = ParentRect.rect.size - MySize;
     }

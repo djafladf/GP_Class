@@ -13,7 +13,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] Blurring AscendingOption;
 
     [SerializeField] GameObject PlayUI;
-    [SerializeField] RawImage PauseUI;
 
     [HideInInspector] public int CurScore = 0;
     private void Awake()
@@ -283,42 +282,5 @@ public class UIManager : MonoBehaviour
     }
 
 
-    #endregion
-
-    [SerializeField] TMP_Text[] MenuTexts;
-
-    public void ApplyOnUI(int ind, float val)
-    {
-        MenuTexts[ind].text = $"{Mathf.FloorToInt(val * 100)}%";
-    }
-
-    #region Something Windows
-    [SerializeField] GameObject MinMenu;
-    Stack<GameObject> WindowStack = new();
-    
-    
-    public void TogleWindow()
-    {
-
-        // On Menu
-        if (WindowStack.TryPop(out var topW))
-        {
-            topW.SetActive(false);
-            if (WindowStack.TryPeek(out topW)) topW.gameObject.SetActive(true);
-            else { Cursor.lockState = CursorLockMode.Confined; Cursor.visible = false; GameManager.instance.Camera.CamSetting(AllowFollow: true); }
-        }
-        else AddWindow(MinMenu);
-    }
-
-    public void AddWindow(GameObject window)
-    {
-        if (!WindowStack.TryPeek(out var topW))
-        {
-            GameManager.instance.Camera.CamSetting(AllowFollow:false);
-            Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
-        }
-        else topW.SetActive(false);
-        WindowStack.Push(window); window.gameObject.SetActive(true);
-    }
     #endregion
 }

@@ -9,15 +9,11 @@ public class SliderSub : MonoBehaviour
     [SerializeField] UnityEngine.UI.Slider slid;
     [SerializeField] UnityEvent<Vector3> Act;
     [SerializeField] Vector3 Multiplier;
-
-    private void Start()
-    {
-        valueSet();
-    }
+    [SerializeField] float Multi = 1;
 
     public void valueSet()
     {
-        text.text = $"{slid.value}";
+        text.text = $"{slid.value * Multi}";
         Act.Invoke(Multiplier*slid.value);
     }
 
