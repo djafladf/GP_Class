@@ -117,8 +117,6 @@ public class UIManager : MonoBehaviour
     {
         PlayUI.SetActive(OnOff);
     }
-
-
     [SerializeField] List<Texture2D> BlackTexs;
     [SerializeField] Material BlackMat;
     [SerializeField] GameObject BlackImage;
@@ -134,6 +132,56 @@ public class UIManager : MonoBehaviour
         BlackImage.gameObject.SetActive(false);
     }
 
+    #region Combo
+    [SerializeField] TMP_Text[] ComboTex;
+    [SerializeField] GameObject[] ComboObjs;
+    int ComboACount = 1;
+    bool AllowSameAct = true;
+    public LinkedList<CurveState> ComboStats = new();
+    Coroutine ComboCor = null;
+    public CurveState GetNextCombo() { if (ComboStats.Count == 0) return CurveState.none; else return ComboStats.First.Value; }
+    public void SetSame(int boo) { AllowSameAct = boo == 0; GameManager.GStat.SameNext = AllowSameAct; }
+    public void SetCount(Vector3 count) { ComboACount = (int)count.x ; GameManager.GStat.NextAble = ComboACount; }
+    public void ClearCombo()
+    {
+        if(ComboCor != null) StopCoroutine(ComboCor);
+        foreach (var j in ComboObjs) j.SetActive(false);
+        ComboStats.Clear();
+    }
+    public int ComboAdd(ref CurveState curCS, CurveState add)
+    {
+        if (ComboStats.Count >= ComboACount) return 0;
+        if (ComboStats.Count == 0) { if (curCS == add && !AllowSameAct) return 0; }
+        else if (ComboStats.Last.Value == add && !AllowSameAct) return 0;
+        ComboStats.AddFirst(add);
+        ComboObjs[ComboStats.Count - 1].SetActive(true);
+        ComboTex[ComboStats.Count - 1].text = add.ToString();
+        return 2;
+    }
+    public CurveState ComboConsume()
+    {
+        if(ComboStats.Count == 0) return CurveState.none;
+        ComboObjs[ComboStats.Count-1].SetActive(false);
+        var t = ComboStats.First.Value; ComboStats.RemoveFirst();
+        if (ComboCor == null) ComboCor = StartCoroutine(ComboCoroutine());
+        return t;
+    }
+    IEnumerator ComboCoroutine()
+    {
+        int i, l;
+        for(i = 0; i < 10; i++)
+        {
+            for(l = 0; l < ComboStats.Count; l++)
+            {
+                ComboObjs[l].transform.localPosition = new Vector3(17.5f + l * 87.5f - i * 8.75f, 0, 0);
+            }
+            yield return GameManager.MinSeconds;
+        }           
+        ComboCor = null;
+    }
+    #endregion
+
+    #region Interact
     ReserveSystem<(Action<System.Object>, String)> Interact = new();
 
     public int RegisterInteract(Action<System.Object> InteractAct,string Text = null)
@@ -166,14 +214,14 @@ public class UIManager : MonoBehaviour
         InteractText.gameObject.SetActive(true);
         InteractText.text = data.Item2;
     }
-
+    #endregion
     public void ShowAscending(string text, float time, Action act = null)
     {
         AscendingOption.Setting(time,text: text, AfterAction: act);
         Ascending.gameObject.SetActive(true);
     }
 
-
+    #region BarStat
     // 일단은 Stat 자체 증감은 없다고 가정함.
     [SerializeField] List<Image> Bars; // 0,1 : HP.  2,3 : Sta. 4,5 : Mana
     Coroutine[] BarCols = { null,null,null };
@@ -226,30 +274,7 @@ public class UIManager : MonoBehaviour
         if (BarCols[type] == null) BarCols[type] = StartCoroutine(BarSet(type));
         if (type == 1 && StaFill != null) { StopCoroutine(StaFill); StaFill = null; }
     }
-
-    [SerializeField] Image BossHP;
-    [SerializeField] TMP_Text BossName;
-    public void ToggleBoss(string name)
-    {
-        BossHP.fillAmount = 1; BossName.text = name;
-        BossHP.transform.parent.gameObject.SetActive(true);
-    }
-
-    public void BossHpChange(float amount)
-    {
-        BossHP.fillAmount = amount;
-    }
     #endregion
-#region Map
-    [Header("Map")]
-    [SerializeField] RectTransform MapObj;
-    [SerializeField] RectTransform MaskerObj, PlayerPin;
-    [SerializeField] List<Sprite> PinType; // 0 : Unknown, 1 : Base, 2 : Monster, 3 : Puzzle, 4 : Heal, 5 : Shop, 6: Fog
-    int[,] RoomTypes;
-    Image[,] PinSprites;
-    [SerializeField] RectTransform Pins;
-    [SerializeField] GameObject MapPin, PassPin,FogPin;
-    GameObject[,] Fogs;
     #endregion
 #region Buff
     [Header("Buff")]

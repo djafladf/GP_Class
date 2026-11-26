@@ -26,17 +26,17 @@ public class GameStatus
 
     // GameSetting
     public float LockDist;
+    public bool AllowSameLock;
     public float CurveTime;
     public int NextAble;
     public bool SameNext;
-    public bool PIPO;
+    public int CurveChangeType;
     public float RunTime;
     public bool RunToggle;
     public bool AutoLockChange;
 
     // KeySetting
-    public string[] MoveKey;
-    public string PauseKey;
+    public string[] KeyBindings;
 
     // GameVar
 
@@ -49,7 +49,10 @@ public class GameStatus
         DampV = new Vector2[2] { Vector2.zero, Vector2.zero };
         DampV = new Vector2[2] { Vector2.zero, Vector2.zero };
 
-        MoveKey = new string[4] { "<Keyboard>/w", "<Keyboard>/s", "<Keyboard>/a", "<Keyboard>/d" };
+        LockDist = 1f; RunTime = 0.2f;
+        AllowSameLock = false; SameNext = true;
+        RunToggle = false; AutoLockChange = false;
+        NextAble = 1; CurveChangeType = 0;
     }
 }
 
@@ -61,6 +64,7 @@ public class AnimCurve : ISerializationCallbackReceiver
     public string trigger;
     public float StUsement;
     [System.NonSerialized] public HashSet<CurveState> ComboAble;
+    public bool UseInternalTime = false;
     public ForTestFloat ComboTime;
     public List<CurveState> ComboAbleInspec;
 

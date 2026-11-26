@@ -88,7 +88,7 @@ public class CameraManager : MonoBehaviour
     public void ToLock(Transform To = null)
     {
         if (To != null) CurLock = To;
-        OnUse.Add(CurLock);
+        if(!AllowSameLock) OnUse.Add(CurLock);
         LockCheck = true;
         FC[1].Priority = 20;
     }
@@ -144,14 +144,16 @@ public class CameraManager : MonoBehaviour
         rig.MoveRotation(Quaternion.LookRotation(fixedDir));
     }
 
+    bool AllowSameLock = false;
     PriorityQueue<Transform, float> LockPQ = new((a, b) => a.Item2 < b.Item2);
     HashSet<Transform> OnUse = new();
     Collider[] Target = new Collider[32];
     [SerializeField] LayerMask EMask = 1 << 7, OMask = (1 << 6) | (1 << 12);
+    float LockDist = 20f;
     public void OnLock()
     {
         var OriginPos = LockOrbs[0].position;
-        int res = Physics.OverlapSphereNonAlloc(OriginPos, 15f, Target, EMask);
+        int res = Physics.OverlapSphereNonAlloc(OriginPos, LockDist, Target, EMask);
 
         Transform tcnt;
         Vector3 pcnt;
@@ -200,4 +202,6 @@ public class CameraManager : MonoBehaviour
     public void DampH1(Vector3 value) { CRots[0].Damping.x = value.x; GameManager.GStat.DampH[0].x = value.x; }
     public void DampH2(Vector3 value) { CRots[1].Damping.y = value.x; GameManager.GStat.DampH[1].x = value.x; }
     public void Shakee(Vector3 value) { }
+    public void SetLockDist(Vector3 value) { LockDist = 20f * value.x; GameManager.GStat.LockDist = LockDist; }
+    public void SetSameLock(int ll) { AllowSameLock = ll == 1; GameManager.GStat.AllowSameLock = AllowSameLock; }
 }

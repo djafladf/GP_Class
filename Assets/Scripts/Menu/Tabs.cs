@@ -19,24 +19,6 @@ public class Tabs : MonoBehaviour
     Color One = new Color(0.4f, 0.3f, 0.3f);
     Color Two = new Color(0.2f, 0.1f, 0.1f);
 
-    void AddEvent(EventTrigger eventTrigger, EventTriggerType Type, Action<PointerEventData,int> Event,int param)
-    {
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = Type;
-        entry.callback.AddListener((data) => { Event((PointerEventData)data,param); });
-        eventTrigger.triggers.Add(entry);
-    }
-
-    void ButtonInit(EventTrigger eventTrigger, Action<PointerEventData,int> OnPointer, Action<PointerEventData,int> OutPointer, Action<PointerEventData,int> ClickPointer,int i)
-    {
-        //data.pointerId : left -> -1, right -> -2, Wheel -> -3;
-        if (OnPointer != null) AddEvent(eventTrigger, EventTriggerType.PointerEnter, OnPointer,i);
-
-        if (OutPointer != null) AddEvent(eventTrigger, EventTriggerType.PointerExit, OutPointer,i);
-
-        if (ClickPointer != null) AddEvent(eventTrigger, EventTriggerType.PointerClick, ClickPointer,i);
-    }
-
     private void Awake()
     {
         int l = transform.childCount - (Selector == null ? 0 : 1);
@@ -48,7 +30,7 @@ public class Tabs : MonoBehaviour
                 TabImages.Add(t.GetComponent<Image>());TabImages.Add(t.GetChild(0).GetComponent<Image>());
                 TabText.Add(t.GetChild(1).GetComponent<TMP_Text>());
                 if(!t.TryGetComponent<EventTrigger>(out var et)) { et = t.AddComponent<EventTrigger>(); }
-                ButtonInit(et, PointOn, PointOff, Toggle,i);
+                EventUtil<int>.ButtonInit(et, PointOn, PointOff, Toggle,i);
             }
         }
     }

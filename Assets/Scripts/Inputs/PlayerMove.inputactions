@@ -27,9 +27,19 @@
                     "priority": 0
                 },
                 {
-                    "name": "LAttack",
+                    "name": "RHand",
                     "type": "Button",
                     "id": "a8383590-f83c-4b49-9e14-e3d78f4f0c35",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "LHand",
+                    "type": "Button",
+                    "id": "099b80f4-e239-4865-a66f-b790425f3015",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -40,16 +50,6 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "bc91bdfa-1cc1-4d84-8bf6-abd6dfa8cb25",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false,
-                    "priority": 0
-                },
-                {
-                    "name": "Focus",
-                    "type": "Button",
-                    "id": "70cbb6b2-ba40-4eeb-859b-703ee9e51ba4",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -80,6 +80,16 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "2ae600d8-f08c-42ed-8c88-905b04ab1c10",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Special",
+                    "type": "Button",
+                    "id": "f56cb8e9-010c-4c61-8b9e-defaf6ea8c63",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -237,7 +247,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "LAttack",
+                    "action": "RHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -248,40 +258,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "LAttack",
+                    "action": "RHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "886e731e-7071-4ae4-95c0-e61739dad6fd",
-                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "id": "c085fdbb-d433-4ac3-8e6c-beebd96303a0",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Touch",
-                    "action": "LAttack",
+                    "groups": ";Gamepad",
+                    "action": "LHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "ee3d0cd2-254e-47a7-a8cb-bc94d9658c54",
-                    "path": "<Joystick>/trigger",
+                    "id": "41dc4511-b8c3-4c18-a40a-9f9722252922",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Joystick",
-                    "action": "LAttack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8255d333-5683-4943-a58a-ccb207ff1dce",
-                    "path": "<XRController>/{PrimaryAction}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "XR",
-                    "action": "LAttack",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LHand",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -293,17 +292,6 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ee79ac64-8f71-4f19-9722-c4d7ecd866b6",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Focus",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -359,6 +347,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Dodge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "864f20f0-46f6-4493-be0a-e65f7a5b2928",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Special",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

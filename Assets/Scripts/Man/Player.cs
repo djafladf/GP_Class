@@ -105,18 +105,15 @@ public class Player : MonoBehaviour
     /// </summary>
     int SetAnimCurve(CurveState state)
     {
-        if (!MoveAble) return 0;
-        if (OnCurve)
-        {
-            if (PInp != CurveState.none) return 0;
-            PInp = state; return 2;
-        }
+        if (!MoveAble || state == CurveState.none) return 0;
+        if (OnCurve) return GameManager.instance.UI.ComboAdd(ref curCurv,state);
         
         return StartCurve(state);
     }
 
     int StartCurve(CurveState state,bool IsCombo = false)
     {
+        if (state == CurveState.none) return 0;
         if (state == CurveState.rattack) if (CurAttackLevel >= CurWeapon.One.Count) return 0;
         if (!CanPayCurve(state)) return 0;
         curStateInfo = GameManager.instance.Data.curves[(int)state - 1];
@@ -145,7 +142,7 @@ public class Player : MonoBehaviour
 
         AnimatorStateInfo before = anim.GetCurrentAnimatorStateInfo(0);
 
-        String nextTrigger;
+        string nextTrigger;
         if (state == CurveState.lattack || state == CurveState.rattack) nextTrigger = IsCombo ? "Combo" : curStateInfo.trigger;
         else nextTrigger = curStateInfo.trigger;
         anim.SetTrigger(nextTrigger);
@@ -165,6 +162,8 @@ public class Player : MonoBehaviour
         return CurST >= data.StUsement;
     }
 
+    public void SetComboStartTime(Vector3 var) { ComboStartTime = var.x; GameManager.GStat.CurveTime = var.x; }
+    float ComboStartTime = 0.6f;
     Coroutine CheckCurState = null;
     IEnumerator CheckEndCurve(int oldH, float oldT)
     {
@@ -196,31 +195,34 @@ public class Player : MonoBehaviour
                 if (!stt.IsTag("Curve"))
                 {
                     while (anim.IsInTransition(layer)) yield return null;
-
+                    
                     break;
                 }
             }
             else  // 연계 가능 시간 화긴
             {
                 t = stt.normalizedTime;
+                PInp = GameManager.instance.UI.GetNextCombo();
                 if (!(PInp != CurveState.none && curStateInfo.ComboAble.Contains(PInp))) continue;
-                st = curStateInfo.ComboTime.List[0]; ed = curStateInfo.ComboTime.List[1];
+                if (curStateInfo.UseInternalTime) { st = curStateInfo.ComboTime.List[0]; ed = curStateInfo.ComboTime.List[1]; }
+                else { st = ComboStartTime; ed = 0.9f; }
                 if (st > t || t > ed) continue;
                 if (CanPayCurve(PInp))
                 {
                     var nt = PInp;
-                    PInp = CurveState.none;
+                    PInp = GameManager.instance.UI.ComboConsume();
                     CheckCurState = null;
                     EndCurve(false);
-                    if(StartCurve(nt,true) == 0) yield break;
-                    // Equal return;
+                    StartCurve(nt, true);
+                    yield break;
                 }
-                PInp = CurveState.none;
+                else
+                {
+                    PInp = CurveState.none;
+                    GameManager.instance.UI.ClearCombo();
+                }
             }
-            
         }
-
-
         CheckCurState = null;
         EndCurve();
     }
@@ -240,9 +242,8 @@ public class Player : MonoBehaviour
         OnCurve = false; curCurv = CurveState.none; 
         if (startPending && PInp != CurveState.none)
         {
-            CurveState next = PInp;
-            PInp = CurveState.none;
-            SetAnimCurve(next);
+            PInp = GameManager.instance.UI.ComboConsume();
+            SetAnimCurve(PInp);
         }
     }
     #endregion
@@ -262,29 +263,45 @@ public class Player : MonoBehaviour
         if (!OnCurve) { anim.SetFloat("dx", Dir.x); anim.SetFloat("dy", Dir.y); }
     }
 
-    float LastDodge = 0;
-    float DodgeGap = 0.3f;
+    WaitForSecondsRealtime DodgeGap = new WaitForSecondsRealtime(0.3f);
+    public void SetDodgeGap(Vector3 g) { DodgeGap = new WaitForSecondsRealtime(g.x); GameManager.GStat.RunTime = g.x; }
+    bool ToggleRun = false;
+    public void ToggleRunType(int type) { ToggleRun = type == 1; GameManager.GStat.RunToggle = ToggleRun; }
     bool IsDodge = false;
     bool OnRunning = false;
+
+    Coroutine DodgeCor = null;
+    bool DodgeHolded = true;
+    IEnumerator DodgeCheck()
+    {
+        DodgeHolded = true;
+        yield return DodgeGap;
+        if(IsDodge && MoveAble)
+        {
+            DodgeHolded = false;
+            if (ToggleRun) OnRunning = OnRunning == false;
+            else OnRunning = true;
+            anim.SetBool("OnRun", OnRunning);
+        }
+        DodgeCor = null;
+    }
+
     // Dodge + Run
     void OnDodge(InputValue value)
     {
-        if (!MoveAble) return;
         if (value.isPressed)
         {
-            if (IsDodge || CurST < Time.deltaTime) return;
+            if (!MoveAble || IsDodge || CurST < Time.deltaTime) return;
             IsDodge = true;
-            LastDodge = Time.unscaledTime;
-            OnRunning = true;
-            anim.SetBool("OnRun", true);
+            DodgeCor = StartCoroutine(DodgeCheck());
         }
         else
         {
             if (!IsDodge) return;
             IsDodge = false;
-            if (Time.unscaledTime - LastDodge < DodgeGap) SetAnimCurve(CurveState.roll);
-            anim.SetBool("OnRun", false);
-            OnRunning = false;
+            if(DodgeCor != null) { StopCoroutine(DodgeCor); DodgeCor = null; }
+            if (DodgeHolded) SetAnimCurve(CurveState.roll);
+            if (!ToggleRun) OnRunning = false; anim.SetBool("OnRun", OnRunning);
         }
     }
 
@@ -356,7 +373,7 @@ public class Player : MonoBehaviour
 
     public void OnCancel(InputValue value)
     {
-        if (value.isPressed) GameManager.instance.Setting.TogleWindow();
+        //if (value.isPressed) GameManager.instance.Setting.TogleWindow();
     }
 
     public void OnRest(Transform trans,FireLit f = null)
@@ -384,7 +401,7 @@ public class Player : MonoBehaviour
     [SerializeField] VisualEffect VF;
     int CurAttackLevel = 0;
 
-    void OnLAttack(InputValue value)
+    void OnRHand(InputValue value)
     {
         if (value.isPressed)
         {
@@ -395,6 +412,11 @@ public class Player : MonoBehaviour
                 CurAttackLevel = (CurAttackLevel + 1) % CurWeapon.returnCount(onDouble);
             }
         }
+    }
+
+    void OnLHand(InputValue value)
+    {
+
     }
     
     void clipChange()
