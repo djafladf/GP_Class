@@ -299,7 +299,7 @@ public class Player : MonoBehaviour
         {
             if (!IsDodge) return;
             IsDodge = false;
-            if(DodgeCor != null) { StopCoroutine(DodgeCor); DodgeCor = null; }
+            if(DodgeCor != null) { StopCoroutine(DodgeCor); DodgeCor = null; DodgeGap.Reset(); }
             if (DodgeHolded) SetAnimCurve(CurveState.roll);
             if (!ToggleRun) OnRunning = false; anim.SetBool("OnRun", OnRunning);
         }
@@ -373,7 +373,7 @@ public class Player : MonoBehaviour
 
     public void OnCancel(InputValue value)
     {
-        //if (value.isPressed) GameManager.instance.Setting.TogleWindow();
+        if (value.isPressed && MoveAble) GameManager.instance.Setting.TogleWindow();
     }
 
     public void OnRest(Transform trans,FireLit f = null)

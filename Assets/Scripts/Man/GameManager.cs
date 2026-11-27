@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public static WaitForSeconds DotTwo = new WaitForSeconds(0.2f);
     public static WaitForSeconds DotThree = new WaitForSeconds(0.3f);
     public static WaitForSeconds DotFive = new WaitForSeconds(0.5f);
-    public static GameStatus GStat;
+    public static SettingStatus GStat;
 
     // Managers
     [HideInInspector] public Transform Player;

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class Event : UnityEvent<BaseEventData> { }
 
 [System.Serializable]
-public class GameStatus
+public class SettingStatus
 {
     // Volume
     public float[] Sounds;
@@ -40,7 +40,7 @@ public class GameStatus
 
     // GameVar
 
-    public GameStatus()
+    public SettingStatus()
     {
         Sounds = new float[6] {100,100,100,100,100,100};
         FOV = new float[2] { 60, 40 };

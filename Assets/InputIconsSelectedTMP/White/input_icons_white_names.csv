@@ -1,0 +1,115 @@
+﻿name,effectivePath,source_path,x,y,w,h
+A,<Keyboard>/a,key/alphanum/letter/border/a.png,0,1920,128,128
+B,<Keyboard>/b,key/alphanum/letter/border/b.png,128,1920,128,128
+C,<Keyboard>/c,key/alphanum/letter/border/c.png,256,1920,128,128
+D,<Keyboard>/d,key/alphanum/letter/border/d.png,384,1920,128,128
+E,<Keyboard>/e,key/alphanum/letter/border/e.png,512,1920,128,128
+F,<Keyboard>/f,key/alphanum/letter/border/f.png,640,1920,128,128
+G,<Keyboard>/g,key/alphanum/letter/border/g.png,768,1920,128,128
+H,<Keyboard>/h,key/alphanum/letter/border/h.png,896,1920,128,128
+I,<Keyboard>/i,key/alphanum/letter/border/i.png,1024,1920,128,128
+J,<Keyboard>/j,key/alphanum/letter/border/j.png,1152,1920,128,128
+K,<Keyboard>/k,key/alphanum/letter/border/k.png,1280,1920,128,128
+L,<Keyboard>/l,key/alphanum/letter/border/l.png,1408,1920,128,128
+M,<Keyboard>/m,key/alphanum/letter/border/m.png,1536,1920,128,128
+N,<Keyboard>/n,key/alphanum/letter/border/n.png,1664,1920,128,128
+O,<Keyboard>/o,key/alphanum/letter/border/o.png,1792,1920,128,128
+P,<Keyboard>/p,key/alphanum/letter/border/p.png,1920,1920,128,128
+Q,<Keyboard>/q,key/alphanum/letter/border/q.png,0,1792,128,128
+R,<Keyboard>/r,key/alphanum/letter/border/r.png,128,1792,128,128
+S,<Keyboard>/s,key/alphanum/letter/border/s.png,256,1792,128,128
+T,<Keyboard>/t,key/alphanum/letter/border/t.png,384,1792,128,128
+U,<Keyboard>/u,key/alphanum/letter/border/u.png,512,1792,128,128
+V,<Keyboard>/v,key/alphanum/letter/border/v.png,640,1792,128,128
+W,<Keyboard>/w,key/alphanum/letter/border/w.png,768,1792,128,128
+X,<Keyboard>/x,key/alphanum/letter/border/x.png,896,1792,128,128
+Y,<Keyboard>/y,key/alphanum/letter/border/y.png,1024,1792,128,128
+Z,<Keyboard>/z,key/alphanum/letter/border/z.png,1152,1792,128,128
+0,<Keyboard>/digit0,key/alphanum/number/border/0.png,1280,1792,128,128
+1,<Keyboard>/digit1,key/alphanum/number/border/1.png,1408,1792,128,128
+2,<Keyboard>/digit2,key/alphanum/number/border/2.png,1536,1792,128,128
+3,<Keyboard>/digit3,key/alphanum/number/border/3.png,1664,1792,128,128
+4,<Keyboard>/digit4,key/alphanum/number/border/4.png,1792,1792,128,128
+5,<Keyboard>/digit5,key/alphanum/number/border/5.png,1920,1792,128,128
+6,<Keyboard>/digit6,key/alphanum/number/border/6.png,0,1664,128,128
+7,<Keyboard>/digit7,key/alphanum/number/border/7.png,128,1664,128,128
+8,<Keyboard>/digit8,key/alphanum/number/border/8.png,256,1664,128,128
+9,<Keyboard>/digit9,key/alphanum/number/border/9.png,384,1664,128,128
+F1,<Keyboard>/f1,key/function/_/border/f1.png,512,1664,128,128
+F2,<Keyboard>/f2,key/function/_/border/f2.png,640,1664,128,128
+F3,<Keyboard>/f3,key/function/_/border/f3.png,768,1664,128,128
+F4,<Keyboard>/f4,key/function/_/border/f4.png,896,1664,128,128
+F5,<Keyboard>/f5,key/function/_/border/f5.png,1024,1664,128,128
+F6,<Keyboard>/f6,key/function/_/border/f6.png,1152,1664,128,128
+F7,<Keyboard>/f7,key/function/_/border/f7.png,1280,1664,128,128
+F8,<Keyboard>/f8,key/function/_/border/f8.png,1408,1664,128,128
+F9,<Keyboard>/f9,key/function/_/border/f9.png,1536,1664,128,128
+F10,<Keyboard>/f10,key/function/_/border/f10.png,1664,1664,128,128
+F11,<Keyboard>/f11,key/function/_/border/f11.png,1792,1664,128,128
+F12,<Keyboard>/f12,key/function/_/border/f12.png,1920,1664,128,128
+Alt,,key/modifier/_/border/alt.png,0,1536,128,128
+Ctrl,,key/modifier/_/border/ctrl.png,128,1536,128,128
+Shift,,key/modifier/_/border/shift.png,256,1536,128,128
+Left Alt,<Keyboard>/leftAlt,key/modifier/_/border/lalt.png,384,1536,128,128
+Left Ctrl,<Keyboard>/leftCtrl,key/modifier/_/border/lctrl.png,512,1536,128,128
+Left Shift,<Keyboard>/leftShift,key/modifier/_/border/lshift.png,640,1536,128,128
+Right Alt,<Keyboard>/rightAlt,key/modifier/_/border/ralt.png,768,1536,128,128
+Right Ctrl,<Keyboard>/rightCtrl,key/modifier/_/border/rctrl.png,896,1536,128,128
+Right Shift,<Keyboard>/rightShift,key/modifier/_/border/rshift.png,1024,1536,128,128
+Windows,,key/modifier/windows/border/win.png,1152,1536,128,128
+Left Meta,<Keyboard>/leftMeta,key/modifier/windows/border/lwin.png,1280,1536,128,128
+Right Meta,<Keyboard>/rightMeta,key/modifier/windows/border/rwin.png,1408,1536,128,128
+Backspace,<Keyboard>/backspace,key/special/_/border/backspace.png,1536,1536,128,128
+Caps Lock,<Keyboard>/capslock,key/special/_/border/capslock.png,1664,1536,128,128
+Delete,<Keyboard>/delete,key/special/_/border/delete.png,1792,1536,128,128
+Enter,<Keyboard>/enter,key/special/_/border/enter.png,1920,1536,128,128
+Escape,<Keyboard>/escape,key/special/_/border/escape.png,0,1408,128,128
+Home,<Keyboard>/home,key/special/_/border/home.png,128,1408,128,128
+Insert,<Keyboard>/insert,key/special/_/border/insert.png,256,1408,128,128
+Num Lock,<Keyboard>/numLock,key/special/_/border/numberlock.png,384,1408,128,128
+Numpad Enter,<Keyboard>/numpadEnter,key/special/_/border/numpadenter.png,512,1408,128,128
+Page Down,<Keyboard>/pagedown,key/special/_/border/pagedown.png,640,1408,128,128
+Page Up,<Keyboard>/pageup,key/special/_/border/pageup.png,768,1408,128,128
+Pause,<Keyboard>/pause,key/special/_/border/pausebreak.png,896,1408,128,128
+Print Screen,<Keyboard>/printscreen,key/special/_/border/printscreen.png,1024,1408,128,128
+Scroll Lock,<Keyboard>/scrolllock,key/special/_/border/scrolllock.png,1152,1408,128,128
+Space,<Keyboard>/space,key/special/_/border/space.png,1280,1408,128,128
+Tab,<Keyboard>/tab,key/special/_/border/tab.png,1408,1408,128,128
+Backslash,<Keyboard>/backslash,key/symbol/_/border/backslash.png,1536,1408,128,128
+Backquote,<Keyboard>/backquote,key/symbol/_/border/backtick.png,1664,1408,128,128
+Comma,<Keyboard>/comma,key/symbol/_/border/comma.png,1792,1408,128,128
+Minus,<Keyboard>/minus,key/symbol/_/border/dash.png,1920,1408,128,128
+Equals,<Keyboard>/equals,key/symbol/_/border/equals.png,0,1280,128,128
+Left Bracket,<Keyboard>/leftbracket,key/symbol/_/border/leftbracket.png,128,1280,128,128
+Period,<Keyboard>/period,key/symbol/_/border/period.png,256,1280,128,128
+Right Bracket,<Keyboard>/rightbracket,key/symbol/_/border/rightbracket.png,384,1280,128,128
+Semicolon,<Keyboard>/semicolon,key/symbol/_/border/semicolon.png,512,1280,128,128
+Quote,<Keyboard>/quote,key/symbol/_/border/singlequote.png,640,1280,128,128
+Slash,<Keyboard>/slash,key/symbol/_/border/slash.png,768,1280,128,128
+Numpad 0,<Keyboard>/numpad0,key/numpad/_/border/0.png,896,1280,128,128
+Numpad 1,<Keyboard>/numpad1,key/numpad/_/border/1.png,1024,1280,128,128
+Numpad 2,<Keyboard>/numpad2,key/numpad/_/border/2.png,1152,1280,128,128
+Numpad 3,<Keyboard>/numpad3,key/numpad/_/border/3.png,1280,1280,128,128
+Numpad 4,<Keyboard>/numpad4,key/numpad/_/border/4.png,1408,1280,128,128
+Numpad 5,<Keyboard>/numpad5,key/numpad/_/border/5.png,1536,1280,128,128
+Numpad 6,<Keyboard>/numpad6,key/numpad/_/border/6.png,1664,1280,128,128
+Numpad 7,<Keyboard>/numpad7,key/numpad/_/border/7.png,1792,1280,128,128
+Numpad 8,<Keyboard>/numpad8,key/numpad/_/border/8.png,1920,1280,128,128
+Numpad 9,<Keyboard>/numpad9,key/numpad/_/border/9.png,0,1152,128,128
+Numpad Multiply,<Keyboard>/numpadMultiply,key/numpad/_/border/asterisk.png,128,1152,128,128
+Numpad Comma,,key/numpad/_/border/comma.png,256,1152,128,128
+Numpad Minus,<Keyboard>/numpadMinus,key/numpad/_/border/minus.png,384,1152,128,128
+Numpad Period,<Keyboard>/numpadPeriod,key/numpad/_/border/period.png,512,1152,128,128
+Numpad Plus,<Keyboard>/numpadPlus,key/numpad/_/border/plus.png,640,1152,128,128
+Numpad Divide,<Keyboard>/numpadDivide,key/numpad/_/border/slash.png,768,1152,128,128
+Mouse,,mouse/_/_/transparent/_.png,896,1152,128,128
+Left Button,<Mouse>/leftButton,mouse/_/_/transparent/lb.png,1024,1152,128,128
+Right Button,<Mouse>/rightButton,mouse/_/_/transparent/rb.png,1152,1152,128,128
+Middle Button,<Mouse>/middleButton,mouse/_/_/transparent/mb.png,1280,1152,128,128
+Scroll,<Mouse>/scroll,mouse/_/_/transparent/scroll.png,1408,1152,128,128
+Scroll Down,,mouse/_/_/transparent/scrolldown.png,1536,1152,128,128
+Scroll Up,,mouse/_/_/transparent/scrollup.png,1664,1152,128,128
+Up Arrow,<Keyboard>/upArrow,layout/_/arrow/transparent/w.png,1792,1152,128,128
+Left Arrow,<Keyboard>/leftArrow,layout/_/arrow/transparent/a.png,1920,1152,128,128
+Down Arrow,<Keyboard>/downArrow,layout/_/arrow/transparent/s.png,0,1024,128,128
+Right Arrow,<Keyboard>/rightArrow,layout/_/arrow/transparent/d.png,128,1024,128,128

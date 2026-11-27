@@ -1,0 +1,1033 @@
+{
+  "count": 114,
+  "atlas_width": 2048,
+  "atlas_height": 2048,
+  "sprites": [
+    {
+      "name": "A",
+      "path": "key/alphanum/letter/border/a.png",
+      "x": 0,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/a"
+    },
+    {
+      "name": "B",
+      "path": "key/alphanum/letter/border/b.png",
+      "x": 128,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/b"
+    },
+    {
+      "name": "C",
+      "path": "key/alphanum/letter/border/c.png",
+      "x": 256,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/c"
+    },
+    {
+      "name": "D",
+      "path": "key/alphanum/letter/border/d.png",
+      "x": 384,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/d"
+    },
+    {
+      "name": "E",
+      "path": "key/alphanum/letter/border/e.png",
+      "x": 512,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/e"
+    },
+    {
+      "name": "F",
+      "path": "key/alphanum/letter/border/f.png",
+      "x": 640,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f"
+    },
+    {
+      "name": "G",
+      "path": "key/alphanum/letter/border/g.png",
+      "x": 768,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/g"
+    },
+    {
+      "name": "H",
+      "path": "key/alphanum/letter/border/h.png",
+      "x": 896,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/h"
+    },
+    {
+      "name": "I",
+      "path": "key/alphanum/letter/border/i.png",
+      "x": 1024,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/i"
+    },
+    {
+      "name": "J",
+      "path": "key/alphanum/letter/border/j.png",
+      "x": 1152,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/j"
+    },
+    {
+      "name": "K",
+      "path": "key/alphanum/letter/border/k.png",
+      "x": 1280,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/k"
+    },
+    {
+      "name": "L",
+      "path": "key/alphanum/letter/border/l.png",
+      "x": 1408,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/l"
+    },
+    {
+      "name": "M",
+      "path": "key/alphanum/letter/border/m.png",
+      "x": 1536,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/m"
+    },
+    {
+      "name": "N",
+      "path": "key/alphanum/letter/border/n.png",
+      "x": 1664,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/n"
+    },
+    {
+      "name": "O",
+      "path": "key/alphanum/letter/border/o.png",
+      "x": 1792,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/o"
+    },
+    {
+      "name": "P",
+      "path": "key/alphanum/letter/border/p.png",
+      "x": 1920,
+      "y": 1920,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/p"
+    },
+    {
+      "name": "Q",
+      "path": "key/alphanum/letter/border/q.png",
+      "x": 0,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/q"
+    },
+    {
+      "name": "R",
+      "path": "key/alphanum/letter/border/r.png",
+      "x": 128,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/r"
+    },
+    {
+      "name": "S",
+      "path": "key/alphanum/letter/border/s.png",
+      "x": 256,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/s"
+    },
+    {
+      "name": "T",
+      "path": "key/alphanum/letter/border/t.png",
+      "x": 384,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/t"
+    },
+    {
+      "name": "U",
+      "path": "key/alphanum/letter/border/u.png",
+      "x": 512,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/u"
+    },
+    {
+      "name": "V",
+      "path": "key/alphanum/letter/border/v.png",
+      "x": 640,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/v"
+    },
+    {
+      "name": "W",
+      "path": "key/alphanum/letter/border/w.png",
+      "x": 768,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/w"
+    },
+    {
+      "name": "X",
+      "path": "key/alphanum/letter/border/x.png",
+      "x": 896,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/x"
+    },
+    {
+      "name": "Y",
+      "path": "key/alphanum/letter/border/y.png",
+      "x": 1024,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/y"
+    },
+    {
+      "name": "Z",
+      "path": "key/alphanum/letter/border/z.png",
+      "x": 1152,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/z"
+    },
+    {
+      "name": "0",
+      "path": "key/alphanum/number/border/0.png",
+      "x": 1280,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit0"
+    },
+    {
+      "name": "1",
+      "path": "key/alphanum/number/border/1.png",
+      "x": 1408,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit1"
+    },
+    {
+      "name": "2",
+      "path": "key/alphanum/number/border/2.png",
+      "x": 1536,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit2"
+    },
+    {
+      "name": "3",
+      "path": "key/alphanum/number/border/3.png",
+      "x": 1664,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit3"
+    },
+    {
+      "name": "4",
+      "path": "key/alphanum/number/border/4.png",
+      "x": 1792,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit4"
+    },
+    {
+      "name": "5",
+      "path": "key/alphanum/number/border/5.png",
+      "x": 1920,
+      "y": 1792,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit5"
+    },
+    {
+      "name": "6",
+      "path": "key/alphanum/number/border/6.png",
+      "x": 0,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit6"
+    },
+    {
+      "name": "7",
+      "path": "key/alphanum/number/border/7.png",
+      "x": 128,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit7"
+    },
+    {
+      "name": "8",
+      "path": "key/alphanum/number/border/8.png",
+      "x": 256,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit8"
+    },
+    {
+      "name": "9",
+      "path": "key/alphanum/number/border/9.png",
+      "x": 384,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/digit9"
+    },
+    {
+      "name": "F1",
+      "path": "key/function/_/border/f1.png",
+      "x": 512,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f1"
+    },
+    {
+      "name": "F2",
+      "path": "key/function/_/border/f2.png",
+      "x": 640,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f2"
+    },
+    {
+      "name": "F3",
+      "path": "key/function/_/border/f3.png",
+      "x": 768,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f3"
+    },
+    {
+      "name": "F4",
+      "path": "key/function/_/border/f4.png",
+      "x": 896,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f4"
+    },
+    {
+      "name": "F5",
+      "path": "key/function/_/border/f5.png",
+      "x": 1024,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f5"
+    },
+    {
+      "name": "F6",
+      "path": "key/function/_/border/f6.png",
+      "x": 1152,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f6"
+    },
+    {
+      "name": "F7",
+      "path": "key/function/_/border/f7.png",
+      "x": 1280,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f7"
+    },
+    {
+      "name": "F8",
+      "path": "key/function/_/border/f8.png",
+      "x": 1408,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f8"
+    },
+    {
+      "name": "F9",
+      "path": "key/function/_/border/f9.png",
+      "x": 1536,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f9"
+    },
+    {
+      "name": "F10",
+      "path": "key/function/_/border/f10.png",
+      "x": 1664,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f10"
+    },
+    {
+      "name": "F11",
+      "path": "key/function/_/border/f11.png",
+      "x": 1792,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f11"
+    },
+    {
+      "name": "F12",
+      "path": "key/function/_/border/f12.png",
+      "x": 1920,
+      "y": 1664,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/f12"
+    },
+    {
+      "name": "Alt",
+      "path": "key/modifier/_/border/alt.png",
+      "x": 0,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Ctrl",
+      "path": "key/modifier/_/border/ctrl.png",
+      "x": 128,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Shift",
+      "path": "key/modifier/_/border/shift.png",
+      "x": 256,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Left Alt",
+      "path": "key/modifier/_/border/lalt.png",
+      "x": 384,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/leftAlt"
+    },
+    {
+      "name": "Left Ctrl",
+      "path": "key/modifier/_/border/lctrl.png",
+      "x": 512,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/leftCtrl"
+    },
+    {
+      "name": "Left Shift",
+      "path": "key/modifier/_/border/lshift.png",
+      "x": 640,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/leftShift"
+    },
+    {
+      "name": "Right Alt",
+      "path": "key/modifier/_/border/ralt.png",
+      "x": 768,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/rightAlt"
+    },
+    {
+      "name": "Right Ctrl",
+      "path": "key/modifier/_/border/rctrl.png",
+      "x": 896,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/rightCtrl"
+    },
+    {
+      "name": "Right Shift",
+      "path": "key/modifier/_/border/rshift.png",
+      "x": 1024,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/rightShift"
+    },
+    {
+      "name": "Windows",
+      "path": "key/modifier/windows/border/win.png",
+      "x": 1152,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Left Meta",
+      "path": "key/modifier/windows/border/lwin.png",
+      "x": 1280,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/leftMeta"
+    },
+    {
+      "name": "Right Meta",
+      "path": "key/modifier/windows/border/rwin.png",
+      "x": 1408,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/rightMeta"
+    },
+    {
+      "name": "Backspace",
+      "path": "key/special/_/border/backspace.png",
+      "x": 1536,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/backspace"
+    },
+    {
+      "name": "Caps Lock",
+      "path": "key/special/_/border/capslock.png",
+      "x": 1664,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/capslock"
+    },
+    {
+      "name": "Delete",
+      "path": "key/special/_/border/delete.png",
+      "x": 1792,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/delete"
+    },
+    {
+      "name": "Enter",
+      "path": "key/special/_/border/enter.png",
+      "x": 1920,
+      "y": 1536,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/enter"
+    },
+    {
+      "name": "Escape",
+      "path": "key/special/_/border/escape.png",
+      "x": 0,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/escape"
+    },
+    {
+      "name": "Home",
+      "path": "key/special/_/border/home.png",
+      "x": 128,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/home"
+    },
+    {
+      "name": "Insert",
+      "path": "key/special/_/border/insert.png",
+      "x": 256,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/insert"
+    },
+    {
+      "name": "Num Lock",
+      "path": "key/special/_/border/numberlock.png",
+      "x": 384,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numLock"
+    },
+    {
+      "name": "Numpad Enter",
+      "path": "key/special/_/border/numpadenter.png",
+      "x": 512,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpadEnter"
+    },
+    {
+      "name": "Page Down",
+      "path": "key/special/_/border/pagedown.png",
+      "x": 640,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/pagedown"
+    },
+    {
+      "name": "Page Up",
+      "path": "key/special/_/border/pageup.png",
+      "x": 768,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/pageup"
+    },
+    {
+      "name": "Pause",
+      "path": "key/special/_/border/pausebreak.png",
+      "x": 896,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/pause"
+    },
+    {
+      "name": "Print Screen",
+      "path": "key/special/_/border/printscreen.png",
+      "x": 1024,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/printscreen"
+    },
+    {
+      "name": "Scroll Lock",
+      "path": "key/special/_/border/scrolllock.png",
+      "x": 1152,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/scrolllock"
+    },
+    {
+      "name": "Space",
+      "path": "key/special/_/border/space.png",
+      "x": 1280,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/space"
+    },
+    {
+      "name": "Tab",
+      "path": "key/special/_/border/tab.png",
+      "x": 1408,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/tab"
+    },
+    {
+      "name": "Backslash",
+      "path": "key/symbol/_/border/backslash.png",
+      "x": 1536,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/backslash"
+    },
+    {
+      "name": "Backquote",
+      "path": "key/symbol/_/border/backtick.png",
+      "x": 1664,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/backquote"
+    },
+    {
+      "name": "Comma",
+      "path": "key/symbol/_/border/comma.png",
+      "x": 1792,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/comma"
+    },
+    {
+      "name": "Minus",
+      "path": "key/symbol/_/border/dash.png",
+      "x": 1920,
+      "y": 1408,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/minus"
+    },
+    {
+      "name": "Equals",
+      "path": "key/symbol/_/border/equals.png",
+      "x": 0,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/equals"
+    },
+    {
+      "name": "Left Bracket",
+      "path": "key/symbol/_/border/leftbracket.png",
+      "x": 128,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/leftbracket"
+    },
+    {
+      "name": "Period",
+      "path": "key/symbol/_/border/period.png",
+      "x": 256,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/period"
+    },
+    {
+      "name": "Right Bracket",
+      "path": "key/symbol/_/border/rightbracket.png",
+      "x": 384,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/rightbracket"
+    },
+    {
+      "name": "Semicolon",
+      "path": "key/symbol/_/border/semicolon.png",
+      "x": 512,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/semicolon"
+    },
+    {
+      "name": "Quote",
+      "path": "key/symbol/_/border/singlequote.png",
+      "x": 640,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/quote"
+    },
+    {
+      "name": "Slash",
+      "path": "key/symbol/_/border/slash.png",
+      "x": 768,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/slash"
+    },
+    {
+      "name": "Numpad 0",
+      "path": "key/numpad/_/border/0.png",
+      "x": 896,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad0"
+    },
+    {
+      "name": "Numpad 1",
+      "path": "key/numpad/_/border/1.png",
+      "x": 1024,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad1"
+    },
+    {
+      "name": "Numpad 2",
+      "path": "key/numpad/_/border/2.png",
+      "x": 1152,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad2"
+    },
+    {
+      "name": "Numpad 3",
+      "path": "key/numpad/_/border/3.png",
+      "x": 1280,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad3"
+    },
+    {
+      "name": "Numpad 4",
+      "path": "key/numpad/_/border/4.png",
+      "x": 1408,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad4"
+    },
+    {
+      "name": "Numpad 5",
+      "path": "key/numpad/_/border/5.png",
+      "x": 1536,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad5"
+    },
+    {
+      "name": "Numpad 6",
+      "path": "key/numpad/_/border/6.png",
+      "x": 1664,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad6"
+    },
+    {
+      "name": "Numpad 7",
+      "path": "key/numpad/_/border/7.png",
+      "x": 1792,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad7"
+    },
+    {
+      "name": "Numpad 8",
+      "path": "key/numpad/_/border/8.png",
+      "x": 1920,
+      "y": 1280,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad8"
+    },
+    {
+      "name": "Numpad 9",
+      "path": "key/numpad/_/border/9.png",
+      "x": 0,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpad9"
+    },
+    {
+      "name": "Numpad Multiply",
+      "path": "key/numpad/_/border/asterisk.png",
+      "x": 128,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpadMultiply"
+    },
+    {
+      "name": "Numpad Comma",
+      "path": "key/numpad/_/border/comma.png",
+      "x": 256,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Numpad Minus",
+      "path": "key/numpad/_/border/minus.png",
+      "x": 384,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpadMinus"
+    },
+    {
+      "name": "Numpad Period",
+      "path": "key/numpad/_/border/period.png",
+      "x": 512,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpadPeriod"
+    },
+    {
+      "name": "Numpad Plus",
+      "path": "key/numpad/_/border/plus.png",
+      "x": 640,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpadPlus"
+    },
+    {
+      "name": "Numpad Divide",
+      "path": "key/numpad/_/border/slash.png",
+      "x": 768,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/numpadDivide"
+    },
+    {
+      "name": "Mouse",
+      "path": "mouse/_/_/transparent/_.png",
+      "x": 896,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Left Button",
+      "path": "mouse/_/_/transparent/lb.png",
+      "x": 1024,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Mouse>/leftButton"
+    },
+    {
+      "name": "Right Button",
+      "path": "mouse/_/_/transparent/rb.png",
+      "x": 1152,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Mouse>/rightButton"
+    },
+    {
+      "name": "Middle Button",
+      "path": "mouse/_/_/transparent/mb.png",
+      "x": 1280,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Mouse>/middleButton"
+    },
+    {
+      "name": "Scroll",
+      "path": "mouse/_/_/transparent/scroll.png",
+      "x": 1408,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Mouse>/scroll"
+    },
+    {
+      "name": "Scroll Down",
+      "path": "mouse/_/_/transparent/scrolldown.png",
+      "x": 1536,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Scroll Up",
+      "path": "mouse/_/_/transparent/scrollup.png",
+      "x": 1664,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": null
+    },
+    {
+      "name": "Up Arrow",
+      "path": "layout/_/arrow/transparent/w.png",
+      "x": 1792,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/upArrow"
+    },
+    {
+      "name": "Left Arrow",
+      "path": "layout/_/arrow/transparent/a.png",
+      "x": 1920,
+      "y": 1152,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/leftArrow"
+    },
+    {
+      "name": "Down Arrow",
+      "path": "layout/_/arrow/transparent/s.png",
+      "x": 0,
+      "y": 1024,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/downArrow"
+    },
+    {
+      "name": "Right Arrow",
+      "path": "layout/_/arrow/transparent/d.png",
+      "x": 128,
+      "y": 1024,
+      "w": 128,
+      "h": 128,
+      "effectivePath": "<Keyboard>/rightArrow"
+    }
+  ]
+}

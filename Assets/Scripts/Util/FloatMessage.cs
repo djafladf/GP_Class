@@ -9,6 +9,7 @@ public class FloatMessage : MonoBehaviour
 {
     Image Im;
     TMP_Text MainText;
+    RectTransform ImRect;
     RectTransform ParentRect;
     RectTransform InfRect;
     private void Awake()
@@ -20,6 +21,7 @@ public class FloatMessage : MonoBehaviour
             InfRect = GetComponent<RectTransform>();
             MainText = transform.GetChild(1).GetComponent<TMP_Text>();
             Im = transform.GetChild(0).GetComponent<Image>();
+            ImRect = Im.GetComponent<RectTransform>();
             gameObject.SetActive(false);
         }
         else Destroy(gameObject);
@@ -44,19 +46,38 @@ public class FloatMessage : MonoBehaviour
 
     int CurUseInd;
 
-    public void Init(string Message,int ind = 0,float font = 50, Sprite spr = null)
+    IEnumerator AutoClosing(float t)
     {
-        MainText.text = Message; MainText.fontSize = font;
-        if (spr != null) { Im.gameObject.SetActive(true); Im.sprite = spr; } else Im.gameObject.SetActive(false);
+        yield return new WaitForSecondsRealtime(t);
+        Close(-1,true);
+        ClosingCor = null;
+    }
+
+    Coroutine ClosingCor = null;
+    public void Init(string Message,int ind = 0, float closingTime = -1,Sprite spr = null)
+    {
+        MainText.text = Message;
+        if (spr != null) 
+        { 
+            Im.gameObject.SetActive(true); ImRect.sizeDelta = spr.rect.size;
+            Im.sprite = spr; 
+        } 
+        else Im.gameObject.SetActive(false);
         gameObject.SetActive(true); CurUseInd = ind;
         LayoutRebuilder.ForceRebuildLayoutImmediate(InfRect);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(ParentRect);
         MySize = InfRect.rect.size * 0.5f; MaxSize = ParentRect.rect.size - MySize;
+        if(ClosingCor != null) StopCoroutine(ClosingCor);
+        if (closingTime != -1) ClosingCor = StartCoroutine(AutoClosing(closingTime));
+        else ClosingCor = null;
     }
 
     public void Close(int ind, bool MasterKey = false)
     {
         if (CurUseInd == ind | MasterKey)
         {
+            if (ClosingCor != null) StopCoroutine(ClosingCor);
+            ClosingCor = null;
             gameObject.SetActive(false);
             MainText.text = "";
         }

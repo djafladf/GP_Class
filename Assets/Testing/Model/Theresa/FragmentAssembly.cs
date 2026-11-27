@@ -57,7 +57,6 @@ public sealed class FragmentAssembly : MonoBehaviour
 
     public void Begin(bool assembling)
     {
-        print($"{build}({elapsed}) - > {assembling}");
         if (build == assembling) return;
         elapsed = 1 - elapsed;
         build = assembling;

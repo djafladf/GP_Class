@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.EventSystems;
 
 public static class EventUtil
@@ -44,6 +43,33 @@ public static class EventUtil<T>
         if (OutPointer != null) AddEvent(eventTrigger, EventTriggerType.PointerExit, OutPointer, i);
 
         if (ClickPointer != null) AddEvent(eventTrigger, EventTriggerType.PointerClick, ClickPointer, i);
+    }
+}
+
+public class LinkedSet<T>
+{
+    LinkedList<T> value = new();
+    Dictionary<T, LinkedListNode<T>> Nodes = new();
+
+    public void Add(T item)
+    {
+        Nodes.Add(item,value.AddLast(item));
+    }
+    public bool Remove(T item)
+    {
+        if(Nodes.Remove(item,out var t)) { value.Remove(t); return true; }
+        return false;
+    }
+
+    public bool First(out T var) 
+    { 
+        if(value.First == null) { var = default; return false; }
+        var = value.First.Value; return true;
+    }
+    public bool Last(out T var)
+    {
+        if (value.First == null) { var = default; return false; }
+        var = value.Last.Value; return true;
     }
 }
 
